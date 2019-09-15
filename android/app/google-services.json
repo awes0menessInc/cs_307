@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "714344170931",
+    "firebase_url": "https://twistter-23e52.firebaseio.com",
+    "project_id": "twistter-23e52",
+    "storage_bucket": "twistter-23e52.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:714344170931:android:88ac2f114220ce9fe8b7c6",
+        "android_client_info": {
+          "package_name": "com.example.twistter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "714344170931-5ufikg8u3s14dv2a4jn9nbme3jg9gn76.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBieZqE3a4d1G8RgE5MaKn0ZTZ4A8fTrLc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "714344170931-5ufikg8u3s14dv2a4jn9nbme3jg9gn76.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
