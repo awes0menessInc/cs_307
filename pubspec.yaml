@@ -1,5 +1,5 @@
 name: twistter
-description: A new Flutter project.
+description: CS 307 Group Project.
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -39,6 +39,13 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  fonts:
+    - family: Amaranth
+      fonts:
+        - asset: fonts/Amaranth-Regular.ttf
+        - asset: fonts/Amaranth-BoldItalic.ttf
+          style: italic
+          weight: 700
 
   # To add assets to your application, add an assets section, like this:
   # assets:
