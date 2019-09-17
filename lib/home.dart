@@ -10,7 +10,7 @@ class Home extends StatelessWidget {
           child: Scaffold(
             appBar: AppBar(
               title: Text("twistter", 
-              style: TextStyle(color: Colors.black, fontFamily:'Amaranth', fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, fontSize: 27),
+              style: TextStyle(color: Color(0xff032B30), fontFamily:'Amaranth', fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, fontSize: 27),
               ),
               backgroundColor: Colors.white,
               ),
@@ -23,7 +23,7 @@ class Home extends StatelessWidget {
                 tabs: [
                   Tab(
                     icon: Icon(
-                      Icons.home,
+                      Icons.home, 
                     ),
                     text: "Home",
                   ),
