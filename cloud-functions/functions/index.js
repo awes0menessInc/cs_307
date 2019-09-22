@@ -20,7 +20,7 @@ exports.test = functions.https.onRequest((req, res) => {
                 "id": doc.id,
                 "message": doc.data().message
             }
-            contents = contents.concat(v);
+            contents = contents.concat(v); 
         });
         res.send(contents)
         return "";
