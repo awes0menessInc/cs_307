@@ -63,33 +63,28 @@ exports.getUserMicroblogs = functions.https.onRequest((req, res) => {
 // directly from my timeline so that I can easily post to my timeline.
 
 exports.postMicroblog = functions.https.onRequest((req, res) => {
+    var blog = req.body;
 
     var db = admin.firestore();
     // add to microblog collection
-    db.collection('microblogs').add(req.body).then(snapshot => {
-        res.send('Added new microblog successfully');
-        return "";
-      }).catch(error => {
-        res.send(error);
+    var blogDoc = db.collection('microblogs').doc();
+    blogDoc.set(blog);
+
+    // add ref to microblogs in user doc in user collection
+    db.collection('users').doc(blog.userId).update({
+        microblogs: admin.firestore.FieldValue.arrayUnion(blogDoc.id)
     });
 
-    // // add ref to microblogs in user doc in user collection
-    // db.collection("users").get(userId).then(snapshot => {
-    //     snapshot.forEach(doc => {
-    //         var object = {
-    //             "id": doc.id,
-    //             "content": doc.data().content,
-    //             "likes": doc.data().likes,
-    //             "quotes": doc.data().quotes,
-    //             "timestamp": doc.data().timestamp,
-    //             "topics": doc.data().topics,
-    //             "username": doc.data().username
-    //         }
-    //         contents = contents.concat(object);
-    //     });
-    //     res.send(contents)
+    res.send('Added new microblog successfully: ' + blogDoc.id);
+    // db.collection('microblogs').add(req.body).then(snapshot => {
+    //     res.send('Added new microblog successfully: ', snapshot.id);
     //     return "";
-    // }).catch(error => {
-    //     res.send(error)
-    // })
+    //   }).catch(error => {
+    //     res.send(error);
+    // });
+
+    // add ref to microblogs in user doc in user collection
+    // db.collection('users').doc(blog.userId).update({
+    //     microblogs: firebase.firestore.FieldValue.arrayUnion()
+    // });
 });
