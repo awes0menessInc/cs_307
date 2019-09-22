@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'timeline.dart';
+import 'profile.dart';
 
 class Home extends StatelessWidget {
   @override
@@ -28,18 +30,18 @@ class Home extends StatelessWidget {
                     text: "Home",
                   ),
                   Tab(icon: Icon(Icons.search), text: "Search"),
-                  Tab(icon: Icon(Icons.file_download), text: "Downloads"),
-                  Tab(icon: Icon(Icons.list), text: "More"),
+                  Tab(icon: Icon(Icons.favorite), text: "Followers"),
+                  Tab(icon: Icon(Icons.person), text: "Profile"),
                 ],
                 unselectedLabelColor: Color(0xff999999),
                 labelColor: Colors.blue,
                 indicatorColor: Colors.transparent),
             body: TabBarView(
               children: [
-                Center(child: Text("Page 1")),
+                Timeline(),
                 Center(child: Text("Page 2")),
                 Center(child: Text("Page 3")),
-                Center(child: Text("Page 4")),
+                UserProfilePage(),
               ],
             ),
           ),
