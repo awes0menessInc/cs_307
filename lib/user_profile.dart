@@ -15,13 +15,12 @@ class MyApp extends StatelessWidget {
 
 class UserProfilePage extends StatelessWidget {
   final String _fullName = "Rebecca Keys";
-  final String _status = "Student";
+  final String _status = "Software Developer";
   final String _bio =
       "\"Hi, I am a Freelance developer working for hourly basis. If you wants to contact me to build your product leave a message.\"";
   final String _followers = "450";
   final String _following = "127";
   final String _posts = "24";
-
 
   Widget _buildCoverImage(Size screenSize) {
     return Container(
@@ -42,7 +41,7 @@ class UserProfilePage extends StatelessWidget {
         height: 140.0,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/nickfrost.jpg'),
+            image: AssetImage('assets/images/profile_image.jpg'),
             fit: BoxFit.cover,
           ),
           borderRadius: BorderRadius.circular(80.0),
