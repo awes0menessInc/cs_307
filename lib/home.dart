@@ -18,6 +18,7 @@ class Home extends StatelessWidget {
               ),
             floatingActionButton: FloatingActionButton(
               child: Icon(Icons.add_comment),
+              backgroundColor: Color(0xff55b0bd),
               onPressed: (){
                 print("hello world");
               },),
@@ -34,7 +35,7 @@ class Home extends StatelessWidget {
                   Tab(icon: Icon(Icons.person), text: "Profile"),
                 ],
                 unselectedLabelColor: Color(0xff999999),
-                labelColor: Colors.blue,
+                labelColor: Color(0xff55b0bd),
                 indicatorColor: Colors.transparent),
             body: TabBarView(
               children: [

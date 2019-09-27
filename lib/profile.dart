@@ -5,22 +5,24 @@ class UserProfilePage extends StatelessWidget {
   final String _fullName = "Rebecca Keys";
   final String _status = "Software Developer";
   final String _bio =
-      "\"Hi, I am a Freelance developer working for hourly basis. If you wants to contact me to build your product leave a message.\"";
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Varius sit amet mattis vulputate enim nulla. Malesuada fames ac turpis egestas. In dictum non consectetur a erat nam at lectus urna. Id venenatis a condimentum vitae sapien pellentesque habitant morbi tristique.";
   final String _followers = "450";
   final String _following = "127";
   final String _posts = "24";
+  bool _followStatus = false;
+  String _followText = "FOLLOW";
 
-  Widget _buildCoverImage(Size screenSize) {
-    return Container(
-      height: screenSize.height / 2.6,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/images/cover.jpeg'),
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
-  }
+  // Widget _buildCoverImage(Size screenSize) {
+  //   return Container(
+  //     height: screenSize.height / 3,
+  //     decoration: BoxDecoration(
+  //       image: DecorationImage(
+  //         image: AssetImage('lib/assets/images/cover.jpeg'),
+  //         fit: BoxFit.cover,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildProfileImage() {
     return Center(
@@ -29,30 +31,47 @@ class UserProfilePage extends StatelessWidget {
         height: 140.0,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/profile_image.jpg'),
+            image: AssetImage('lib/assets/images/profile_image.jpg'),
             fit: BoxFit.cover,
           ),
           borderRadius: BorderRadius.circular(80.0),
           border: Border.all(
             color: Colors.white,
-            width: 10.0,
+            width: 2.0,
           ),
         ),
       ),
     );
   }
 
-  Widget _buildFullName() {
-    TextStyle _nameTextStyle = TextStyle(
-      fontFamily: 'Roboto',
-      color: Colors.black,
-      fontSize: 28.0,
-      fontWeight: FontWeight.w700,
-    );
+  Widget _buildFullName(BuildContext context) {
+    // TextStyle _nameTextStyle = TextStyle(
+    //   fontFamily: 'Roboto',
+    //   color: Colors.black,
+    //   fontSize: 28.0,
+    //   fontWeight: FontWeight.w700,
+    // );
 
-    return Text(
-      _fullName,
-      style: _nameTextStyle,
+    // return Text(
+    //   _fullName,
+    //   style: _nameTextStyle,
+    // );
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 6.0),
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: BorderRadius.circular(4.0),
+        // margin: EdgeInsets.only(top: 8.0),
+      ),
+      child: Text(
+        _fullName,
+        style: TextStyle(
+          fontFamily: 'Spectral',
+          color: Colors.black,
+          fontSize: 20.0,
+          fontWeight: FontWeight.w300,
+        ),
+      ),
     );
   }
 
@@ -151,17 +170,6 @@ class UserProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildGetInTouch(BuildContext context) {
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      padding: EdgeInsets.only(top: 8.0),
-      child: Text(
-        "Get in Touch with ${_fullName.split(" ")[0]},",
-        style: TextStyle(fontFamily: 'Roboto', fontSize: 16.0),
-      ),
-    );
-  }
-
   Widget _buildButtons() {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -169,16 +177,27 @@ class UserProfilePage extends StatelessWidget {
         children: <Widget>[
           Expanded(
             child: InkWell(
-              onTap: () => print("followed"),
+              onTap: () {
+                _followStatus = !(_followStatus);
+                if (_followStatus) {
+                  _followText = "FOLLOWING";
+                  print("Following");
+                }
+                else {
+                  _followText = "FOLLOW";
+                  print("Unfollowed");
+                }
+              },
               child: Container(
                 height: 40.0,
                 decoration: BoxDecoration(
                   border: Border.all(),
-                  color: Color(0xFF404A5C),
+                  borderRadius: BorderRadius.circular(15.0),
+                  color: Color(0xff077188),
                 ),
                 child: Center(
                   child: Text(
-                    "FOLLOW",
+                    "$_followText",
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
@@ -188,27 +207,27 @@ class UserProfilePage extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(width: 10.0),
-          Expanded(
-            child: InkWell(
-              onTap: () => print("Message"),
-              child: Container(
-                height: 40.0,
-                decoration: BoxDecoration(
-                  border: Border.all(),
-                ),
-                child: Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Text(
-                      "MESSAGE",
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
+          // SizedBox(width: 10.0),
+          // Expanded(
+          //   child: InkWell(
+          //     onTap: () => print("Message"),
+          //     child: Container(
+          //       height: 40.0,
+          //       decoration: BoxDecoration(
+          //         border: Border.all(),
+          //       ),
+          //       child: Center(
+          //         child: Padding(
+          //           padding: EdgeInsets.all(10.0),
+          //           child: Text(
+          //             "MESSAGE",
+          //             style: TextStyle(fontWeight: FontWeight.w600),
+          //           ),
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
@@ -220,22 +239,22 @@ class UserProfilePage extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: <Widget>[
-          _buildCoverImage(screenSize),
+          // _buildCoverImage(screenSize),
           SafeArea(
             child: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  SizedBox(height: screenSize.height / 6.4),
+                  SizedBox(height: screenSize.height / 20),
                   _buildProfileImage(),
-                  _buildFullName(),
+                  _buildFullName(context),
                   _buildStatus(context),
                   _buildStatContainer(),
                   _buildBio(context),
                   _buildSeparator(screenSize),
                   SizedBox(height: 10.0),
-                  _buildGetInTouch(context),
                   SizedBox(height: 8.0),
                   _buildButtons(),
+
                 ],
               ),
             ),
