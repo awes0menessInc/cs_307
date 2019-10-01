@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'timeline.dart';
 import 'profile.dart';
+import 'newPost.dart';
 
 class Home extends StatelessWidget {
   @override
@@ -11,16 +12,21 @@ class Home extends StatelessWidget {
           data: ThemeData(brightness: Brightness.light),
           child: Scaffold(
             appBar: AppBar(
+              centerTitle: true,
               title: Text("twistter", 
-              style: TextStyle(color: Color(0xff032B30), fontFamily:'Amaranth', fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, fontSize: 27),
+              style: TextStyle(color: Colors.white, fontFamily:'Amaranth', fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, fontSize: 27),
               ),
-              backgroundColor: Colors.white,
+              backgroundColor: Color.fromRGBO(85, 176, 189, 1.0),
               ),
             floatingActionButton: FloatingActionButton(
               child: Icon(Icons.add_comment),
               backgroundColor: Color(0xff55b0bd),
               onPressed: (){
                 print("hello world");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => NewPost()),
+                );
               },),
             bottomNavigationBar: TabBar(
                 tabs: [
