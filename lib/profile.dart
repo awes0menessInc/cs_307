@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class UserProfilePage extends StatelessWidget {
   final String _fullName = "Rebecca Keys";
   final String _status = "Software Developer";
@@ -11,6 +10,8 @@ class UserProfilePage extends StatelessWidget {
   final String _posts = "24";
   bool _followStatus = false;
   String _followText = "FOLLOW";
+// TODO: grab the logged in user upon login so this field can be properly filled out
+  String _viewingUser = "Rebecca Keys"; // currently a mock of the logged in user.
 
   // Widget _buildCoverImage(Size screenSize) {
   //   return Container(
@@ -144,7 +145,7 @@ class UserProfilePage extends StatelessWidget {
   Widget _buildBio(BuildContext context) {
     TextStyle bioTextStyle = TextStyle(
       fontFamily: 'Spectral',
-      fontWeight: FontWeight.w400,//try changing weight to w500 if not thin
+      fontWeight: FontWeight.w400, //try changing weight to w500 if not thin
       fontStyle: FontStyle.italic,
       color: Color(0xFF799497),
       fontSize: 16.0,
@@ -171,66 +172,95 @@ class UserProfilePage extends StatelessWidget {
   }
 
   Widget _buildButtons() {
+    bool showEdit = _fullName == _viewingUser;
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: InkWell(
-              onTap: () {
-                _followStatus = !(_followStatus);
-                if (_followStatus) {
-                  _followText = "FOLLOWING";
-                  print("Following");
-                }
-                else {
-                  _followText = "FOLLOW";
-                  print("Unfollowed");
-                }
-              },
-              child: Container(
-                height: 40.0,
-                decoration: BoxDecoration(
-                  border: Border.all(),
-                  borderRadius: BorderRadius.circular(15.0),
-                  color: Color(0xff077188),
-                ),
-                child: Center(
-                  child: Text(
-                    "$_followText",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
+        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        child: Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      _followStatus = !(_followStatus);
+                      if (_followStatus) {
+                        _followText = "FOLLOWING";
+                        print("Following");
+                      } else {
+                        _followText = "FOLLOW";
+                        print("Unfollowed");
+                      }
+                    },
+                    child: Container(
+                      height: 40.0,
+                      decoration: BoxDecoration(
+                        border: Border.all(),
+                        borderRadius: BorderRadius.circular(15.0),
+                        color: Color(0xff077188),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "$_followText",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
+                // SizedBox(width: 10.0),
+                // Expanded(
+                //   child: InkWell(
+                //     onTap: () => print("Message"),
+                //     child: Container(
+                //       height: 40.0,
+                //       decoration: BoxDecoration(
+                //         border: Border.all(),
+                //       ),
+                //       child: Center(
+                //         child: Padding(
+                //           padding: EdgeInsets.all(10.0),
+                //           child: Text(
+                //             "MESSAGE",
+                //             style: TextStyle(fontWeight: FontWeight.w600),
+                //             ),
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // ),
+              ],
             ),
-          ),
-          // SizedBox(width: 10.0),
-          // Expanded(
-          //   child: InkWell(
-          //     onTap: () => print("Message"),
-          //     child: Container(
-          //       height: 40.0,
-          //       decoration: BoxDecoration(
-          //         border: Border.all(),
-          //       ),
-          //       child: Center(
-          //         child: Padding(
-          //           padding: EdgeInsets.all(10.0),
-          //           child: Text(
-          //             "MESSAGE",
-          //             style: TextStyle(fontWeight: FontWeight.w600),
-          //           ),
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          // ),
-        ],
-      ),
-    );
+            Row(
+              children: <Widget>[
+                Visibility(
+                  visible: showEdit,
+                  child: Expanded( 
+                    child: Container(
+                      child: Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: new FlatButton(
+                            child: Text("EDIT PROFILE"),
+                            shape: RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(15.0)),
+                            color: Color(0xff077188),
+                            textColor: Colors.white,
+                            onPressed: () {
+                              print("Edit profile");
+                            }, // TODO: figure out how to call edit ui 
+                          ),
+                        )  
+                      )
+                    )
+                  )  
+                )
+              ],
+            ),
+          ],
+        ));
   }
 
   @override
@@ -254,7 +284,6 @@ class UserProfilePage extends StatelessWidget {
                   SizedBox(height: 10.0),
                   SizedBox(height: 8.0),
                   _buildButtons(),
-
                 ],
               ),
             ),
