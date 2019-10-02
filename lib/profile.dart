@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 // import 'package:flutter/rendering.dart' show debugDumpRenderTree, debugDumpLayerTree, debugDumpSemanticsTree, DebugSemanticsDumpOrder;
 // import 'package:flutter/gestures.dart' show DragStartBehavior;
 
-bool pressed = false;
+
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -15,13 +15,16 @@ class ProfilePage extends StatefulWidget {
 
 class ProfilePageState extends State<ProfilePage> {
   final String _fullName = "Rebecca Keys";
-  final String _status = "Purdue Student";
+  final String _username = "keyspleasee";
+  // final String _status = "Purdue Student";
   final String _bio =
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sed odio morbi quis commodo odio. Integer eget aliquet nibh praesent tristique. Semper quis lectus nulla at volutpat diam. Fringilla est ullamcorper eget nulla facilisi etiam.";
   final String _posts = "24";
   final String _followers = "450";
   final String _following = "127";
-  String _viewingUser = "FirstnameLastName"; // currently a mock of the logged in user.
+  // String _viewingUser = "Rebecca Keys"; // currently a mock of the logged in user.
+  bool pressed = false;
+  bool isAccountOwner = true; //TODO: Connect to a function on the back end
 
   Widget _buildProfileImage() {
     return Center(
@@ -30,7 +33,7 @@ class ProfilePageState extends State<ProfilePage> {
         height: 140.0,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('lib/assets/images/profile_image.jpg'),
+            image: AssetImage('lib/assets/images/profile.jpg'),
             fit: BoxFit.cover,
           ),
           borderRadius: BorderRadius.circular(80.0),
@@ -44,41 +47,42 @@ class ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildFullName(BuildContext context) {
-    TextStyle _nameTextStyle = TextStyle(
-      fontFamily: 'Roboto',
-      color: Colors.black,
-      fontSize: 28.0,
-      fontWeight: FontWeight.w700,
-    );
-
-    return Text(
-      _fullName,
-      style: _nameTextStyle,
-    );
-  }
-
-  Widget _buildStatus(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 6.0),
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(4.0),
-      ),
+      margin: EdgeInsets.symmetric(vertical: 10.0),
       child: Text(
-        _status,
+        _fullName + ' | @'+ _username,
         style: TextStyle(
-          fontFamily: 'Spectral',
-          color: Colors.black,
-          fontSize: 20.0,
-          fontWeight: FontWeight.w300,
-        ),
-      ),
+        fontFamily: 'Montserrat',
+        color: Colors.black,
+        fontSize: 20.0,
+        fontWeight: FontWeight.w500,
+        )
+      )
     );
   }
+
+  // Widget _buildStatus(BuildContext context) {
+  //   return Container(
+  //     padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 6.0),
+  //     decoration: BoxDecoration(
+  //       color: Theme.of(context).scaffoldBackgroundColor,
+  //       borderRadius: BorderRadius.circular(4.0),
+  //     ),
+  //     child: Text(
+  //       _status,
+  //       style: TextStyle(
+  //         fontFamily: 'Spectral',
+  //         color: Colors.black,
+  //         fontSize: 20.0,
+  //         fontWeight: FontWeight.w300,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildStatItem(String label, String count) {
     TextStyle _statLabelTextStyle = TextStyle(
-      fontFamily: 'Roboto',
+      fontFamily: 'Montserrat',
       color: Colors.black,
       fontSize: 16.0,
       fontWeight: FontWeight.w200,
@@ -117,10 +121,23 @@ class ProfilePageState extends State<ProfilePage> {
         children: <Widget>[
           _buildStatItem("Followers", _followers),
           _buildStatItem("Following", _following),
-          _buildStatItem("Posts", _posts),
+          _buildStatItem("Posts", _posts), 
         ],
       ),
     );
+  }
+
+  Widget _buildDemoButton() {
+    return FlatButton(
+      color: Colors.white,
+      onPressed: () {
+        setState(() { isAccountOwner = !isAccountOwner; });
+      },
+      child: Text(
+        'For Demo Purposes Only',
+        style: TextStyle(color: Colors.red)
+      )
+      );
   }
 
   Widget _buildBio(BuildContext context) {
@@ -145,7 +162,7 @@ class ProfilePageState extends State<ProfilePage> {
 
   Widget _buildSeparator(Size screenSize) {
     return Container(
-      width: screenSize.width / 1.6,
+      width: screenSize.width / 1.2,
       height: 2.0,
       color: Colors.black54,
       margin: EdgeInsets.only(top: 4.0),
@@ -153,7 +170,7 @@ class ProfilePageState extends State<ProfilePage> {
   }
 
   Color getColor(bool pressed) {
-    if (pressed) {
+    if (pressed){
       return Color(0xffd1d1d1);
     } else {
       return Color(0xff077188);
@@ -174,8 +191,6 @@ class ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildButtons(BuildContext context) {
-    // bool isAccountOwner = (_fullName == _viewingUser);
-    bool isAccountOwner = true;
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         child: Column(
@@ -223,30 +238,7 @@ class ProfilePageState extends State<ProfilePage> {
       ));
   }
 
-  showAlertDialog(BuildContext context) {
-  // set up the button
-  Widget okButton = FlatButton(
-    child: Text("OK"),
-    onPressed: () { },
-  );
-  // set up the AlertDialog
-  AlertDialog alert = AlertDialog(
-    title: Text("My title"),
-    content: Text("This is my message."),
-    actions: [
-      okButton,
-    ],
-  );
-  // show the dialog
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return alert;
-    },
-  );
-}
-
-  AlertDialog showEdit(BuildContext context) { // TODO: replace with call to actual profile edit UI
+  void showEdit(BuildContext context) { // TODO: replace with call to actual profile edit UI
     // context: context;
     // builder: (BuildContext context) {
       AlertDialog editProfile = AlertDialog(
@@ -255,14 +247,6 @@ class ProfilePageState extends State<ProfilePage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: new InputDecoration(
-                    hintText: 'Bio'
-                  ),
-                ),
-              ),
               Padding(
                 padding: EdgeInsets.all(8.0),
                 child: TextFormField(
@@ -288,6 +272,14 @@ class ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               Padding(
+                padding: EdgeInsets.all(8.0),
+                child: TextFormField(
+                  decoration: new InputDecoration(
+                    hintText: 'Bio'
+                  ),
+                ),
+              ),
+              Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: RaisedButton(
                   child: Text("Submit"),
@@ -296,7 +288,7 @@ class ProfilePageState extends State<ProfilePage> {
                     print("Submitted Pofile Edits"); // TODO: Connect to back end
                   },
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -309,6 +301,63 @@ class ProfilePageState extends State<ProfilePage> {
         },
       );
     }
+
+  Widget _makeListTile(BuildContext context) {
+    return ListTile( 
+      contentPadding : EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+      leading : Container(
+        padding: EdgeInsets.only(right: 5.0),
+        child: Icon(Icons.account_circle,
+        size: 45.0,
+        color: Color.fromRGBO(5, 62, 66, 1.0)),
+      ),
+      title: Text(
+        "BoilerMaker",
+        style: TextStyle(color: Color.fromRGBO(7, 113, 136, 1.0), fontWeight: FontWeight.bold, fontSize: 12),
+      ),
+      subtitle: Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      style: TextStyle(fontSize: 11)),
+
+      trailing: Row(
+        mainAxisSize : MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Icon(Icons.favorite,
+          size: 20.0),
+          Icon(Icons.add_comment,
+          size: 20.0)
+        ]
+      ),
+    );
+  }
+
+  Widget _makeBody(BuildContext context) {
+    return Container(
+      child: ListView.builder(
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      itemCount: 10,
+      itemBuilder: (BuildContext context, int index) {
+        _makeCard(context);
+      },
+      ),
+    );
+  }
+
+  Widget _makeCard(BuildContext context) {
+    return Card(
+      elevation: 8.0,
+      //shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),),
+      margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.white,
+          ),
+        child: _makeListTile(context),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -323,14 +372,15 @@ class ProfilePageState extends State<ProfilePage> {
                 children: <Widget>[
                   SizedBox(height: screenSize.height / 20),
                   _buildProfileImage(),
+                  SizedBox(height: 10.0),
                   _buildFullName(context),
-                  _buildStatus(context),
+                  // _buildStatus(context),
                   _buildStatContainer(),
                   _buildBio(context),
                   _buildSeparator(screenSize),
-                  SizedBox(height: 10.0),
-                  SizedBox(height: 8.0),
+                  _buildDemoButton(),
                   _buildButtons(context),
+                  _makeBody(context),
                 ],
               ),
             ),

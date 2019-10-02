@@ -56,7 +56,6 @@ class Home extends StatelessWidget {
                 Timeline(),
                 Center(child: Text("Page 2")),
                 Center(child: Text("Page 3")),
-                // UserProfilePage(),
                 ProfilePage(),
               ],
             ),
