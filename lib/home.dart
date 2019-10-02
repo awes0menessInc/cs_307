@@ -29,7 +29,6 @@ class Home extends StatelessWidget {
               child: Icon(Icons.add_comment),
               backgroundColor: Color(0xff55b0bd),
               onPressed: () {
-                print("hello world");
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => NewPost()),

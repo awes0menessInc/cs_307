@@ -11,7 +11,7 @@ class UserProfilePage extends StatelessWidget {
   bool _followStatus = false;
   String _followText = "FOLLOW";
 // TODO: grab the logged in user upon login so this field can be properly filled out
-  String _viewingUser = "Rebecca Keys"; // currently a mock of the logged in user.
+  String _viewingUser = "Firstname LastName"; // currently a mock of the logged in user.
 
   // Widget _buildCoverImage(Size screenSize) {
   //   return Container(
