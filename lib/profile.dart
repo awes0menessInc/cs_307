@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 
 class UserProfilePage extends StatelessWidget {
-  final String _fullName = "Rebecca Keys";
-  final String _status = "Software Developer";
+  final String _fullName = "Firstname LastName";
+  final String _status = "Profile Status";
   final String _bio =
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Varius sit amet mattis vulputate enim nulla. Malesuada fames ac turpis egestas. In dictum non consectetur a erat nam at lectus urna. Id venenatis a condimentum vitae sapien pellentesque habitant morbi tristique.";
+      "This is my bio.";
   final String _followers = "450";
   final String _following = "127";
   final String _posts = "24";
