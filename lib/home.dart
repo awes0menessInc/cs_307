@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:twistter/newPost.dart';
 import 'timeline.dart';
 import 'profile.dart';
+// import 'profile_copy.dart';
 import 'newPost.dart';
 
 class Home extends StatelessWidget {
@@ -55,7 +56,8 @@ class Home extends StatelessWidget {
                 Timeline(),
                 Center(child: Text("Page 2")),
                 Center(child: Text("Page 3")),
-                UserProfilePage(),
+                // UserProfilePage(),
+                ProfilePage(),
               ],
             ),
           ),
