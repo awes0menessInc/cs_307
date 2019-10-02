@@ -99,10 +99,15 @@ class _ListPageState extends State<ListPage> {
 
   static final makeCard = Card(
     elevation: 8.0,
+    //shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),),
     margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
     child: Container(
-      decoration: BoxDecoration(color: Colors.white),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.white,
+        ),
       child: makeListTile,
+      
     ),
   );
 
@@ -111,7 +116,8 @@ class _ListPageState extends State<ListPage> {
     leading : Container(
       padding: EdgeInsets.only(right: 5.0),
       child: Icon(Icons.account_circle,
-      size: 45.0),
+      size: 45.0,
+      color: Color.fromRGBO(5, 62, 66, 1.0)),
     ),
     title: Text(
       "BoilerMaker",
