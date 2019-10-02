@@ -171,7 +171,7 @@ class UserProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildButtons() {
+  Widget _buildButtons(BuildContext context) {
     bool showEdit = _fullName == _viewingUser;
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -249,8 +249,63 @@ class UserProfilePage extends StatelessWidget {
                             color: Color(0xff077188),
                             textColor: Colors.white,
                             onPressed: () {
-                              print("Edit profile");
-                            }, // TODO: figure out how to call edit ui 
+                              showDialog( // TODO: replace with call to actual profile edit UI
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: new Text("Edit Profile"),
+                                    content: Form(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: TextFormField(
+                                              decoration: new InputDecoration(
+                                                hintText: 'Bio'
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: TextFormField(
+                                              decoration: new InputDecoration(
+                                                hintText: 'First Name'
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: TextFormField(
+                                              decoration: new InputDecoration(
+                                                hintText: 'Last Name'
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: TextFormField(
+                                              decoration: new InputDecoration(
+                                                hintText: 'Email '
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: RaisedButton(
+                                              child: Text("Submit"),
+                                              onPressed: () {
+                                                print("Form submit");
+                                              },
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                }
+                              );
+                            }, 
                           ),
                         )  
                       )
@@ -283,7 +338,7 @@ class UserProfilePage extends StatelessWidget {
                   _buildSeparator(screenSize),
                   SizedBox(height: 10.0),
                   SizedBox(height: 8.0),
-                  _buildButtons(),
+                  _buildButtons(context),
                 ],
               ),
             ),
