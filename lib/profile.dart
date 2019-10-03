@@ -14,12 +14,13 @@ class ProfilePage extends StatefulWidget {
 }
 
 class ProfilePageState extends State<ProfilePage> {
-  final String _fullName = "Rebecca Keys";
+  final String _firstName = "Rebecca";
+  final String _lastName = "Keys";
   final String _username = "keyspleasee";
   // final String _status = "Purdue Student";
   final String _bio =
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sed odio morbi quis commodo odio. Integer eget aliquet nibh praesent tristique. Semper quis lectus nulla at volutpat diam. Fringilla est ullamcorper eget nulla facilisi etiam.";
-  final String _posts = "24";
+  final String _posts = "0";
   final String _followers = "450";
   final String _following = "127";
   // String _viewingUser = "Rebecca Keys"; // currently a mock of the logged in user.
@@ -50,7 +51,7 @@ class ProfilePageState extends State<ProfilePage> {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10.0),
       child: Text(
-        _fullName + ' | @'+ _username,
+        _firstName + ' ' + _lastName + ' | @'+ _username,
         style: TextStyle(
         fontFamily: 'Montserrat',
         color: Colors.black,
@@ -143,7 +144,7 @@ class ProfilePageState extends State<ProfilePage> {
   Widget _buildBio(BuildContext context) {
     TextStyle bioTextStyle = TextStyle(
       fontFamily: 'Spectral',
-      fontWeight: FontWeight.w400, //try changing weight to w500 if not thin
+      fontWeight: FontWeight.w400,
       fontStyle: FontStyle.italic,
       color: Color(0xFF799497),
       fontSize: 16.0,
@@ -302,6 +303,35 @@ class ProfilePageState extends State<ProfilePage> {
       );
     }
 
+  Text _noPostsText() {
+    TextStyle ts = TextStyle(
+      fontFamily: 'Spectral',
+      fontWeight: FontWeight.w400,
+      color: Color(0xFF799497),
+      fontSize: 16.0,
+    );
+
+    if (isAccountOwner) {
+      return Text(
+        "You haven't posted yet. Click the new post button to create your first post!",
+        textAlign: TextAlign.center,
+        style: ts);
+    }
+    else {
+      return Text("$_firstName hasn't posted yet. Check back later!",
+        textAlign: TextAlign.center,
+        style: ts);
+    }
+  }
+
+  Widget _buildNoPosts(BuildContext context) {
+    return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      padding: EdgeInsets.all(8.0),
+      child: _noPostsText()
+    );
+  }
+
   Widget _makeListTile(BuildContext context) {
     return ListTile( 
       contentPadding : EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
@@ -380,6 +410,7 @@ class ProfilePageState extends State<ProfilePage> {
                   _buildSeparator(screenSize),
                   _buildDemoButton(),
                   _buildButtons(context),
+                  _buildNoPosts(context),
                   _makeBody(context),
                 ],
               ),
