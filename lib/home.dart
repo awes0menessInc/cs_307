@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:twistter/newPost.dart';
 import 'timeline.dart';
 import 'profile.dart';
+// import 'profile_copy.dart';
 import 'newPost.dart';
 
 class Home extends StatelessWidget {
@@ -13,26 +15,32 @@ class Home extends StatelessWidget {
           child: Scaffold(
             appBar: AppBar(
               centerTitle: true,
-              title: Text("twistter", 
-              style: TextStyle(color: Colors.white, fontFamily:'Amaranth', fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, fontSize: 27),
+              title: Text(
+                "twistter",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Amaranth',
+                    fontWeight: FontWeight.bold,
+                    fontStyle: FontStyle.italic,
+                    fontSize: 27),
               ),
               backgroundColor: Color.fromRGBO(85, 176, 189, 1.0),
-              ),
+            ),
             floatingActionButton: FloatingActionButton(
               child: Icon(Icons.add_comment),
               backgroundColor: Color(0xff55b0bd),
-              onPressed: (){
-                print("hello world");
+              onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => NewPost()),
                 );
-              },),
+              },
+            ),
             bottomNavigationBar: TabBar(
                 tabs: [
                   Tab(
                     icon: Icon(
-                      Icons.home, 
+                      Icons.home,
                     ),
                     text: "Home",
                   ),
@@ -48,11 +56,10 @@ class Home extends StatelessWidget {
                 Timeline(),
                 Center(child: Text("Page 2")),
                 Center(child: Text("Page 3")),
-                UserProfilePage(),
+                ProfilePage(),
               ],
             ),
           ),
-        )
-      );
+        ));
   }
 }
