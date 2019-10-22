@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:twistter/newPost.dart';
 import 'timeline.dart';
@@ -5,9 +6,30 @@ import 'profile.dart';
 // import 'profile_copy.dart';
 import 'newPost.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
+  Home({Key key, this.uid}) : super(key: key); 
+  final String uid;
+
   @override
-  Widget build(BuildContext context) {
+  _HomeState createState() => _HomeState();
+
+}
+
+class _HomeState extends State<Home> {
+  FirebaseUser currentUser;
+  
+  @override
+  void initState() {
+    this.getCurrentUser();
+    super.initState();
+  }
+
+  void getCurrentUser() async {
+    currentUser = await FirebaseAuth.instance.currentUser();
+  }
+
+  @override
+  Widget build (BuildContext context) {
     return DefaultTabController(
         length: 4,
         child: Theme(
