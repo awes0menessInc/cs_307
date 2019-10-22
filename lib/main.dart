@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'home.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -11,7 +13,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.white,
       ),
-      home: Home(),
+      // home: Home(),
+      home: SplashPage(),
+      routes: <String, WidgetBuilder> {
+        '/login': (BuildContext context) => LoginPage(),
+        '/register': (BuildContext context) => RegisterPage(),
+      }
       debugShowCheckedModeBanner: false,
     );
   }
