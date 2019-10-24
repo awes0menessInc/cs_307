@@ -94,9 +94,9 @@ class _LoginState extends State<Login> {
                       }
                     },
                   ),
-                  Text("Don't have an account yet?"),
+                  Text("Don't have an account?"),
                   FlatButton(
-                    child: Text("Register here!"),
+                    child: Text("Register"),
                     onPressed: () {
                       Navigator.pushNamed(context, "/register");
                     },
