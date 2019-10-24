@@ -46,10 +46,12 @@ packages:
   cloud_functions:
     dependency: "direct main"
     description:
-      name: cloud_functions
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.4.1+1"
+      path: "packages/cloud_functions"
+      ref: HEAD
+      resolved-ref: "31cad01da7450edc80c2b3645096246389553d41"
+      url: "https://github.com/FirebaseExtended/flutterfire.git"
+    source: git
+    version: "0.4.1+2"
   collection:
     dependency: transitive
     description:
