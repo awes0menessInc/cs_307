@@ -6,6 +6,7 @@ class Timeline extends StatelessWidget {
     return new MaterialApp(
       theme: new ThemeData(primaryColor: Colors.white),
       home: new ListPage(title: 'Timeline'),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
