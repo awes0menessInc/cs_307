@@ -56,14 +56,14 @@ class _LoginState extends State<Login> {
               children: <Widget>[
                 TextFormField(
                   decoration: InputDecoration(
-                    labelText: 'Email*', hintText: "john.doe@gmail.com"),
+                    labelText: 'Email', hintText: "john.doe@gmail.com"),
                     controller: emailInputController,
                     keyboardType: TextInputType.emailAddress,
                     validator: emailValidator,
                 ),
                 TextFormField(
                   decoration: InputDecoration(
-                    labelText: 'Password*', hintText: "********"),
+                    labelText: 'Password', hintText: "********"),
                     controller: pwdInputController,
                     obscureText: true,
                     validator: pwdValidator,
@@ -74,12 +74,26 @@ class _LoginState extends State<Login> {
                   textColor: Colors.black,
                   onPressed: () {
                     if (_loginFormKey.currentState.validate()) {
-                      FirebaseAuth.instance
-                      .signInWithEmailAndPassword(
+                      FirebaseAuth.instance.signInWithEmailAndPassword(
                         email: emailInputController.text,
                         password: pwdInputController.text)
-                        .then((currentUser) => Firestore.instance
-                        .collection("users")
+                        .catchError((err) => showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("Error"),
+                              content: Text("Incorrect email address or password"),
+                              actions: <Widget>[
+                                FlatButton(
+                                  child: Text("Close"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                )
+                              ],
+                            );
+                          }))
+                        .then((currentUser) => Firestore.instance.collection("users")
                         .document(currentUser.uid).get()
                         .then((DocumentSnapshot result) => Navigator.pushReplacement(
                           context,

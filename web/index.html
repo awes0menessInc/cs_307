@@ -2,9 +2,33 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>cs_307</title>
+  <title>Twistter</title>
 </head>
 <body>
   <script src="main.dart.js" type="application/javascript"></script>
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/7.2.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.2.2/firebase-analytics.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.2.2/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.2.2/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.2.2/firebase-functions.js"></script>
+
+  
+  <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+      apiKey: "AIzaSyD1tZYlG6kRl5VGHCXEhDrIBvQeo7G52uw",
+      authDomain: "twistter-23e52.firebaseapp.com",
+      databaseURL: "https://twistter-23e52.firebaseio.com",
+      projectId: "twistter-23e52",
+      storageBucket: "twistter-23e52.appspot.com",
+      messagingSenderId: "714344170931",
+      appId: "1:714344170931:web:ebced154bf8fe81fe8b7c6",
+      measurementId: "G-KQVWWPS4QW"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+    </script>
 </body>
 </html>

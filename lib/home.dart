@@ -50,6 +50,7 @@ class _HomeState extends State<Home> {
                     fontStyle: FontStyle.italic,
                     fontSize: 27),
               ),
+              // Temporary Logout Button
               actions: <Widget>[
                 IconButton(
                   icon: Icon(Icons.dehaze),
