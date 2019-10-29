@@ -6,6 +6,7 @@ import 'profile.dart';
 import 'settings.dart';
 // import 'profile_copy.dart';
 import 'newPost.dart';
+import 'login.dart';
 
 class Home extends StatefulWidget {
   Home({Key title, this.uid}) : super(key: title); 
@@ -13,7 +14,6 @@ class Home extends StatefulWidget {
 
   @override
   _HomeState createState() => _HomeState();
-
 }
 
 class _HomeState extends State<Home> {
@@ -27,6 +27,10 @@ class _HomeState extends State<Home> {
 
   void getCurrentUser() async {
     currentUser = await FirebaseAuth.instance.currentUser();
+  }
+
+  void _logout(uid) async {
+    await FirebaseAuth.instance.signOut();
   }
 
   @override
@@ -47,6 +51,18 @@ class _HomeState extends State<Home> {
                     fontStyle: FontStyle.italic,
                     fontSize: 27),
               ),
+              // Temporary Logout Button
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.dehaze),
+                  onPressed: () {
+                    _logout(currentUser.uid);
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => Login()));
+                  },
+                )
+              ],
               backgroundColor: Color.fromRGBO(85, 176, 189, 1.0),
             ),
             floatingActionButton: FloatingActionButton(
