@@ -187,7 +187,7 @@ class _ListPageState extends State<ListPage> {
             StreamBuilder<QuerySnapshot>(
                 stream: Firestore.instance
                     .collection('microblogs')
-                    .orderBy('timestamp')
+                    .orderBy('timestamp', descending: true)
                     .snapshots(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {

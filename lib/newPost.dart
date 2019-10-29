@@ -16,6 +16,7 @@ class NewPost extends StatefulWidget {
 class _NewPostState extends State<NewPost> {
   final GlobalKey<FormState> _NewPostFormKey = GlobalKey<FormState>();
   var t = ["Purdue", "Science"];
+  var dropdownvalue;
   var top = "";
   TextEditingController postEditingController;
 
@@ -31,6 +32,7 @@ class _NewPostState extends State<NewPost> {
             t.add(temp[i]);
           }
         }));
+    dropdownvalue = t[1];
     super.initState();
   }
 
@@ -62,8 +64,12 @@ class _NewPostState extends State<NewPost> {
                     child: new Text(value),
                   );
                 }).toList(),
+                value: dropdownvalue,
                 onChanged: (String val) {
                   top = val;
+                  setState(() {
+                    dropdownvalue = val;
+                  });
                 },
               ),
               add(),
@@ -93,7 +99,9 @@ class _NewPostState extends State<NewPost> {
                           'quotes': '0',
                           'timestamp':
                               new DateTime.now().millisecondsSinceEpoch,
-                          'topics': [top], // fix topics list and ui part
+                          'topics': [
+                            dropdownvalue
+                          ], // fix topics list and ui part
                           'userId': currentUser.uid,
                         }))
                     .then((result) => {
@@ -109,6 +117,7 @@ class _NewPostState extends State<NewPost> {
                     .catchError((err) => print(err)))
                 .catchError((err) => print(err));
           }),
+      margin: const EdgeInsets.all(10.0),
     );
   }
 
@@ -123,6 +132,7 @@ class _NewPostState extends State<NewPost> {
               builder: (context) => Home(),
             ));
           }),
+      margin: const EdgeInsets.all(10.0),
     );
   }
 // class NewPost extends StatelessWidget {
