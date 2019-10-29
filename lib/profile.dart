@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:flutter/rendering.dart' show debugDumpRenderTree, debugDumpLayerTree, debugDumpSemanticsTree, DebugSemanticsDumpOrder;
 // import 'package:flutter/gestures.dart' show DragStartBehavior;
 
@@ -14,6 +16,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class ProfilePageState extends State<ProfilePage> {
+  final GlobalKey<FormState> _editFormKey = GlobalKey<FormState>();
   final String _firstName = "Rebecca";
   final String _lastName = "Keys";
   final String _username = "keyspleasee";
@@ -26,6 +29,12 @@ class ProfilePageState extends State<ProfilePage> {
   // String _viewingUser = "Rebecca Keys"; // currently a mock of the logged in user.
   bool pressed = false;
   bool isAccountOwner = true; //TODO: Connect to a function on the back end
+  TextEditingController fnameController;
+  TextEditingController lnameController;
+  TextEditingController bioController;
+  TextEditingController bdayController;
+  TextEditingController weblinkController;
+  TextEditingController emailController;
 
   Widget _buildProfileImage() {
     return Center(
@@ -235,64 +244,120 @@ class ProfilePageState extends State<ProfilePage> {
               ),
             ],
           ),
+          Row(
+            children: <Widget>[
+              Visibility(
+                visible: isAccountOwner,
+                child: Expanded(
+                  child: RaisedButton(
+                    child: Text("Delete Account"),
+                    color: Color(0xffd1d1d1),
+                    shape: RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(15.0)),
+                    onPressed: () {
+                      print("Clicked Delete");
+                    },
+                  ),
+                ),
+              )
+            ],
+          )
         ],
       ));
   }
 
+  String emailValidator(String value) {
+    Pattern emailPattern =
+      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp emailRegex = new RegExp(emailPattern);
+    if (!emailRegex.hasMatch(value)) {
+      return 'Please enter a valid e-mail';
+    } else {
+      return null;
+    }
+  }
+
+  String bdayValidator(String value) {
+    Pattern bdayPattern = r'(0[1-9]|1[012])/(0[1-9]|[12][0-9]|3[01])/(19|20)\d\d';
+    RegExp bdayRegex = new RegExp(bdayPattern);
+    if (!bdayRegex.hasMatch(value)) {
+      return "Enter a valid birthday";
+    } else {
+      return null;
+    }
+  }
   void showEdit(BuildContext context) { // TODO: replace with call to actual profile edit UI
     // context: context;
     // builder: (BuildContext context) {
       AlertDialog editProfile = AlertDialog(
         title: new Text("Edit Profile"),
-        content: Form(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: new InputDecoration(
-                    hintText: 'First Name'
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: new InputDecoration(
-                    hintText: 'Last Name'
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: new InputDecoration(
-                    hintText: 'Email '
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: new InputDecoration(
-                    hintText: 'Bio'
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: RaisedButton(
-                  child: Text("Submit"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    print("Submitted Pofile Edits"); // TODO: Connect to back end
+        content: SingleChildScrollView(
+          child: Form(
+            key: _editFormKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'First Name', hintText: "John"),
+                  controller: fnameController,
+                  validator: (value) {
+                    if (value.length == 0) {
+                      return "Please enter your first name.";
+                    }
+                    return null;
                   },
                 ),
-              ),
-            ],
-          ),
-        ),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Last Name', hintText: "Doe"),
+                  controller: lnameController,
+                  validator: (value) {
+                    if (value.length == 0) {
+                      return "Please enter your last name.";
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Email', hintText: "example@email.com"),
+                  controller: emailController,
+                  validator: emailValidator
+                ),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Bio', hintText: "Bio"),
+                  controller: bioController,
+                ),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Birthday', hintText: "10/18/2019"),
+                  controller: bdayController,
+                  validator: bdayValidator,
+                ),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Website', hintText: "www.example.com"),
+                  controller: weblinkController,
+                  validator: (value) {
+                    return null;
+                  },
+                ),
+                RaisedButton(
+                  child: Text("Submit"),
+                  color: Theme.of(context).primaryColor,
+                  textColor: Colors.black,
+                  onPressed: (){
+                    if (_editFormKey.currentState.validate()) {
+                      
+                    }
+                  },
+                )
+              ],
+            ),
+          ) ,  
+        )
       );
       // show the dialog
       showDialog(
@@ -301,7 +366,7 @@ class ProfilePageState extends State<ProfilePage> {
           return editProfile;
         },
       );
-    }
+  }
 
   Text _noPostsText() {
     TextStyle ts = TextStyle(
