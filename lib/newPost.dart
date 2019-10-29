@@ -32,7 +32,7 @@ class _NewPostState extends State<NewPost> {
             t.add(temp[i]);
           }
         }));
-    dropdownvalue = t[1];
+    dropdownvalue = t[0];
     super.initState();
   }
 
@@ -40,101 +40,147 @@ class _NewPostState extends State<NewPost> {
     return Scaffold(
         appBar: AppBar(
           title: Text("NewPost"),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.add_comment),
+              onPressed: () {
+                FirebaseAuth.instance
+                    .currentUser()
+                    .then((currentUser) => Firestore.instance
+                        .collection("users")
+                        .document(currentUser.uid)
+                        .get()
+                        .then((doc) => Firestore.instance
+                                .collection('microblogs')
+                                .document()
+                                .setData({
+                              'content': postEditingController.text,
+                              'likes': '0',
+                              'quotes': '0',
+                              'timestamp':
+                                  new DateTime.now().millisecondsSinceEpoch,
+                              'topics': [
+                                dropdownvalue
+                              ], // fix topics list and ui part
+                              'userId': currentUser.uid,
+                            }))
+                        .then((result) => {
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Home(
+                                            uid: currentUser.uid,
+                                          )),
+                                  (_) => false),
+                              postEditingController.clear()
+                            })
+                        .catchError((err) => print(err)))
+                    .catchError((err) => print(err));
+              },
+            )
+          ],
         ),
         body: Container(
             padding: const EdgeInsets.all(20.0),
-            child: SingleChildScrollView(
-                child: Form(
-                    child: Column(children: <Widget>[
-              TextFormField(
-                decoration: InputDecoration(
-                    labelText: 'Create New Post', hintText: "Write Something?"),
-                maxLines: 7,
-                autofocus: true,
-                showCursor: true,
-                autocorrect: false,
-                textAlign: TextAlign.left,
-                keyboardAppearance: Brightness.dark,
-                controller: postEditingController,
-              ),
-              DropdownButton<String>(
-                items: t.map((String value) {
-                  return new DropdownMenuItem<String>(
-                    value: value,
-                    child: new Text(value),
-                  );
-                }).toList(),
-                value: dropdownvalue,
-                onChanged: (String val) {
-                  top = val;
-                  setState(() {
-                    dropdownvalue = val;
-                  });
-                },
-              ),
-              add(),
-              cancel()
-            ])))));
+            child: new Theme(
+                data: ThemeData(
+                    brightness: Brightness.light,
+                    backgroundColor: Color.fromRGBO(85, 176, 189, 1.0)),
+                child: SingleChildScrollView(
+                    child: Form(
+                        child: Column(children: <Widget>[
+                  TextFormField(
+                    decoration: InputDecoration(
+                      labelText: 'Create New Post',
+                      hintText: "Write Something?",
+                    ),
+                    maxLines: 7,
+                    autofocus: true,
+                    showCursor: true,
+                    autocorrect: false,
+                    textAlign: TextAlign.left,
+                    keyboardAppearance: Brightness.dark,
+                    controller: postEditingController,
+                    maxLength: 307,
+                  ),
+                  DropdownButton<String>(
+                    items: t.map((String value) {
+                      return new DropdownMenuItem<String>(
+                        value: value,
+                        child: new Text(value),
+                      );
+                    }).toList(),
+                    value: dropdownvalue,
+                    onChanged: (String val) {
+                      top = val;
+                      setState(() {
+                        dropdownvalue = val;
+                      });
+                    },
+                  ),
+                  // add(),
+                  // cancel()
+                ]))))));
   }
 
-  Widget add() {
-    return new Container(
-      child: FloatingActionButton(
-          tooltip: 'Create Post',
-          child: Icon(Icons.add),
-          heroTag: 1,
-          onPressed: () {
-            FirebaseAuth.instance
-                .currentUser()
-                .then((currentUser) => Firestore.instance
-                    .collection("users")
-                    .document(currentUser.uid)
-                    .get()
-                    .then((doc) => Firestore.instance
-                            .collection('microblogs')
-                            .document()
-                            .setData({
-                          'content': postEditingController.text,
-                          'likes': '0',
-                          'quotes': '0',
-                          'timestamp':
-                              new DateTime.now().millisecondsSinceEpoch,
-                          'topics': [
-                            dropdownvalue
-                          ], // fix topics list and ui part
-                          'userId': currentUser.uid,
-                        }))
-                    .then((result) => {
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Home(
-                                        uid: currentUser.uid,
-                                      )),
-                              (_) => false),
-                          postEditingController.clear()
-                        })
-                    .catchError((err) => print(err)))
-                .catchError((err) => print(err));
-          }),
-      margin: const EdgeInsets.all(10.0),
-    );
-  }
+  // Widget add() {
+  //   return new Container(
+  //     child: FloatingActionButton(
+  //         tooltip: 'Create Post',
+  //         child: Icon(Icons.add),
+  //         heroTag: 1,
+  //         onPressed: () {
+  //           FirebaseAuth.instance
+  //               .currentUser()
+  //               .then((currentUser) => Firestore.instance
+  //                   .collection("users")
+  //                   .document(currentUser.uid)
+  //                   .get()
+  //                   .then((doc) => Firestore.instance
+  //                           .collection('microblogs')
+  //                           .document()
+  //                           .setData({
+  //                         'content': postEditingController.text,
+  //                         'likes': '0',
+  //                         'quotes': '0',
+  //                         'timestamp':
+  //                             new DateTime.now().millisecondsSinceEpoch,
+  //                         'topics': [
+  //                           dropdownvalue
+  //                         ], // fix topics list and ui part
+  //                         'userId': currentUser.uid,
+  //                       }))
+  //                   .then((result) => {
+  //                         Navigator.pushAndRemoveUntil(
+  //                             context,
+  //                             MaterialPageRoute(
+  //                                 builder: (context) => Home(
+  //                                     // uid: currentUser.uid,
+  //                                     )),
+  //                             (_) => false),
+  //                         postEditingController.clear()
+  //                       })
+  //                   .catchError((err) => print(err)))
+  //               .catchError((err) => print(err));
+  //         }),
+  //     margin: const EdgeInsets.all(10.0),
+  //   );
+  // }
 
-  Widget cancel() {
-    return new Container(
-      child: FloatingActionButton(
-          tooltip: 'Cancel Post',
-          child: Icon(Icons.cancel),
-          heroTag: 0,
-          onPressed: () {
-            Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (context) => Home(),
-            ));
-          }),
-      margin: const EdgeInsets.all(10.0),
-    );
-  }
+  // Widget cancel() {
+  //   return new Container(
+  //     child: FloatingActionButton(
+  //         tooltip: 'Cancel Post',
+  //         child: Icon(Icons.cancel),
+  //         heroTag: 0,
+  //         onPressed: () {
+  //           Navigator.of(context).pushReplacement(MaterialPageRoute(
+  //             builder: (context) => Home(),
+  //           ));
+  //         }),
+  //     margin: const EdgeInsets.all(10.0),
+  //   );
+  // }
 // class NewPost extends StatelessWidget {
 //   TextEditingController newPost = TextEditingController();
 //   String dropdownValue = 'Purdue';
