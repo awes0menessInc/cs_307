@@ -17,24 +17,46 @@ class ProfilePage extends StatefulWidget {
 
 class ProfilePageState extends State<ProfilePage> {
   final GlobalKey<FormState> _editFormKey = GlobalKey<FormState>();
-  final String _firstName = "Rebecca";
-  final String _lastName = "Keys";
-  final String _username = "keyspleasee";
+  String _firstName = "";
+  String _lastName = "Key";
+  String _username = "keyspleasee";
   // final String _status = "Purdue Student";
-  final String _bio =
+   String _bio =
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sed odio morbi quis commodo odio. Integer eget aliquet nibh praesent tristique. Semper quis lectus nulla at volutpat diam. Fringilla est ullamcorper eget nulla facilisi etiam.";
-  final String _posts = "0";
-  final String _followers = "450";
-  final String _following = "127";
+  String _posts = "0";
+  String _followers = "450";
+  String _following = "127";
+  String _email = "";
   // String _viewingUser = "Rebecca Keys"; // currently a mock of the logged in user.
   bool pressed = false;
   bool isAccountOwner = true; //TODO: Connect to a function on the back end
-  TextEditingController fnameController;
-  TextEditingController lnameController;
-  TextEditingController bioController;
-  TextEditingController bdayController;
-  TextEditingController weblinkController;
-  TextEditingController emailController;
+  TextEditingController fnameController = new TextEditingController();
+  TextEditingController lnameController = new TextEditingController();
+  TextEditingController bioController = new TextEditingController();
+  TextEditingController bdayController = new TextEditingController();
+  TextEditingController weblinkController = new TextEditingController();
+  TextEditingController emailController = new TextEditingController();
+
+  @override
+  initState() {
+    super.initState();
+    _getUser();
+  }
+
+  Future _getUser() async {
+     FirebaseAuth.instance.currentUser().then((currentuser) => {
+      Firestore.instance.collection("users").
+      document(currentuser.uid).
+      get().
+      then((DocumentSnapshot snapshot) => {
+        setState((){
+          _firstName = snapshot["firstName"];
+          _lastName = snapshot["lastName"];
+          _email = snapshot["email"];
+        })
+      })
+    });
+  }
 
   Widget _buildProfileImage() {
     return Center(
@@ -289,83 +311,88 @@ class ProfilePageState extends State<ProfilePage> {
   void showEdit(BuildContext context) { // TODO: replace with call to actual profile edit UI
     // context: context;
     // builder: (BuildContext context) {
-      AlertDialog editProfile = AlertDialog(
-        title: new Text("Edit Profile"),
-        content: SingleChildScrollView(
-          child: Form(
-            key: _editFormKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'First Name', hintText: "John"),
-                  controller: fnameController,
-                  validator: (value) {
-                    if (value.length == 0) {
-                      return "Please enter your first name.";
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Last Name', hintText: "Doe"),
-                  controller: lnameController,
-                  validator: (value) {
-                    if (value.length == 0) {
-                      return "Please enter your last name.";
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Email', hintText: "example@email.com"),
-                  controller: emailController,
-                  validator: emailValidator
-                ),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Bio', hintText: "Bio"),
-                  controller: bioController,
-                ),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Birthday', hintText: "10/18/2019"),
-                  controller: bdayController,
-                  validator: bdayValidator,
-                ),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Website', hintText: "www.example.com"),
-                  controller: weblinkController,
-                  validator: (value) {
-                    return null;
-                  },
-                ),
-                RaisedButton(
-                  child: Text("Submit"),
-                  color: Theme.of(context).primaryColor,
-                  textColor: Colors.black,
-                  onPressed: (){
-                    if (_editFormKey.currentState.validate()) {
-                      
-                    }
-                  },
-                )
-              ],
-            ),
-          ) ,  
-        )
-      );
-      // show the dialog
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return editProfile;
-        },
-      );
+    fnameController.text = _firstName;
+    lnameController.text = _lastName;
+    bioController.text = _bio;
+    emailController.text = _email;
+
+    AlertDialog editProfile = AlertDialog(
+      title: new Text("Edit Profile"),
+      content: SingleChildScrollView(
+        child: Form(
+          key: _editFormKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'First Name', hintText: "John"),
+                controller: fnameController,
+                validator: (value) {
+                  if (value.length == 0) {
+                    return "Please enter your first name.";
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Last Name', hintText: "Doe"),
+                controller: lnameController,
+                validator: (value) {
+                  if (value.length == 0) {
+                    return "Please enter your last name.";
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Email', hintText: "example@email.com"),
+                controller: emailController,
+                validator: emailValidator
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Bio', hintText: "Bio"),
+                controller: bioController,
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Birthday', hintText: "10/18/2019"),
+                controller: bdayController,
+                validator: bdayValidator,
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Website', hintText: "www.example.com"),
+                controller: weblinkController,
+                validator: (value) {
+                  return null;
+                },
+              ),
+              RaisedButton(
+                child: Text("Submit"),
+                color: Theme.of(context).primaryColor,
+                textColor: Colors.black,
+                onPressed: (){
+                  if (_editFormKey.currentState.validate()) {
+                    
+                  }
+                },
+              )
+            ],
+          ),
+        ) ,  
+      )
+    );
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return editProfile;
+      },
+    );
   }
 
   Text _noPostsText() {
@@ -453,6 +480,7 @@ class ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
