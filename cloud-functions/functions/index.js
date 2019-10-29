@@ -22,6 +22,9 @@ exports.deleteUser = functions.https.onRequest((data, context) => {
   user.deleteUser(data, context, admin);
 });
 
+exports.updateProfile = functions.https.onRequest((data, context) => {
+  user.updateProfile(data, context, admin);
+});
 
 exports.testGet = functions.https.onRequest((req, res) => {
   var contents = [];
