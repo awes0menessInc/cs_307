@@ -185,7 +185,10 @@ class _ListPageState extends State<ListPage> {
         body: Stack(
           children: <Widget>[
             StreamBuilder<QuerySnapshot>(
-                stream: Firestore.instance.collection('microblogs').snapshots(),
+                stream: Firestore.instance
+                    .collection('microblogs')
+                    .orderBy('timestamp')
+                    .snapshots(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasError) return new Text('Error');
