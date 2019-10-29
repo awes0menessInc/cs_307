@@ -12,32 +12,40 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
-  @override 
+  @override
   void initState() {
-    FirebaseAuth.instance.currentUser().then((currentUser) => {
-      if (currentUser == null) {
-        Navigator.pushReplacementNamed(context, '/login')
-      }
-      else {
-        Firestore.instance
-          .collection('users')
-          .document(currentUser.uid)
-          .get()
-          .then((DocumentSnapshot snapshot) =>
-            Navigator.pushReplacement(context, MaterialPageRoute(
-              builder: (context) => Home(
-                uid: currentUser.uid,
-              )))).catchError((err) => print(err))
-      }
-    }).catchError((err) => print(err));
+    FirebaseAuth.instance
+        .currentUser()
+        .then((currentUser) => {
+              if (currentUser == null)
+                {Navigator.pushReplacementNamed(context, '/login')}
+              else
+                {
+                  Firestore.instance
+                      .collection('users')
+                      .document(currentUser.uid)
+                      .get()
+                      .then((DocumentSnapshot snapshot) =>
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Home(
+                                        uid: currentUser.uid,
+                                      ))))
+                      .catchError((err) => print(err))
+                }
+            })
+        .catchError((err) => print(err));
     super.initState();
   }
 
-  @override 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Container(child: Text('Loading...'),),
+        child: Container(
+          child: Text('Loading...'),
+        ),
       ),
     );
   }

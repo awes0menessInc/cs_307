@@ -1,110 +1,232 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:twistter/home.dart';
 import 'package:twistter/timeline.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class NewPost extends StatelessWidget {
-  TextEditingController newPost = TextEditingController();
-  String dropdownValue = 'Purdue';
-  @override
+class NewPost extends StatefulWidget {
+  NewPost({Key key}) : super(key: key);
+  _NewPostState createState() => _NewPostState();
+}
+
+class _NewPostState extends State<NewPost> {
+  final GlobalKey<FormState> _NewPostFormKey = GlobalKey<FormState>();
+  var t = ["Purdue", "Science"];
+  var top = "";
+  TextEditingController postEditingController;
+
+  initState() {
+    postEditingController = new TextEditingController();
+    FirebaseAuth.instance.currentUser().then((currentUser) => Firestore.instance
+            .collection("users")
+            .document(currentUser.uid)
+            .get()
+            .then((DocumentSnapshot ds) {
+          var temp = ds.data["topics"];
+          for (var i = 0; i < temp.length(); i++) {
+            t.add(temp[i]);
+          }
+        }));
+    super.initState();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(
-            "twistter",
-            style: TextStyle(
-                color: Color(0xff032B30),
-                fontFamily: 'Amaranth',
-                fontWeight: FontWeight.bold,
-                fontStyle: FontStyle.italic,
-                fontSize: 27),
-          ),
-          backgroundColor: Colors.white,
+          title: Text("NewPost"),
         ),
-        drawer: new Drawer(),
-        floatingActionButton: new Row(
-          children: <Widget>[
-            new Padding(
-              padding: new EdgeInsets.symmetric(
-                horizontal: 10.0,
+        body: Container(
+            padding: const EdgeInsets.all(20.0),
+            child: SingleChildScrollView(
+                child: Form(
+                    child: Column(children: <Widget>[
+              TextFormField(
+                decoration: InputDecoration(
+                    labelText: 'Create New Post', hintText: "Write Something?"),
+                maxLines: 7,
+                autofocus: true,
+                showCursor: true,
+                autocorrect: false,
+                textAlign: TextAlign.left,
+                keyboardAppearance: Brightness.dark,
+                controller: postEditingController,
               ),
-            ),
-            new FloatingActionButton(
-              child: Icon(Icons.cancel),
-              backgroundColor: Color(0xff55b0bd),
-              heroTag: 0,
-              onPressed: () {
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) => Home(),
-                ));
-              },
-            ),
-            new Padding(
-              padding: new EdgeInsets.symmetric(
-                horizontal: 138.0,
+              DropdownButton<String>(
+                items: t.map((String value) {
+                  return new DropdownMenuItem<String>(
+                    value: value,
+                    child: new Text(value),
+                  );
+                }).toList(),
+                onChanged: (String val) {
+                  top = val;
+                },
               ),
-            ),
-            new FloatingActionButton(
-              child: Icon(Icons.add_comment),
-              backgroundColor: Color(0xff55b0bd),
-              heroTag: 1,
-              onPressed: () {
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) => Home(),
-                ));
-              },
-            ),
-          ],
-        ),
-        body: Center(
-          child: Card(
-            elevation: 8.0,
-            margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                const ListTile(
-                  leading: Icon(Icons.account_circle),
-                  title: Text('Write Something?'),
-                ),
-                new Expanded(
-                  //flex: 3,
-                  child: new TextFormField(
-                    maxLines: 7,
-                    autofocus: true,
-                    showCursor: true,
-                    autocorrect: false,
-                    textAlign: TextAlign.left,
-                    keyboardAppearance: Brightness.dark,
-                    controller: newPost,
-                  ),
-                ),
-                new Expanded(
-                  child: DropdownButton<String>(
-                    value: dropdownValue,
-                    icon: Icon(Icons.title),
-                    elevation: 10,
-                    underline: Container(
-                      height: 2,
-                      color: Color(0xff55b0bd),
-                    ),
-                    onChanged: (String newValue) {
-                      dropdownValue = newValue;
-                    },
-                    items: <String>['Purdue']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        child: Text(value),
-                        value: value,
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          //child: TextFormField(
-          //decoration: InputDecoration(labelText: 'Write Post'),
-        ));
+              add(),
+              cancel()
+            ])))));
   }
+
+  Widget add() {
+    return new Container(
+      child: FloatingActionButton(
+          tooltip: 'Create Post',
+          child: Icon(Icons.add),
+          heroTag: 1,
+          onPressed: () {
+            FirebaseAuth.instance
+                .currentUser()
+                .then((currentUser) => Firestore.instance
+                    .collection("users")
+                    .document(currentUser.uid)
+                    .get()
+                    .then((doc) => Firestore.instance
+                            .collection('microblogs')
+                            .document()
+                            .setData({
+                          'content': postEditingController.text,
+                          'likes': '0',
+                          'quotes': '0',
+                          'timestamp':
+                              new DateTime.now().millisecondsSinceEpoch,
+                          'topics': [top], // fix topics list and ui part
+                          'userId': currentUser.uid,
+                        }))
+                    .then((result) => {
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Home(
+                                        uid: currentUser.uid,
+                                      )),
+                              (_) => false),
+                          postEditingController.clear()
+                        })
+                    .catchError((err) => print(err)))
+                .catchError((err) => print(err));
+          }),
+    );
+  }
+
+  Widget cancel() {
+    return new Container(
+      child: FloatingActionButton(
+          tooltip: 'Cancel Post',
+          child: Icon(Icons.cancel),
+          heroTag: 0,
+          onPressed: () {
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (context) => Home(),
+            ));
+          }),
+    );
+  }
+// class NewPost extends StatelessWidget {
+//   TextEditingController newPost = TextEditingController();
+//   String dropdownValue = 'Purdue';
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//         appBar: AppBar(
+//           title: Text(
+//             "twistter",
+//             style: TextStyle(
+//                 color: Color(0xff032B30),
+//                 fontFamily: 'Amaranth',
+//                 fontWeight: FontWeight.bold,
+//                 fontStyle: FontStyle.italic,
+//                 fontSize: 27),
+//           ),
+//           backgroundColor: Colors.white,
+//         ),
+//         drawer: new Drawer(),
+//         floatingActionButton: new Row(
+//           children: <Widget>[
+//             new Padding(
+//               padding: new EdgeInsets.symmetric(
+//                 horizontal: 10.0,
+//               ),
+//             ),
+//             new FloatingActionButton(
+//               child: Icon(Icons.cancel),
+//               backgroundColor: Color(0xff55b0bd),
+//               heroTag: 0,
+//               onPressed: () {
+//                 Navigator.of(context).pushReplacement(MaterialPageRoute(
+//                   builder: (context) => Home(),
+//                 ));
+//               },
+//             ),
+//             new Padding(
+//               padding: new EdgeInsets.symmetric(
+//                 horizontal: 138.0,
+//               ),
+//             ),
+//             new FloatingActionButton(
+//               child: Icon(Icons.add_comment),
+//               backgroundColor: Color(0xff55b0bd),
+//               heroTag: 1,
+//               onPressed: () {
+//                 Navigator.of(context).pushReplacement(MaterialPageRoute(
+//                   builder: (context) => Home(),
+//                 ));
+//               },
+//             ),
+//           ],
+//         ),
+//         body: Center(
+//           child: Card(
+//             elevation: 8.0,
+//             margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+//             child: Column(
+//               mainAxisSize: MainAxisSize.min,
+//               children: <Widget>[
+//                 const ListTile(
+//                   leading: Icon(Icons.account_circle),
+//                   title: Text('Write Something?'),
+//                 ),
+//                 new Expanded(
+//                   //flex: 3,
+//                   child: new TextFormField(
+//                     maxLines: 7,
+//                     autofocus: true,
+//                     showCursor: true,
+//                     autocorrect: false,
+//                     textAlign: TextAlign.left,
+//                     keyboardAppearance: Brightness.dark,
+//                     controller: newPost,
+//                   ),
+//                 ),
+//                 new Expanded(
+//                   child: DropdownButton<String>(
+//                     value: dropdownValue,
+//                     icon: Icon(Icons.title),
+//                     elevation: 10,
+//                     underline: Container(
+//                       height: 2,
+//                       color: Color(0xff55b0bd),
+//                     ),
+//                     onChanged: (String newValue) {
+//                       dropdownValue = newValue;
+//                     },
+//                     items: <String>['Purdue']
+//                         .map<DropdownMenuItem<String>>((String value) {
+//                       return DropdownMenuItem<String>(
+//                         child: Text(value),
+//                         value: value,
+//                       );
+//                     }).toList(),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//           //child: TextFormField(
+//           //decoration: InputDecoration(labelText: 'Write Post'),
+//         ));
+//   }
 }
