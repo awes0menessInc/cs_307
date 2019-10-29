@@ -3,10 +3,9 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-// import 'package:flutter/rendering.dart' show debugDumpRenderTree, debugDumpLayerTree, debugDumpSemanticsTree, DebugSemanticsDumpOrder;
-// import 'package:flutter/gestures.dart' show DragStartBehavior;
-
-
+import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:twistter/timeline.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -14,6 +13,46 @@ class ProfilePage extends StatefulWidget {
 }
 
 class ProfilePageState extends State<ProfilePage> {
+  // DocumentSnapshot userDoc() async {
+  //    var user = FirebaseAuth.instance.currentUser;
+  //     if (user != null) {
+  //       String uid = await user.uid;
+  //   }
+  // }
+  // // final db = Firestore.instance;
+  // // String uid = FirebaseAuth.instance.currentUser.uid;
+  // static CollectionReference collectionRef = Firestore.instance.collection('users');
+  // Query query = collectionRef.where('uid', =, );
+  // DocumentReference userInfo = Firestore.instance.collection('users').document(userDoc);
+  // // Future<DocumentSnapshot> getData(DocumentReference docReference) async{
+  // //     // var docReference = db.collection('cities').document('SF');
+  // //     DocumentSnapshot docSnap = await docReference.get();
+  // //     String name = await docSnap.get('FirstName');
+  // //     return docSnap;
+  // // }
+
+  // FirebaseUser currentUser;
+  // bool isSignedIn = false;
+  // void getCurrentUser() async {
+  //   currentUser = await FirebaseAuth.instance.currentUser();
+  //   setState(() {
+  //     if (currentUser != null) {
+  //       bool isSignedIn = true;
+  //     }
+  //   });
+  // }
+
+  // getCurrentUser();
+  // String _firstName;
+  // void setfirstName() {
+  //   if (!isSignedin) {
+  //     _firstName = "Rebecca";
+  //   }
+  //   else {
+  //     _firstName = currentUser.firstName.toString();
+  //   }
+  // }
+  
   final String _firstName = "Rebecca";
   final String _lastName = "Keys";
   final String _username = "keyspleasee";
@@ -32,19 +71,39 @@ class ProfilePageState extends State<ProfilePage> {
       child: Container(
         width: 140.0,
         height: 140.0,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('lib/assets/images/profile.jpg'),
-            fit: BoxFit.cover,
+        child: new Container(
+          decoration: new BoxDecoration(
+            color: Color(0xff55b0bd),
+            borderRadius: BorderRadius.circular(80.0),
           ),
-          borderRadius: BorderRadius.circular(80.0),
-          border: Border.all(
-            color: Colors.white,
-            width: 2.0,
+          child: Center (
+          child: Text('${_firstName[0]}' + '${_lastName[0]}',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 50.0
+              )
           ),
+          // TODO: Add functionality to display profile picture if the user has uploaded one
+          // decoration: BoxDecoration(
+          //   // image: DecorationImage(
+          //   //   image: AssetImage('lib/assets/images/profile.jpg'),
+          //     // fit: BoxFit.cover,
+          //   ),
+          //   borderRadius: BorderRadius.circular(80.0),
+          //   border: Border.all(
+          //     color: Colors.white,
+          //     width: 2.0,
+          //   ),
+          // ),
         ),
       ),
+      ),
     );
+  }
+
+  Widget _buildAvatar() {
+    //TODO: create a default avatar with initials of the user
   }
 
   Widget _buildFullName(BuildContext context) {
@@ -110,6 +169,8 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // DocumentReference userDoc = Firestore.instance.collection('users').document('1giITpxQDkcH6aRd6dXj');
+
   Widget _buildStatContainer() {
     return Container(
       height: 60.0,
@@ -119,8 +180,15 @@ class ProfilePageState extends State<ProfilePage> {
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
+        // StreamBuilder(
+        //   stream: Firestore.instance.collection('users').snapshots(),
+        //   builder: (context, snapshot) {
+        //     return _buildStatItem("Followers", snapshot.data.document['followers']);
+        //   },
+        // ),
         children: <Widget>[
-          _buildStatItem("Followers", _followers),
+          _buildStatItem("Followers", _followers), //userDoc is the document in Firestore of the currently logged in user
+          // TODO: Add a function that gets the name of the doucment for the currently logged in user and stores it as 'userdoc' (match uid to the right doc)
           _buildStatItem("Following", _following),
           _buildStatItem("Posts", _posts), 
         ],
@@ -249,7 +317,7 @@ class ProfilePageState extends State<ProfilePage> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: EdgeInsets.only(bottom: 30.0, right: 60.0),
                 child: TextFormField(
                   decoration: new InputDecoration(
                     hintText: 'First Name'
@@ -257,7 +325,7 @@ class ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: EdgeInsets.only(bottom: 20.0, right: 60.0),
                 child: TextFormField(
                   decoration: new InputDecoration(
                     hintText: 'Last Name'
@@ -265,7 +333,7 @@ class ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: EdgeInsets.only(bottom: 20.0, right: 60.0),
                 child: TextFormField(
                   decoration: new InputDecoration(
                     hintText: 'Email '
@@ -273,7 +341,7 @@ class ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: EdgeInsets.only(bottom: 20.0, right: 60.0),
                 child: TextFormField(
                   decoration: new InputDecoration(
                     hintText: 'Bio'
@@ -281,7 +349,7 @@ class ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.only(bottom: 10.0),
                 child: RaisedButton(
                   child: Text("Submit"),
                   onPressed: () {
@@ -412,6 +480,7 @@ class ProfilePageState extends State<ProfilePage> {
                   _buildButtons(context),
                   _buildNoPosts(context),
                   _makeBody(context),
+
                 ],
               ),
             ),

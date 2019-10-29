@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'home.dart';
+import 'register.dart';
+import 'login.dart';
 import 'splash.dart';
-
-import 'package:firebase_auth/firebase_auth.dart';
+import 'home.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,12 +14,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.white,
       ),
-      // home: Home(),
-      home: Splash(),
-      routes: <String, WidgetBuilder> {
-        '/login': (BuildContext context) => Login(),
-        '/register': (BuildContext context) => Register(),
-      },
+      home: Home(),
+      // home: Splash(),
+      // routes: <String, WidgetBuilder> {
+      //   '/login': (BuildContext context) => Login(),
+      //   '/register': (BuildContext context) => Register(),
+      // },
       debugShowCheckedModeBanner: false,
     );
   }
