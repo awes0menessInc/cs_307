@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       ),
       // home: Home(),
       home: Splash(),
-      routes: <String, WidgetBuilder> {
+      routes: <String, WidgetBuilder>{
         '/login': (BuildContext context) => Login(),
         '/register': (BuildContext context) => Register(),
       },
