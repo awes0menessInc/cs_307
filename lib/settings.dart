@@ -80,52 +80,52 @@ class SettingsState extends State<Settings> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'First Name', hintText: "John"),
-                controller: fnameController,
-                validator: (value) {
-                  if (value.length == 0) {
-                    return "Please enter your first name.";
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Last Name', hintText: "Doe"),
-                controller: lnameController,
-                validator: (value) {
-                  if (value.length == 0) {
-                    return "Please enter your last name.";
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Email', hintText: "example@email.com"),
-                controller: emailController,
-                validator: emailValidator
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Bio', hintText: "Bio"),
-                controller: bioController,
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Birthday', hintText: "10/18/2019"),
-                controller: bdayController,
-                validator: bdayValidator,
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Website', hintText: "www.example.com"),
-                controller: weblinkController,
-                validator: (value) {
-                  return null;
-                },
-              ),
+            decoration: InputDecoration(
+              labelText: 'First Name', hintText: "John"),
+            controller: fnameController,
+            validator: (value) {
+              if (value.length == 0) {
+                return "Please enter your first name.";
+              }
+              return null;
+            },
+          ),
+          TextFormField(
+            decoration: InputDecoration(
+              labelText: 'Last Name', hintText: "Doe"),
+            controller: lnameController,
+            validator: (value) {
+              if (value.length == 0) {
+                return "Please enter your last name.";
+              }
+              return null;
+            },
+          ),
+          TextFormField(
+            decoration: InputDecoration(
+              labelText: 'Email', hintText: "example@email.com"),
+            controller: emailController,
+            validator: emailValidator
+          ),
+          TextFormField(
+            decoration: InputDecoration(
+              labelText: 'Bio', hintText: "Bio"),
+            controller: bioController,
+          ),
+          TextFormField(
+            decoration: InputDecoration(
+              labelText: 'Birthday', hintText: "10/18/2019"),
+            controller: bdayController,
+            validator: bdayValidator,
+          ),
+          TextFormField(
+            decoration: InputDecoration(
+              labelText: 'Website', hintText: "www.example.com"),
+            controller: weblinkController,
+            validator: (value) {
+              return null;
+            },
+          ),
           Padding(
             padding: EdgeInsets.only(bottom: 10.0),
             child: RaisedButton(
