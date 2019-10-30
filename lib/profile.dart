@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:twistter/timeline.dart';
+// import 'package:twistter/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -13,23 +13,43 @@ class ProfilePage extends StatefulWidget {
 }
 
 class ProfilePageState extends State<ProfilePage> {
-  // DocumentSnapshot userDoc() async {
-  //    var user = FirebaseAuth.instance.currentUser;
-  //     if (user != null) {
-  //       String uid = await user.uid;
-  //   }
-  // }
-  // // final db = Firestore.instance;
-  // // String uid = FirebaseAuth.instance.currentUser.uid;
-  // static CollectionReference collectionRef = Firestore.instance.collection('users');
-  // Query query = collectionRef.where('uid', =, );
-  // DocumentReference userInfo = Firestore.instance.collection('users').document(userDoc);
-  // // Future<DocumentSnapshot> getData(DocumentReference docReference) async{
-  // //     // var docReference = db.collection('cities').document('SF');
-  // //     DocumentSnapshot docSnap = await docReference.get();
-  // //     String name = await docSnap.get('FirstName');
-  // //     return docSnap;
-  // // }
+   static getCurrentUid() async {
+    FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
+    String currentUid = currentUser.uid.toString();
+    return currentUid;
+  }
+  static String currentUid = getCurrentUid();
+  String firstName;
+  String lastName;
+  String bio;
+  int followers;
+  int following;
+
+    Future<QuerySnapshot> getData() async{
+      Query userQuery = Firestore.instance.collection('users').where('uid', isEqualTo: currentUid);
+      print("The current uid is " + currentUid + " and the matching user document is: ");
+      QuerySnapshot docSnap = await userQuery.getDocuments();
+      print(docSnap);
+      if (docSnap.documents.length > 0){
+        firstName = docSnap.documents[0].data['firstName'];
+        lastName = docSnap.documents[0].data['lastName'];
+        followers = docSnap.documents[0].data['followers'];
+        print("The name of the current user is " + firstName);
+      }
+      else {
+        print("No document matches the uid of " + currentUid);
+      }
+      return docSnap;
+    }
+
+    // int get age {
+    //     return vehicleAge;
+    // }
+
+    // String getFirstName() async {
+    //   Future<QuerySnapshot> currentUserDoc = getData();
+    //   String firstName = currentUserDoc.documents[0].data['firstName'];
+    // }
 
   // FirebaseUser currentUser;
   // bool isSignedIn = false;
@@ -53,7 +73,7 @@ class ProfilePageState extends State<ProfilePage> {
   //   }
   // }
   
-  final String _firstName = "Rebecca";
+  // final String _firstName = "Rebecca";
   final String _lastName = "Keys";
   final String _username = "keyspleasee";
   // final String _status = "Purdue Student";
@@ -67,6 +87,7 @@ class ProfilePageState extends State<ProfilePage> {
   bool isAccountOwner = true; //TODO: Connect to a function on the back end
 
   Widget _buildProfileImage() {
+    getData();
     return Center(
       child: Container(
         width: 140.0,
@@ -77,7 +98,7 @@ class ProfilePageState extends State<ProfilePage> {
             borderRadius: BorderRadius.circular(80.0),
           ),
           child: Center (
-          child: Text('${_firstName[0]}' + '${_lastName[0]}',
+          child: Text('${firstName[0]}' + '${_lastName[0]}',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontWeight: FontWeight.bold,
@@ -102,15 +123,15 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildAvatar() {
-    //TODO: create a default avatar with initials of the user
-  }
+  // Widget _buildAvatar() {
+  //   //TODO: create a default avatar with initials of the user
+  // }
 
   Widget _buildFullName(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10.0),
       child: Text(
-        _firstName + ' ' + _lastName + ' | @'+ _username,
+        firstName + ' ' + _lastName + ' | @'+ _username,
         style: TextStyle(
         fontFamily: 'Montserrat',
         color: Colors.black,
@@ -307,7 +328,7 @@ class ProfilePageState extends State<ProfilePage> {
       ));
   }
 
-  void showEdit(BuildContext context) { // TODO: replace with call to actual profile edit UI
+  static void showEdit(BuildContext context) { // TODO: replace with call to actual profile edit UI
     // context: context;
     // builder: (BuildContext context) {
       AlertDialog editProfile = AlertDialog(
@@ -386,7 +407,7 @@ class ProfilePageState extends State<ProfilePage> {
         style: ts);
     }
     else {
-      return Text("$_firstName hasn't posted yet. Check back later!",
+      return Text("$firstName hasn't posted yet. Check back later!",
         textAlign: TextAlign.center,
         style: ts);
     }

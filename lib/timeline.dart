@@ -194,7 +194,7 @@ class _ListPageState extends State<ListPage> {
                   if (snapshot.hasError) return new Text('Error');
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
-                      return new Text('Loading');
+                      return new Text('Loading...');
                     default:
                       return _makeBody(context, snapshot.data.documents);
                   } //switch

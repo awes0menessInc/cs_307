@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:twistter/timeline.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:twistter/profile.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -59,7 +60,7 @@ class SettingsState extends State<Settings> {
                   child: Text("Save Changes"),
                   onPressed: () {
                     final snackBar = SnackBar(
-                      content: Text('Profile changes saved successfully'),
+                      content: Text('Success! Your profile edits were submitted.'),
                       duration: const Duration(seconds: 10),
                       action: SnackBarAction(
                         label: 'Dismiss',
@@ -68,8 +69,7 @@ class SettingsState extends State<Settings> {
                         },
                       ),
                     );
-                    Scaffold.of(context).showSnackBar(snackBar);
-                    print("Submitted Pofile Edits"); // TODO: Connect to back end
+                    Scaffold.of(context).showSnackBar(snackBar); // TODO: Connect to back end
                   },
                 ),
               ),

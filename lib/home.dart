@@ -4,7 +4,6 @@ import 'package:twistter/newPost.dart';
 import 'timeline.dart';
 import 'profile.dart';
 import 'settings.dart';
-// import 'profile_copy.dart';
 import 'newPost.dart';
 import 'login.dart';
 
@@ -17,7 +16,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  FirebaseUser currentUser;
+  static FirebaseUser currentUser;
   
   @override
   void initState() {
