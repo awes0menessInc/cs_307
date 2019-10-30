@@ -13,69 +13,154 @@ class Settings extends StatefulWidget {
 }
 
 class SettingsState extends State<Settings> {
+  String _firstName = "";
+  String _lastName = "";
+  String _bio = "";
+  String _email = "";
+  String _bday = "";
+  String _weblink = "";
+
+  TextEditingController fnameController = new TextEditingController();
+  TextEditingController lnameController = new TextEditingController();
+  TextEditingController bioController = new TextEditingController();
+  TextEditingController bdayController = new TextEditingController();
+  TextEditingController weblinkController = new TextEditingController();
+  TextEditingController emailController = new TextEditingController();
+  final GlobalKey<FormState> _editFormKey = GlobalKey<FormState>();
+
+  @override
+  initState() {
+    super.initState();
+    _getUser();
+  }
+
+  Future _getUser() async {
+     FirebaseAuth.instance.currentUser().then((currentuser) => {
+      Firestore.instance.collection("users").
+      document(currentuser.uid).
+      get().
+      then((DocumentSnapshot snapshot) => {
+        setState((){
+          _firstName = snapshot["firstName"];
+          _lastName = snapshot["lastName"];
+          _email = snapshot["email"];
+        })
+      })
+    });
+  }
+
+  String emailValidator(String value) {
+    Pattern emailPattern =
+      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp emailRegex = new RegExp(emailPattern);
+    if (!emailRegex.hasMatch(value)) {
+      return 'Please enter a valid e-mail';
+    } else {
+      return null;
+    }
+  }
+
+  String bdayValidator(String value) {
+    Pattern bdayPattern = r'(0[1-9]|1[012])/(0[1-9]|[12][0-9]|3[01])/(19|20)\d\d';
+    RegExp bdayRegex = new RegExp(bdayPattern);
+    if (!bdayRegex.hasMatch(value)) {
+      return "Enter a valid birthday";
+    } else {
+      return null;
+    }
+  }
+
   Widget _buildSettings() {
-        return Form(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(bottom: 30.0, right: 60.0),
-                child: TextFormField(
-                  decoration: new InputDecoration(
-                    hintText: 'First Name'
-                  ),
-                ),
+    fnameController.text = _firstName;
+    lnameController.text = _lastName;
+    emailController.text = _email;
+    return Form(
+      key: _editFormKey,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'First Name', hintText: "John"),
+                controller: fnameController,
+                validator: (value) {
+                  if (value.length == 0) {
+                    return "Please enter your first name.";
+                  }
+                  return null;
+                },
               ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 20.0, right: 60.0),
-                child: TextFormField(
-                  decoration: new InputDecoration(
-                    hintText: 'Last Name'
-                  ),
-                ),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Last Name', hintText: "Doe"),
+                controller: lnameController,
+                validator: (value) {
+                  if (value.length == 0) {
+                    return "Please enter your last name.";
+                  }
+                  return null;
+                },
               ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 20.0, right: 60.0),
-                child: TextFormField(
-                  decoration: new InputDecoration(
-                    hintText: 'Email '
-                  ),
-                ),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Email', hintText: "example@email.com"),
+                controller: emailController,
+                validator: emailValidator
               ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 20.0, right: 60.0),
-                child: TextFormField(
-                  minLines: 3,
-                  maxLines: 5,
-                  maxLength: 150,
-                  decoration: new InputDecoration(
-                    hintText: 'Bio'
-                  ),
-                ),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Bio', hintText: "Bio"),
+                controller: bioController,
               ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 10.0),
-                child: RaisedButton(
-                  child: Text("Save Changes"),
-                  onPressed: () {
-                    final snackBar = SnackBar(
-                      content: Text('Profile changes saved successfully'),
-                      duration: const Duration(seconds: 10),
-                      action: SnackBarAction(
-                        label: 'Dismiss',
-                        onPressed: () {
-                          Scaffold.of(context).hideCurrentSnackBar();
-                        },
-                      ),
-                    );
-                    Scaffold.of(context).showSnackBar(snackBar);
-                    print("Submitted Pofile Edits"); // TODO: Connect to back end
-                  },
-                ),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Birthday', hintText: "10/18/2019"),
+                controller: bdayController,
+                validator: bdayValidator,
               ),
-            ],
-          )
-        );
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Website', hintText: "www.example.com"),
+                controller: weblinkController,
+                validator: (value) {
+                  return null;
+                },
+              ),
+          Padding(
+            padding: EdgeInsets.only(bottom: 10.0),
+            child: RaisedButton(
+              child: Text("Save Changes"),
+              onPressed: () {
+                // TODO: call cloud functions
+                if (_editFormKey.currentState.validate()) {
+                  final snackBar = SnackBar(
+                    content: Text('Profile changes saved successfully'),
+                    duration: const Duration(seconds: 10),
+                    action: SnackBarAction(
+                      label: 'Dismiss',
+                      onPressed: () {
+                        Scaffold.of(context).hideCurrentSnackBar();
+                      },
+                    ),
+                  );
+                  Scaffold.of(context).showSnackBar(snackBar);
+                  print("Submitted Pofile Edits"); // TODO: Connect to back end   
+                }
+              },
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(bottom: 10.0),
+            child: RaisedButton(
+              child: Text("Delete Account"),
+              onPressed: () {
+                
+              },
+            ),
+          ),
+        ],
+      )
+    );
   }
 
   @override
