@@ -68,6 +68,17 @@ class _LoginState extends State<Login> {
                     obscureText: true,
                     validator: pwdValidator,
                 ),
+                FlatButton(
+                  child: Text(
+                    "Forgot password?",
+                    style: TextStyle(
+                      color: Colors.lightBlue,
+                      fontSize: 11,
+                    )
+                  ),
+                  /* TODO: implement forgot password function */
+                  onPressed: () => null,
+                ),
                 RaisedButton(
                   child: Text("Login"),
                   color: Theme.of(context).primaryColor,

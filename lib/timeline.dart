@@ -34,9 +34,12 @@ class _ListPageState extends State<ListPage> {
 
   void showTags(BuildContext context, Post post) {
     AlertDialog viewTags = AlertDialog(
+      shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(32.0))),
       title: Text('Post Tags',
           textAlign: TextAlign.center, style: TextStyle(fontFamily: 'Poppins')),
       content: Container(
+        height: 50,
         child: ListView(
             padding: EdgeInsets.all(4),
             children: post.topics
@@ -52,11 +55,25 @@ class _ListPageState extends State<ListPage> {
                 .toList()),
       ),
       actions: <Widget>[
-        new FlatButton(
-          child: Text('Close'),
-          onPressed: () {
-            Navigator.of(context, rootNavigator: true).pop('dialog');
-          },
+        Container( 
+          padding: EdgeInsets.only(right: 75),
+          child: 
+              ButtonBar(
+              alignment: MainAxisAlignment.center,
+              children: <Widget>[
+                    SizedBox(
+                      width: 100,
+                      child: new RaisedButton(
+                        color: Color.fromRGBO(85, 176, 189, 1.0),
+                        onPressed: () {
+                          Navigator.of(context, rootNavigator: true).pop('dialog');
+                        },
+                        child: Text('Close',
+                          style: TextStyle(color: Colors.white)),
+                      ),
+                    ),
+              ]
+              ),
         ),
       ],
     );
@@ -72,12 +89,6 @@ class _ListPageState extends State<ListPage> {
     List<Post> postsList = [];
     List<dynamic> tags = [];
     snap.forEach((f) {
-      //var s = f['topics'];
-      //debugPrint("topics: " + s);
-      //print(s.runtimeType);
-      // s.forEach((r) {
-      //   print(r.runtimeType);
-      // });
       postsList.add(new Post(
         content: f['content'],
         username: f['userId'],

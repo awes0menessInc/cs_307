@@ -73,18 +73,46 @@ class ProfilePageState extends State<ProfilePage> {
   //   }
   // }
   
+<<<<<<< HEAD
   // final String _firstName = "Rebecca";
   final String _lastName = "Keys";
   final String _username = "keyspleasee";
+=======
+  String _firstName = "Rebecca";
+  String _lastName = "Keys";
+  String _username = "keyspleasee";
+>>>>>>> 8e248114f3c6e653c4a5cf1ff296147cece5e332
   // final String _status = "Purdue Student";
-  final String _bio =
+   String _bio =
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sed odio morbi quis commodo odio. Integer eget aliquet nibh praesent tristique. Semper quis lectus nulla at volutpat diam. Fringilla est ullamcorper eget nulla facilisi etiam.";
-  final String _posts = "0";
-  final String _followers = "450";
-  final String _following = "127";
+  String _posts = "0";
+  String _followers = "450";
+  String _following = "127";
+  String _email = "";
   // String _viewingUser = "Rebecca Keys"; // currently a mock of the logged in user.
   bool pressed = false;
   bool isAccountOwner = true; //TODO: Connect to a function on the back end
+
+  @override
+  initState() {
+    super.initState();
+    _getUser();
+  }
+
+  Future _getUser() async {
+     FirebaseAuth.instance.currentUser().then((currentuser) => {
+      Firestore.instance.collection("users").
+      document(currentuser.uid).
+      get().
+      then((DocumentSnapshot snapshot) => {
+        setState((){
+          _firstName = snapshot["firstName"];
+          _lastName = snapshot["lastName"];
+          _email = snapshot["email"];
+        })
+      })
+    });
+  }
 
   Widget _buildProfileImage() {
     getData();
@@ -305,28 +333,28 @@ class ProfilePageState extends State<ProfilePage> {
                 )
               ]
             ),
-            Row(
-              children: <Widget>[
-                Visibility(
-                  visible: isAccountOwner,
-                  child: Expanded(
-                    child: RaisedButton(
-                      color: Color(0xffd1d1d1),
-                      shape: RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(15.0)),
-                      onPressed: () {
-                        showEdit(context);
-                        print("Clicked edit profile");
-                      }, 
-                      child: Text('Edit Profile')
+          Row(
+            children: <Widget>[
+              Visibility(
+                visible: isAccountOwner,
+                child: Expanded(
+                  child: RaisedButton(
+                    child: Text("Delete Account"),
+                    color: Color(0xffd1d1d1),
+                    shape: RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(15.0)),
+                    onPressed: () {
+                      print("Clicked Delete");
+                    },
                   ),
-                )  
-              ),
+                ),
+              )
             ],
-          ),
+          )
         ],
       ));
   }
+<<<<<<< HEAD
 
   static void showEdit(BuildContext context) { // TODO: replace with call to actual profile edit UI
     // context: context;
@@ -392,6 +420,9 @@ class ProfilePageState extends State<ProfilePage> {
       );
     }
 
+=======
+  
+>>>>>>> 8e248114f3c6e653c4a5cf1ff296147cece5e332
   Text _noPostsText() {
     TextStyle ts = TextStyle(
       fontFamily: 'Spectral',
@@ -477,6 +508,7 @@ class ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
