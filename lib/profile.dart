@@ -306,24 +306,6 @@ class ProfilePageState extends State<ProfilePage> {
                 )
               ]
             ),
-          Row(
-            children: <Widget>[
-              Visibility(
-                visible: isAccountOwner,
-                child: Expanded(
-                  child: RaisedButton(
-                    child: Text("Delete Account"),
-                    color: Color(0xffd1d1d1),
-                    shape: RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(15.0)),
-                    onPressed: () {
-                      print("Clicked Delete");
-                    },
-                  ),
-                ),
-              )
-            ],
-          )
         ],
       ));
   }
