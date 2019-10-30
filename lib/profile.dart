@@ -3,12 +3,9 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:flutter/rendering.dart' show debugDumpRenderTree, debugDumpLayerTree, debugDumpSemanticsTree, DebugSemanticsDumpOrder;
-// import 'package:flutter/gestures.dart' show DragStartBehavior;
-
-
+// import 'package:twistter/timeline.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -16,9 +13,48 @@ class ProfilePage extends StatefulWidget {
 }
 
 class ProfilePageState extends State<ProfilePage> {
-  final GlobalKey<FormState> _editFormKey = GlobalKey<FormState>();
-  String _firstName = "";
-  String _lastName = "Key";
+  // DocumentSnapshot userDoc() async {
+  //    var user = FirebaseAuth.instance.currentUser;
+  //     if (user != null) {
+  //       String uid = await user.uid;
+  //   }
+  // }
+  // // final db = Firestore.instance;
+  // // String uid = FirebaseAuth.instance.currentUser.uid;
+  // static CollectionReference collectionRef = Firestore.instance.collection('users');
+  // Query query = collectionRef.where('uid', =, );
+  // DocumentReference userInfo = Firestore.instance.collection('users').document(userDoc);
+  // // Future<DocumentSnapshot> getData(DocumentReference docReference) async{
+  // //     // var docReference = db.collection('cities').document('SF');
+  // //     DocumentSnapshot docSnap = await docReference.get();
+  // //     String name = await docSnap.get('FirstName');
+  // //     return docSnap;
+  // // }
+
+  // FirebaseUser currentUser;
+  // bool isSignedIn = false;
+  // void getCurrentUser() async {
+  //   currentUser = await FirebaseAuth.instance.currentUser();
+  //   setState(() {
+  //     if (currentUser != null) {
+  //       bool isSignedIn = true;
+  //     }
+  //   });
+  // }
+
+  // getCurrentUser();
+  // String _firstName;
+  // void setfirstName() {
+  //   if (!isSignedin) {
+  //     _firstName = "Rebecca";
+  //   }
+  //   else {
+  //     _firstName = currentUser.firstName.toString();
+  //   }
+  // }
+  
+  String _firstName = "Rebecca";
+  String _lastName = "Keys";
   String _username = "keyspleasee";
   // final String _status = "Purdue Student";
    String _bio =
@@ -30,12 +66,6 @@ class ProfilePageState extends State<ProfilePage> {
   // String _viewingUser = "Rebecca Keys"; // currently a mock of the logged in user.
   bool pressed = false;
   bool isAccountOwner = true; //TODO: Connect to a function on the back end
-  TextEditingController fnameController = new TextEditingController();
-  TextEditingController lnameController = new TextEditingController();
-  TextEditingController bioController = new TextEditingController();
-  TextEditingController bdayController = new TextEditingController();
-  TextEditingController weblinkController = new TextEditingController();
-  TextEditingController emailController = new TextEditingController();
 
   @override
   initState() {
@@ -63,19 +93,39 @@ class ProfilePageState extends State<ProfilePage> {
       child: Container(
         width: 140.0,
         height: 140.0,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('lib/assets/images/profile.jpg'),
-            fit: BoxFit.cover,
+        child: new Container(
+          decoration: new BoxDecoration(
+            color: Color(0xff55b0bd),
+            borderRadius: BorderRadius.circular(80.0),
           ),
-          borderRadius: BorderRadius.circular(80.0),
-          border: Border.all(
-            color: Colors.white,
-            width: 2.0,
+          child: Center (
+          child: Text('${_firstName[0]}' + '${_lastName[0]}',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 50.0
+              )
           ),
+          // TODO: Add functionality to display profile picture if the user has uploaded one
+          // decoration: BoxDecoration(
+          //   // image: DecorationImage(
+          //   //   image: AssetImage('lib/assets/images/profile.jpg'),
+          //     // fit: BoxFit.cover,
+          //   ),
+          //   borderRadius: BorderRadius.circular(80.0),
+          //   border: Border.all(
+          //     color: Colors.white,
+          //     width: 2.0,
+          //   ),
+          // ),
         ),
       ),
+      ),
     );
+  }
+
+  Widget _buildAvatar() {
+    //TODO: create a default avatar with initials of the user
   }
 
   Widget _buildFullName(BuildContext context) {
@@ -141,6 +191,8 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // DocumentReference userDoc = Firestore.instance.collection('users').document('1giITpxQDkcH6aRd6dXj');
+
   Widget _buildStatContainer() {
     return Container(
       height: 60.0,
@@ -150,8 +202,15 @@ class ProfilePageState extends State<ProfilePage> {
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
+        // StreamBuilder(
+        //   stream: Firestore.instance.collection('users').snapshots(),
+        //   builder: (context, snapshot) {
+        //     return _buildStatItem("Followers", snapshot.data.document['followers']);
+        //   },
+        // ),
         children: <Widget>[
-          _buildStatItem("Followers", _followers),
+          _buildStatItem("Followers", _followers), //userDoc is the document in Firestore of the currently logged in user
+          // TODO: Add a function that gets the name of the doucment for the currently logged in user and stores it as 'userdoc' (match uid to the right doc)
           _buildStatItem("Following", _following),
           _buildStatItem("Posts", _posts), 
         ],
@@ -247,25 +306,6 @@ class ProfilePageState extends State<ProfilePage> {
                 )
               ]
             ),
-            Row(
-              children: <Widget>[
-                Visibility(
-                  visible: isAccountOwner,
-                  child: Expanded(
-                    child: RaisedButton(
-                      color: Color(0xffd1d1d1),
-                      shape: RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(15.0)),
-                      onPressed: () {
-                        showEdit(context);
-                        print("Clicked edit profile");
-                      }, 
-                      child: Text('Edit Profile')
-                  ),
-                )  
-              ),
-            ],
-          ),
           Row(
             children: <Widget>[
               Visibility(
@@ -287,114 +327,7 @@ class ProfilePageState extends State<ProfilePage> {
         ],
       ));
   }
-
-  String emailValidator(String value) {
-    Pattern emailPattern =
-      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    RegExp emailRegex = new RegExp(emailPattern);
-    if (!emailRegex.hasMatch(value)) {
-      return 'Please enter a valid e-mail';
-    } else {
-      return null;
-    }
-  }
-
-  String bdayValidator(String value) {
-    Pattern bdayPattern = r'(0[1-9]|1[012])/(0[1-9]|[12][0-9]|3[01])/(19|20)\d\d';
-    RegExp bdayRegex = new RegExp(bdayPattern);
-    if (!bdayRegex.hasMatch(value)) {
-      return "Enter a valid birthday";
-    } else {
-      return null;
-    }
-  }
-  void showEdit(BuildContext context) { // TODO: replace with call to actual profile edit UI
-    // context: context;
-    // builder: (BuildContext context) {
-    fnameController.text = _firstName;
-    lnameController.text = _lastName;
-    bioController.text = _bio;
-    emailController.text = _email;
-
-    AlertDialog editProfile = AlertDialog(
-      title: new Text("Edit Profile"),
-      content: SingleChildScrollView(
-        child: Form(
-          key: _editFormKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'First Name', hintText: "John"),
-                controller: fnameController,
-                validator: (value) {
-                  if (value.length == 0) {
-                    return "Please enter your first name.";
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Last Name', hintText: "Doe"),
-                controller: lnameController,
-                validator: (value) {
-                  if (value.length == 0) {
-                    return "Please enter your last name.";
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Email', hintText: "example@email.com"),
-                controller: emailController,
-                validator: emailValidator
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Bio', hintText: "Bio"),
-                controller: bioController,
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Birthday', hintText: "10/18/2019"),
-                controller: bdayController,
-                validator: bdayValidator,
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Website', hintText: "www.example.com"),
-                controller: weblinkController,
-                validator: (value) {
-                  return null;
-                },
-              ),
-              RaisedButton(
-                child: Text("Submit"),
-                color: Theme.of(context).primaryColor,
-                textColor: Colors.black,
-                onPressed: (){
-                  if (_editFormKey.currentState.validate()) {
-                    
-                  }
-                },
-              )
-            ],
-          ),
-        ) ,  
-      )
-    );
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return editProfile;
-      },
-    );
-  }
-
+  
   Text _noPostsText() {
     TextStyle ts = TextStyle(
       fontFamily: 'Spectral',
@@ -505,6 +438,7 @@ class ProfilePageState extends State<ProfilePage> {
                   _buildButtons(context),
                   _buildNoPosts(context),
                   _makeBody(context),
+
                 ],
               ),
             ),
