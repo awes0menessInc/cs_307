@@ -18,12 +18,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.white,
       ),
-      home: Home(),
-      // home: Splash(),
-      // routes: <String, WidgetBuilder> {
-      //   '/login': (BuildContext context) => Login(),
-      //   '/register': (BuildContext context) => Register(),
-      // },
+      //home: Home(),
+      home: Splash(),
+      routes: <String, WidgetBuilder> {
+        '/login': (BuildContext context) => Login(),
+        '/register': (BuildContext context) => Register(),
+      },
       debugShowCheckedModeBanner: false,
     );
   }
