@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+
 import 'home.dart';
 
 class Register extends StatefulWidget {
@@ -52,8 +54,10 @@ class _RegisterState extends State<Register> {
   }
 
   String usernameValidator (String username) {
-
   }
+
+  // final HttpsCallable add_user = CloudFunctions.instance.getHttpsCallable(functionName: 'addUser',);
+  
 
   @override
   Widget build(BuildContext context) {
@@ -135,8 +139,16 @@ class _RegisterState extends State<Register> {
                             "uid": currentUser.uid,
                             "firstName": firstNameInputController.text,
                             "lastName": lastNameInputController.text,
+                            "username": usernameInputController.text,
                             "email": emailInputController.text,
                           })
+                          // .then((currentUser) async => await add_user.call(<String, dynamic>{
+                          //   'uid': currentUser.uid,
+                          //   'firstName': firstNameInputController.text,
+                          //   'lastName': lastNameInputController.text,
+                          //   'userName': usernameInputController.text,
+                          //   'email': emailInputController,
+                          // })
                           .then((result) => {
                             Navigator.pushAndRemoveUntil(
                               context,
@@ -152,8 +164,8 @@ class _RegisterState extends State<Register> {
                               emailInputController.clear(),
                               pwdInputController.clear(),
                               confirmPwdInputController.clear()
-                          }).catchError((err) => print(err))
-                        ).catchError((err) => print(err));
+                          })).catchError((err) => print(err))
+                        .catchError((err) => print(err));
                       } else {
                         showDialog(
                           context: context,

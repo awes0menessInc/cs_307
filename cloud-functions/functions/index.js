@@ -4,8 +4,6 @@ const user = require("./user");
 const microblog = require("./microblog");
 
 
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
 
 exports.addUser = functions.https.onRequest((data, context) => {

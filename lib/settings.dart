@@ -7,6 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:twistter/timeline.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:twistter/profile.dart';
+
+import 'login.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -14,6 +17,8 @@ class Settings extends StatefulWidget {
 }
 
 class SettingsState extends State<Settings> {
+  FirebaseUser currentUser;
+
   String _firstName = "";
   String _lastName = "";
   String _bio = "";
@@ -61,6 +66,14 @@ class SettingsState extends State<Settings> {
     });
   }
 
+  void getCurrentUser() async {
+    currentUser = await FirebaseAuth.instance.currentUser();
+  }
+  
+  void _logout() async {
+    await FirebaseAuth.instance.signOut();
+  }
+
   String emailValidator(String value) {
     Pattern emailPattern =
       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
@@ -80,6 +93,40 @@ class SettingsState extends State<Settings> {
     } else {
       return null;
     }
+  }
+
+   void _showDialog() {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: Text("Delete account?"),
+          content: Text('Are you sure you want to delete your account? This will permanently remove all Twistter data associated with your account.'),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            FlatButton(
+              child: Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: new Text(
+                "Delete Account",
+                style: TextStyle(
+                    color: Color(0xff990C04)
+                )
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Widget _buildSettings() {
@@ -174,7 +221,7 @@ class SettingsState extends State<Settings> {
             child: RaisedButton(
               child: Text("Delete Account"),
               onPressed: () {
-                
+                _showDialog();
               },
             ),
           ),
@@ -187,7 +234,19 @@ class SettingsState extends State<Settings> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Edit Profile")
+          title: Text("Edit Profile"),
+          // Temporary Logout Button
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.exit_to_app),
+                  onPressed: () {
+                    _logout();
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => Login()));
+                  },
+                )
+              ],
         ),
         body: Container(
             padding: const EdgeInsets.all(20.0),

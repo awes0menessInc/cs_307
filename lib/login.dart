@@ -14,12 +14,14 @@ class _LoginState extends State<Login> {
   final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
   TextEditingController emailInputController;
   TextEditingController pwdInputController;
+  bool loading;
 
   @override
   initState() {
     emailInputController = new TextEditingController();
     pwdInputController = new TextEditingController();
     super.initState();
+    loading = false;
   }
 
   String emailValidator(String value) {
@@ -84,6 +86,9 @@ class _LoginState extends State<Login> {
                   color: Theme.of(context).primaryColor,
                   textColor: Colors.black,
                   onPressed: () {
+                    setState(() {
+                      loading = !loading;
+                    });
                     if (_loginFormKey.currentState.validate()) {
                       FirebaseAuth.instance.signInWithEmailAndPassword(
                         email: emailInputController.text,
@@ -123,6 +128,10 @@ class _LoginState extends State<Login> {
                   onPressed: () {
                     Navigator.pushNamed(context, "/register");
                   },
+                ),
+                Container(
+                  alignment: Alignment.bottomCenter,
+                  child: loading ? LinearProgressIndicator() : Container(height:0)
                 )
               ],
             ),

@@ -4,7 +4,6 @@ import 'package:twistter/newPost.dart';
 import 'timeline.dart';
 import 'profile.dart';
 import 'settings.dart';
-// import 'profile_copy.dart';
 import 'newPost.dart';
 import 'login.dart';
 
@@ -17,7 +16,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  FirebaseUser currentUser;
+  static FirebaseUser currentUser;
   
   @override
   void initState() {
@@ -29,9 +28,9 @@ class _HomeState extends State<Home> {
     currentUser = await FirebaseAuth.instance.currentUser();
   }
 
-  void _logout(uid) async {
-    await FirebaseAuth.instance.signOut();
-  }
+  // void _logout(uid) async {
+  //   await FirebaseAuth.instance.signOut();
+  // }
 
   @override
   Widget build (BuildContext context) {
@@ -51,18 +50,18 @@ class _HomeState extends State<Home> {
                     fontStyle: FontStyle.italic,
                     fontSize: 27),
               ),
-              // Temporary Logout Button
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.dehaze),
-                  onPressed: () {
-                    _logout(currentUser.uid);
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => Login()));
-                  },
-                )
-              ],
+              // // Temporary Logout Button
+              // actions: <Widget>[
+              //   IconButton(
+              //     icon: Icon(Icons.dehaze),
+              //     onPressed: () {
+              //       _logout(currentUser.uid);
+              //       Navigator.pushReplacement(
+              //         context,
+              //         MaterialPageRoute(builder: (context) => Login()));
+              //     },
+              //   )
+              // ],
               backgroundColor: Color.fromRGBO(85, 176, 189, 1.0),
             ),
             floatingActionButton: FloatingActionButton(
