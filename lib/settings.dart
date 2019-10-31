@@ -176,7 +176,6 @@ class SettingsState extends State<Settings> {
     bioController.text = _bio;
     weblinkController.text = _weblink;
     return Form(
-<<<<<<< HEAD
       key: _editFormKey,
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -257,23 +256,8 @@ class SettingsState extends State<Settings> {
               ),
               onPressed: () {
                 _showDialog();
-=======
-        key: _editFormKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            TextFormField(
-              decoration:
-                  InputDecoration(labelText: 'First Name', hintText: "John"),
-              controller: fnameController,
-              validator: (value) {
-                if (value.length == 0) {
-                  return "Please enter your first name.";
-                }
-                return null;
->>>>>>> 7a84f74d3c537832222c3916806369927c3aaf2a
               },
-            ),
+            ),),
             TextFormField(
               decoration:
                   InputDecoration(labelText: 'Last Name', hintText: "Doe"),
