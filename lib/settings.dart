@@ -60,9 +60,34 @@ class SettingsState extends State<Settings> {
           _lastName = snapshot["lastName"];
           _email = snapshot["email"];
           _uid = snapshot["uid"];
-          print(_uid);
+          if (snapshot.data.containsKey("uid")) {
+            _bio = snapshot["bio"];
+          }
+          if (snapshot.data.containsKey("website")) {
+            _weblink = snapshot["website"];
+          }
+          if (snapshot.data.containsKey("birthday")) {
+            _bday = snapshot["birthday"];
+          }
         })
       })
+    });
+  }
+
+  Future deleteUser() async {
+    Firestore.instance.collection("users").document(_uid).delete();
+    FirebaseAuth.instance.currentUser().then((currentUser) => {
+      currentUser.delete()
+    });
+  }
+  Future deleteMicroblogs() async{
+    await Firestore.instance.collection("microblogs").getDocuments().then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) => {
+        if (f.data["userId"] == _uid) {
+          print(f.documentID),
+          Firestore.instance.collection("microblogs").document(f.documentID).delete()
+        }
+      });
     });
   }
 
@@ -120,7 +145,9 @@ class SettingsState extends State<Settings> {
                 )
               ),
               onPressed: () {
-                Navigator.of(context).pop();
+                deleteUser();
+                deleteMicroblogs();
+                Navigator.pushReplacementNamed(context, "/login");
               },
             ),
           ],
@@ -133,6 +160,9 @@ class SettingsState extends State<Settings> {
     fnameController.text = _firstName;
     lnameController.text = _lastName;
     emailController.text = _email;
+    bdayController.text = _bday;
+    bioController.text = _bio;
+    weblinkController.text = _weblink;
     return Form(
       key: _editFormKey,
       child: Column(
@@ -211,7 +241,7 @@ class SettingsState extends State<Settings> {
                     ),
                   );
                   Scaffold.of(context).showSnackBar(snackBar);
-                  print("Submitted Pofile Edits"); // TODO: Connect to back end   
+                  print("Submitted Pofile Edits"); 
                 }
               },
             ),
