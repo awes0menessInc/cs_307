@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:twistter/home.dart';
-import 'package:twistter/timeline.dart';
+import 'package:twistter/profile.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -19,6 +19,7 @@ class _NewPostState extends State<NewPost> {
   var dropdownvalue;
   var top = "";
   TextEditingController postEditingController;
+  ProfilePageState pps = new ProfilePageState();
 
   initState() {
     postEditingController = new TextEditingController();
@@ -36,7 +37,9 @@ class _NewPostState extends State<NewPost> {
     super.initState();
   }
 
+
   Widget build(BuildContext context) {
+    pps.getUserInfo();
     return Scaffold(
         appBar: AppBar(
           title: Text("NewPost"),
@@ -63,6 +66,7 @@ class _NewPostState extends State<NewPost> {
                                 dropdownvalue
                               ], // fix topics list and ui part
                               'userId': currentUser.uid,
+                              // 'userName': getUsername(),
                             }))
                         .then((result) => {
                               Navigator.pushAndRemoveUntil(

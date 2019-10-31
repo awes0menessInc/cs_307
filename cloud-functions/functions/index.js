@@ -18,13 +18,6 @@ exports.deleteUser = functions.https.onRequest((data, context) => {
   user.deleteUser(data, context, admin);
 });
 
-<<<<<<< HEAD
-=======
-exports.updateProfile = functions.https.onRequest((data, context) => {
-  user.updateProfile(data, context, admin);
-});
-
->>>>>>> fc704bd9ad8f05f66becf115214b6079f40556bb
 exports.testGet = functions.https.onRequest((req, res) => {
   var contents = [];
   var db = admin.firestore();

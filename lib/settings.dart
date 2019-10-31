@@ -36,23 +36,22 @@ class SettingsState extends State<Settings> {
   @override
   initState() {
     super.initState();
-    _getUser();
   }
 
-  Future _getUser() async {
-     FirebaseAuth.instance.currentUser().then((currentuser) => {
-      Firestore.instance.collection("users").
-      document(currentuser.uid).
-      get().
-      then((DocumentSnapshot snapshot) => {
-        setState((){
-          _firstName = snapshot["firstName"];
-          _lastName = snapshot["lastName"];
-          _email = snapshot["email"];
-        })
-      })
-    });
-  }
+  // Future _getUser() async {
+  //    FirebaseAuth.instance.currentUser().then((currentuser) => {
+  //     Firestore.instance.collection("users").
+  //     document(currentuser.uid).
+  //     get().
+  //     then((DocumentSnapshot snapshot) => {
+  //       setState((){
+  //         _firstName = snapshot["firstName"];
+  //         _lastName = snapshot["lastName"];
+  //         _email = snapshot["email"];
+  //       })
+  //     })
+  //   });
+  // }
 
   void getCurrentUser() async {
     currentUser = await FirebaseAuth.instance.currentUser();
@@ -174,7 +173,25 @@ class SettingsState extends State<Settings> {
             },
           ),
           Padding(
-            padding: EdgeInsets.only(bottom: 10.0),
+            padding: EdgeInsets.all(10.0),
+            child: RaisedButton(
+              child: Text("Save changes"),
+              onPressed: () {
+                Scaffold.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("Success! Your Changes have been saved."),
+                  action: SnackBarAction(
+                    label: 'Dissmiss',
+                    textColor: Colors.lightBlue,
+                    onPressed: () { 
+                      Scaffold.of(context).hideCurrentSnackBar();
+                    })
+                ));
+              },
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(10.0),
             child: RaisedButton(
               child: Text(
                 "Delete Account",
@@ -196,7 +213,9 @@ class SettingsState extends State<Settings> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Edit Profile"),
+          title: Text("Edit Profile",
+            style: TextStyle(color: Colors.black)),
+          backgroundColor: Colors.white,
           // Temporary Logout Button
               actions: <Widget>[
                 IconButton(
