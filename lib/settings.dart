@@ -7,12 +7,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:twistter/timeline.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'login.dart';
+
 class Settings extends StatefulWidget {
   @override
   SettingsState createState() => SettingsState();
 }
 
 class SettingsState extends State<Settings> {
+  FirebaseUser currentUser;
+
   String _firstName = "";
   String _lastName = "";
   String _bio = "";
@@ -47,6 +51,14 @@ class SettingsState extends State<Settings> {
         })
       })
     });
+  }
+
+  void getCurrentUser() async {
+    currentUser = await FirebaseAuth.instance.currentUser();
+  }
+  
+  void _logout() async {
+    await FirebaseAuth.instance.signOut();
   }
 
   String emailValidator(String value) {
@@ -167,7 +179,19 @@ class SettingsState extends State<Settings> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Edit Profile")
+          title: Text("Edit Profile"),
+          // Temporary Logout Button
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.exit_to_app),
+                  onPressed: () {
+                    _logout();
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => Login()));
+                  },
+                )
+              ],
         ),
         body: Container(
             padding: const EdgeInsets.all(20.0),

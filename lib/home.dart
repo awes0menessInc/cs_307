@@ -29,9 +29,9 @@ class _HomeState extends State<Home> {
     currentUser = await FirebaseAuth.instance.currentUser();
   }
 
-  void _logout(uid) async {
-    await FirebaseAuth.instance.signOut();
-  }
+  // void _logout(uid) async {
+  //   await FirebaseAuth.instance.signOut();
+  // }
 
   @override
   Widget build (BuildContext context) {
@@ -51,18 +51,18 @@ class _HomeState extends State<Home> {
                     fontStyle: FontStyle.italic,
                     fontSize: 27),
               ),
-              // Temporary Logout Button
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.dehaze),
-                  onPressed: () {
-                    _logout(currentUser.uid);
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => Login()));
-                  },
-                )
-              ],
+              // // Temporary Logout Button
+              // actions: <Widget>[
+              //   IconButton(
+              //     icon: Icon(Icons.dehaze),
+              //     onPressed: () {
+              //       _logout(currentUser.uid);
+              //       Navigator.pushReplacement(
+              //         context,
+              //         MaterialPageRoute(builder: (context) => Login()));
+              //     },
+              //   )
+              // ],
               backgroundColor: Color.fromRGBO(85, 176, 189, 1.0),
             ),
             floatingActionButton: FloatingActionButton(
