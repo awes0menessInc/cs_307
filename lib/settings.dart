@@ -71,6 +71,40 @@ class SettingsState extends State<Settings> {
     }
   }
 
+   void _showDialog() {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: Text("Delete account?"),
+          content: Text('Are you sure you want to delete your account? This will permanently remove all Twistter data associated with your account.'),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            FlatButton(
+              child: Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: new Text(
+                "Delete Account",
+                style: TextStyle(
+                    color: Color(0xff990C04)
+                )
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildSettings() {
     fnameController.text = _firstName;
     lnameController.text = _lastName;
@@ -119,17 +153,17 @@ class SettingsState extends State<Settings> {
                 controller: bdayController,
                 validator: bdayValidator,
               ),
-<<<<<<< HEAD
               Padding(
                 padding: EdgeInsets.only(bottom: 10.0),
                 child: RaisedButton(
-                  child: Text("Save Changes"),
+                  child: Text('Save Changes'),
                   onPressed: () {
                     final snackBar = SnackBar(
                       content: Text('Success! Your profile edits were submitted.'),
                       duration: const Duration(seconds: 10),
                       action: SnackBarAction(
                         label: 'Dismiss',
+                        textColor: Color(0xff55b0bd),
                         onPressed: () {
                           Scaffold.of(context).hideCurrentSnackBar();
                         },
@@ -138,45 +172,41 @@ class SettingsState extends State<Settings> {
                     Scaffold.of(context).showSnackBar(snackBar); // TODO: Connect to back end
                   },
                 ),
-=======
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Website', hintText: "www.example.com"),
-                controller: weblinkController,
-                validator: (value) {
-                  return null;
-                },
->>>>>>> 8e248114f3c6e653c4a5cf1ff296147cece5e332
               ),
+          // Padding(
+          //   padding: EdgeInsets.only(bottom: 10.0),
+          //   child: RaisedButton(
+          //     child: Text("Save Changes"),
+          //     onPressed: () {
+          //       // TODO: call cloud functions
+          //       if (_editFormKey.currentState.validate()) {
+          //         final snackBar = SnackBar(
+          //           content: Text('Profile changes saved successfully'),
+          //           duration: const Duration(seconds: 10),
+          //           action: SnackBarAction(
+          //             label: 'Dismiss',
+          //             onPressed: () {
+          //               Scaffold.of(context).hideCurrentSnackBar();
+          //             },
+          //           ),
+          //         );
+          //         Scaffold.of(context).showSnackBar(snackBar);
+          //         print("Submitted Pofile Edits"); // TODO: Connect to back end   
+          //       }
+          //     },
+          //   ),
+          // ),
           Padding(
             padding: EdgeInsets.only(bottom: 10.0),
             child: RaisedButton(
-              child: Text("Save Changes"),
+              child: Text(
+                "Delete Account",
+                style: TextStyle(
+                    color: Color(0xff990C04)
+                )
+              ),
               onPressed: () {
-                // TODO: call cloud functions
-                if (_editFormKey.currentState.validate()) {
-                  final snackBar = SnackBar(
-                    content: Text('Profile changes saved successfully'),
-                    duration: const Duration(seconds: 10),
-                    action: SnackBarAction(
-                      label: 'Dismiss',
-                      onPressed: () {
-                        Scaffold.of(context).hideCurrentSnackBar();
-                      },
-                    ),
-                  );
-                  Scaffold.of(context).showSnackBar(snackBar);
-                  print("Submitted Pofile Edits"); // TODO: Connect to back end   
-                }
-              },
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(bottom: 10.0),
-            child: RaisedButton(
-              child: Text("Delete Account"),
-              onPressed: () {
-                
+                _showDialog();
               },
             ),
           ),

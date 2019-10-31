@@ -5,7 +5,6 @@ import 'splash.dart';
 import 'home.dart';
 import 'register.dart';
 import 'login.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
 
 void main() => runApp(MyApp());
@@ -17,6 +16,7 @@ class MyApp extends StatelessWidget {
       title: 'twistter',
       theme: ThemeData(
         primaryColor: Colors.white,
+        accentColor: Color(0xff55b0bd)
       ),
       // home: Home(),
       home: Splash(),

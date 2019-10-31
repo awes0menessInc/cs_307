@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:twistter/home.dart';
+import 'package:twistter/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -13,43 +13,27 @@ class ProfilePage extends StatefulWidget {
 }
 
 class ProfilePageState extends State<ProfilePage> {
-   static getCurrentUid() async {
-    FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
-    String currentUid = currentUser.uid.toString();
-    return currentUid;
-  }
-  static String currentUid = getCurrentUid();
-  String firstName;
-  String lastName;
-  String bio;
-  int followers;
-  int following;
+  // static getCurrentUid() async {
+  //   FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
+  //   String currentUid = currentUser.uid.toString();
+  //   return currentUid;
+  // }
 
-    Future<QuerySnapshot> getData() async{
-      Query userQuery = Firestore.instance.collection('users').where('uid', isEqualTo: currentUid);
-      print("The current uid is " + currentUid + " and the matching user document is: ");
-      QuerySnapshot docSnap = await userQuery.getDocuments();
-      print(docSnap);
-      if (docSnap.documents.length > 0){
-        firstName = docSnap.documents[0].data['firstName'];
-        lastName = docSnap.documents[0].data['lastName'];
-        followers = docSnap.documents[0].data['followers'];
-        print("The name of the current user is " + firstName);
-      }
-      else {
-        print("No document matches the uid of " + currentUid);
-      }
-      return docSnap;
-    }
+  // static String currentUid = getCurrentUid();
+  // String firstName;
+  // String lastName;
+  // String bio;
+  // int followers;
+  // int following;
 
-    // int get age {
-    //     return vehicleAge;
-    // }
+  // int get age {
+  //     return vehicleAge;
+  // }
 
-    // String getFirstName() async {
-    //   Future<QuerySnapshot> currentUserDoc = getData();
-    //   String firstName = currentUserDoc.documents[0].data['firstName'];
-    // }
+  // String getFirstName() async {
+  //   Future<QuerySnapshot> currentUserDoc = getData();
+  //   String firstName = currentUserDoc.documents[0].data['firstName'];
+  // }
 
   // FirebaseUser currentUser;
   // bool isSignedIn = false;
@@ -72,23 +56,17 @@ class ProfilePageState extends State<ProfilePage> {
   //     _firstName = currentUser.firstName.toString();
   //   }
   // }
-  
-<<<<<<< HEAD
-  // final String _firstName = "Rebecca";
-  final String _lastName = "Keys";
-  final String _username = "keyspleasee";
-=======
-  String _firstName = "Rebecca";
-  String _lastName = "Keys";
+
+  String _firstName;
+  String _lastName;
   String _username = "keyspleasee";
->>>>>>> 8e248114f3c6e653c4a5cf1ff296147cece5e332
   // final String _status = "Purdue Student";
-   String _bio =
+  String _bio =
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sed odio morbi quis commodo odio. Integer eget aliquet nibh praesent tristique. Semper quis lectus nulla at volutpat diam. Fringilla est ullamcorper eget nulla facilisi etiam.";
   String _posts = "0";
   String _followers = "450";
   String _following = "127";
-  String _email = "";
+  String _email;
   // String _viewingUser = "Rebecca Keys"; // currently a mock of the logged in user.
   bool pressed = false;
   bool isAccountOwner = true; //TODO: Connect to a function on the back end
@@ -96,26 +74,65 @@ class ProfilePageState extends State<ProfilePage> {
   @override
   initState() {
     super.initState();
-    _getUser();
   }
 
+                        // getUserInfo() async {
+                        //   Firestore.instance
+                        //       .collection('users')
+                        //       .document(currentuser.uid)
+                        //       .get()
+                        //       .then((documentSnapshot) {
+                        //     if (documentSnapshot.exists) {
+                        //       var data = documentSnapshot.data;
+                        //       firstName = data['firstName'];
+                        //       print("The name of the current user is " + firstName);
+                        //       return documentSnapshot;
+                        //     } else {
+                        //       print('document not found');
+                        //       return null;
+                        //     }
+                        //   });
+                        // }
+
+  // Future<QuerySnapshot> getData() async {
+  //   Query userQuery = Firestore.instance
+  //       .collection('users')
+  //       .where('uid', isEqualTo: currentUid);
+  //   print("The current uid is " +
+  //       currentUid +
+  //       " and the matching user document is: ");
+  //   QuerySnapshot docSnap = await userQuery.getDocuments();
+  //   print(docSnap);
+  //   if (docSnap.documents.length > 0) {
+  //     firstName = docSnap.documents[0].data['firstName'];
+  //     lastName = docSnap.documents[0].data['lastName'];
+  //     followers = docSnap.documents[0].data['followers'];
+  //     print("The name of the current user is " + firstName);
+  //   } else {
+  //     print("No document matches the uid of " + currentUid);
+  //   }
+  //   return docSnap;
+  // }
+
   Future _getUser() async {
-     FirebaseAuth.instance.currentUser().then((currentuser) => {
-      Firestore.instance.collection("users").
-      document(currentuser.uid).
-      get().
-      then((DocumentSnapshot snapshot) => {
-        setState((){
-          _firstName = snapshot["firstName"];
-          _lastName = snapshot["lastName"];
-          _email = snapshot["email"];
-        })
-      })
-    });
+    FirebaseAuth.instance.currentUser().then((currentuser) => {
+          Firestore.instance
+              .collection("users")
+              .document(currentuser.uid)
+              .get()
+              .then((DocumentSnapshot snapshot) => {
+                print('Current user is '+ currentuser.uid),
+                    setState(() {
+                      _firstName = snapshot['firstName'];
+                      _lastName = snapshot['lastName'];
+                      _email = snapshot['email'];
+                    })
+                  })
+        });
   }
 
   Widget _buildProfileImage() {
-    getData();
+    // getData();
     return Center(
       child: Container(
         width: 140.0,
@@ -125,28 +142,24 @@ class ProfilePageState extends State<ProfilePage> {
             color: Color(0xff55b0bd),
             borderRadius: BorderRadius.circular(80.0),
           ),
-          child: Center (
-          child: Text('${firstName[0]}' + '${_lastName[0]}',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 50.0
-              )
+          child: Center(
+            child: Text('${_firstName[0]}' + '${_lastName[0]}',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 50.0)),
+            // TODO: Add functionality to display profile picture if the user has uploaded one
+            // decoration: BoxDecoration(
+            //   // image: DecorationImage(
+            //   //   image: AssetImage('lib/assets/images/profile.jpg'),
+            //     // fit: BoxFit.cover,
+            //   ),
+            //   borderRadius: BorderRadius.circular(80.0),
+            //   border: Border.all(
+            //     color: Colors.white,
+            //     width: 2.0,
+            //   ),
+            // ),
           ),
-          // TODO: Add functionality to display profile picture if the user has uploaded one
-          // decoration: BoxDecoration(
-          //   // image: DecorationImage(
-          //   //   image: AssetImage('lib/assets/images/profile.jpg'),
-          //     // fit: BoxFit.cover,
-          //   ),
-          //   borderRadius: BorderRadius.circular(80.0),
-          //   border: Border.all(
-          //     color: Colors.white,
-          //     width: 2.0,
-          //   ),
-          // ),
         ),
-      ),
       ),
     );
   }
@@ -157,17 +170,14 @@ class ProfilePageState extends State<ProfilePage> {
 
   Widget _buildFullName(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10.0),
-      child: Text(
-        firstName + ' ' + _lastName + ' | @'+ _username,
-        style: TextStyle(
-        fontFamily: 'Montserrat',
-        color: Colors.black,
-        fontSize: 20.0,
-        fontWeight: FontWeight.w500,
-        )
-      )
-    );
+        margin: EdgeInsets.symmetric(vertical: 10.0),
+        child: Text(_firstName + ' ' + _lastName + ' | @' + _username,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              color: Colors.black,
+              fontSize: 20.0,
+              fontWeight: FontWeight.w500,
+            )));
   }
 
   // Widget _buildStatus(BuildContext context) {
@@ -236,10 +246,11 @@ class ProfilePageState extends State<ProfilePage> {
         //   },
         // ),
         children: <Widget>[
-          _buildStatItem("Followers", _followers), //userDoc is the document in Firestore of the currently logged in user
+          _buildStatItem("Followers",
+              _followers), //userDoc is the document in Firestore of the currently logged in user
           // TODO: Add a function that gets the name of the doucment for the currently logged in user and stores it as 'userdoc' (match uid to the right doc)
           _buildStatItem("Following", _following),
-          _buildStatItem("Posts", _posts), 
+          _buildStatItem("Posts", _posts),
         ],
       ),
     );
@@ -247,15 +258,14 @@ class ProfilePageState extends State<ProfilePage> {
 
   Widget _buildDemoButton() {
     return FlatButton(
-      color: Colors.white,
-      onPressed: () {
-        setState(() { isAccountOwner = !isAccountOwner; });
-      },
-      child: Text(
-        'For Demo Purposes Only',
-        style: TextStyle(color: Colors.red)
-      )
-      );
+        color: Colors.white,
+        onPressed: () {
+          setState(() {
+            isAccountOwner = !isAccountOwner;
+          });
+        },
+        child: Text('For Demo Purposes Only',
+            style: TextStyle(color: Colors.red)));
   }
 
   Widget _buildBio(BuildContext context) {
@@ -288,23 +298,18 @@ class ProfilePageState extends State<ProfilePage> {
   }
 
   Color getColor(bool pressed) {
-    if (pressed){
+    if (pressed) {
       return Color(0xffd1d1d1);
     } else {
       return Color(0xff077188);
     }
   }
-  Text getText (bool pressed) {
+
+  Text getText(bool pressed) {
     if (pressed) {
-      return Text(
-        'Following',
-        style: TextStyle(color: Colors.black)
-      );
+      return Text('Following', style: TextStyle(color: Colors.black));
     } else {
-      return Text(
-        'Follow',
-        style: TextStyle(color: Colors.white)
-      );
+      return Text('Follow', style: TextStyle(color: Colors.white));
     }
   }
 
@@ -313,116 +318,100 @@ class ProfilePageState extends State<ProfilePage> {
         padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         child: Column(
           children: <Widget>[
+            Row(children: <Widget>[
+              Visibility(
+                  visible: !isAccountOwner,
+                  child: Expanded(
+                      child: RaisedButton(
+                          color: getColor(pressed),
+                          onPressed: () {
+                            setState(() {
+                              pressed = !pressed;
+                            });
+                          },
+                          shape: RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(15.0)),
+                          child: getText(pressed))))
+            ]),
             Row(
               children: <Widget>[
                 Visibility(
-                  visible: !isAccountOwner,
+                  visible: isAccountOwner,
                   child: Expanded(
                     child: RaisedButton(
-                    color: getColor(pressed),
-                    onPressed: () {
-                      setState(() {
-                        pressed = !pressed;
-                      });
-                    },
-                    shape: RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(15.0)),
-                    child: getText(pressed)
-                    ) 
-                  )
-                )
-              ]
-            ),
-          Row(
-            children: <Widget>[
-              Visibility(
-                visible: isAccountOwner,
-                child: Expanded(
-                  child: RaisedButton(
-                    child: Text("Delete Account"),
-                    color: Color(0xffd1d1d1),
-                    shape: RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(15.0)),
-                    onPressed: () {
-                      print("Clicked Delete");
-                    },
+                      child: Text("Delete Account"),
+                      color: Color(0xffd1d1d1),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(15.0)),
+                      onPressed: () {
+                        print("Clicked Delete");
+                      },
+                    ),
                   ),
-                ),
-              )
-            ],
-          )
-        ],
-      ));
+                )
+              ],
+            )
+          ],
+        ));
   }
-<<<<<<< HEAD
 
-  static void showEdit(BuildContext context) { // TODO: replace with call to actual profile edit UI
+  static void showEdit(BuildContext context) {
+    // TODO: replace with call to actual profile edit UI
     // context: context;
     // builder: (BuildContext context) {
-      AlertDialog editProfile = AlertDialog(
-        title: new Text("Edit Profile"),
-        content: Form(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(bottom: 30.0, right: 60.0),
-                child: TextFormField(
-                  decoration: new InputDecoration(
-                    hintText: 'First Name'
-                  ),
-                ),
+    AlertDialog editProfile = AlertDialog(
+      title: new Text("Edit Profile"),
+      content: Form(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(bottom: 30.0, right: 60.0),
+              child: TextFormField(
+                decoration: new InputDecoration(hintText: 'First Name'),
               ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 20.0, right: 60.0),
-                child: TextFormField(
-                  decoration: new InputDecoration(
-                    hintText: 'Last Name'
-                  ),
-                ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: 20.0, right: 60.0),
+              child: TextFormField(
+                decoration: new InputDecoration(hintText: 'Last Name'),
               ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 20.0, right: 60.0),
-                child: TextFormField(
-                  decoration: new InputDecoration(
-                    hintText: 'Email '
-                  ),
-                ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: 20.0, right: 60.0),
+              child: TextFormField(
+                decoration: new InputDecoration(hintText: 'Email '),
               ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 20.0, right: 60.0),
-                child: TextFormField(
-                  decoration: new InputDecoration(
-                    hintText: 'Bio'
-                  ),
-                ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: 20.0, right: 60.0),
+              child: TextFormField(
+                decoration: new InputDecoration(hintText: 'Bio'),
               ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 10.0),
-                child: RaisedButton(
-                  child: Text("Submit"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    print("Submitted Pofile Edits"); // TODO: Connect to back end
-                  },
-                ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: 10.0),
+              child: RaisedButton(
+                child: Text("Submit"),
+                onPressed: () {
+                  Navigator.pop(context);
+                  print("Submitted Pofile Edits"); // TODO: Connect to back end
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      );
-      // show the dialog
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return editProfile;
-        },
-      );
-    }
+      ),
+    );
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return editProfile;
+      },
+    );
+  }
 
-=======
-  
->>>>>>> 8e248114f3c6e653c4a5cf1ff296147cece5e332
   Text _noPostsText() {
     TextStyle ts = TextStyle(
       fontFamily: 'Spectral',
@@ -433,63 +422,59 @@ class ProfilePageState extends State<ProfilePage> {
 
     if (isAccountOwner) {
       return Text(
-        "You haven't posted yet. Click the new post button to create your first post!",
-        textAlign: TextAlign.center,
-        style: ts);
-    }
-    else {
-      return Text("$firstName hasn't posted yet. Check back later!",
-        textAlign: TextAlign.center,
-        style: ts);
+          "You haven't posted yet. Click the new post button to create your first post!",
+          textAlign: TextAlign.center,
+          style: ts);
+    } else {
+      return Text("$_firstName hasn't posted yet. Check back later!",
+          textAlign: TextAlign.center, style: ts);
     }
   }
 
   Widget _buildNoPosts(BuildContext context) {
     return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      padding: EdgeInsets.all(8.0),
-      child: _noPostsText()
-    );
+        color: Theme.of(context).scaffoldBackgroundColor,
+        padding: EdgeInsets.all(8.0),
+        child: _noPostsText());
   }
 
   Widget _makeListTile(BuildContext context) {
-    return ListTile( 
-      contentPadding : EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-      leading : Container(
+    return ListTile(
+      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+      leading: Container(
         padding: EdgeInsets.only(right: 5.0),
         child: Icon(Icons.account_circle,
-        size: 45.0,
-        color: Color.fromRGBO(5, 62, 66, 1.0)),
+            size: 45.0, color: Color.fromRGBO(5, 62, 66, 1.0)),
       ),
       title: Text(
         "BoilerMaker",
-        style: TextStyle(color: Color.fromRGBO(7, 113, 136, 1.0), fontWeight: FontWeight.bold, fontSize: 12),
+        style: TextStyle(
+            color: Color.fromRGBO(7, 113, 136, 1.0),
+            fontWeight: FontWeight.bold,
+            fontSize: 12),
       ),
-      subtitle: Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      style: TextStyle(fontSize: 11)),
-
+      subtitle: Text(
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+          style: TextStyle(fontSize: 11)),
       trailing: Row(
-        mainAxisSize : MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Icon(Icons.favorite,
-          size: 20.0),
-          Icon(Icons.add_comment,
-          size: 20.0)
-        ]
-      ),
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Icon(Icons.favorite, size: 20.0),
+            Icon(Icons.add_comment, size: 20.0)
+          ]),
     );
   }
 
   Widget _makeBody(BuildContext context) {
     return Container(
       child: ListView.builder(
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-      itemCount: 10,
-      itemBuilder: (BuildContext context, int index) {
-        _makeCard(context);
-      },
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemCount: 10,
+        itemBuilder: (BuildContext context, int index) {
+          _makeCard(context);
+        },
       ),
     );
   }
@@ -503,15 +488,15 @@ class ProfilePageState extends State<ProfilePage> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           color: Colors.white,
-          ),
+        ),
         child: _makeListTile(context),
       ),
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
+    _getUser();
     Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
       body: Stack(
@@ -533,7 +518,6 @@ class ProfilePageState extends State<ProfilePage> {
                   _buildButtons(context),
                   _buildNoPosts(context),
                   _makeBody(context),
-
                 ],
               ),
             ),
