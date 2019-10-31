@@ -8,12 +8,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:twistter/profile.dart';
 
+import 'login.dart';
+
 class Settings extends StatefulWidget {
   @override
   SettingsState createState() => SettingsState();
 }
 
 class SettingsState extends State<Settings> {
+  FirebaseUser currentUser;
+
   String _firstName = "";
   String _lastName = "";
   String _bio = "";
@@ -48,6 +52,14 @@ class SettingsState extends State<Settings> {
         })
       })
     });
+  }
+
+  void getCurrentUser() async {
+    currentUser = await FirebaseAuth.instance.currentUser();
+  }
+  
+  void _logout() async {
+    await FirebaseAuth.instance.signOut();
   }
 
   String emailValidator(String value) {
@@ -115,87 +127,52 @@ class SettingsState extends State<Settings> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'First Name', hintText: "John"),
-                controller: fnameController,
-                validator: (value) {
-                  if (value.length == 0) {
-                    return "Please enter your first name.";
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Last Name', hintText: "Doe"),
-                controller: lnameController,
-                validator: (value) {
-                  if (value.length == 0) {
-                    return "Please enter your last name.";
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Email', hintText: "example@email.com"),
-                controller: emailController,
-                validator: emailValidator
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Bio', hintText: "Bio"),
-                controller: bioController,
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Birthday', hintText: "10/18/2019"),
-                controller: bdayController,
-                validator: bdayValidator,
-              ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 10.0),
-                child: RaisedButton(
-                  child: Text('Save Changes'),
-                  onPressed: () {
-                    final snackBar = SnackBar(
-                      content: Text('Success! Your profile edits were submitted.'),
-                      duration: const Duration(seconds: 10),
-                      action: SnackBarAction(
-                        label: 'Dismiss',
-                        textColor: Color(0xff55b0bd),
-                        onPressed: () {
-                          Scaffold.of(context).hideCurrentSnackBar();
-                        },
-                      ),
-                    );
-                    Scaffold.of(context).showSnackBar(snackBar); // TODO: Connect to back end
-                  },
-                ),
-              ),
-          // Padding(
-          //   padding: EdgeInsets.only(bottom: 10.0),
-          //   child: RaisedButton(
-          //     child: Text("Save Changes"),
-          //     onPressed: () {
-          //       // TODO: call cloud functions
-          //       if (_editFormKey.currentState.validate()) {
-          //         final snackBar = SnackBar(
-          //           content: Text('Profile changes saved successfully'),
-          //           duration: const Duration(seconds: 10),
-          //           action: SnackBarAction(
-          //             label: 'Dismiss',
-          //             onPressed: () {
-          //               Scaffold.of(context).hideCurrentSnackBar();
-          //             },
-          //           ),
-          //         );
-          //         Scaffold.of(context).showSnackBar(snackBar);
-          //         print("Submitted Pofile Edits"); // TODO: Connect to back end   
-          //       }
-          //     },
-          //   ),
-          // ),
+            decoration: InputDecoration(
+              labelText: 'First Name', hintText: "John"),
+            controller: fnameController,
+            validator: (value) {
+              if (value.length == 0) {
+                return "Please enter your first name.";
+              }
+              return null;
+            },
+          ),
+          TextFormField(
+            decoration: InputDecoration(
+              labelText: 'Last Name', hintText: "Doe"),
+            controller: lnameController,
+            validator: (value) {
+              if (value.length == 0) {
+                return "Please enter your last name.";
+              }
+              return null;
+            },
+          ),
+          TextFormField(
+            decoration: InputDecoration(
+              labelText: 'Email', hintText: "example@email.com"),
+            controller: emailController,
+            validator: emailValidator
+          ),
+          TextFormField(
+            decoration: InputDecoration(
+              labelText: 'Bio', hintText: "Bio"),
+            controller: bioController,
+          ),
+          TextFormField(
+            decoration: InputDecoration(
+              labelText: 'Birthday', hintText: "10/18/2019"),
+            controller: bdayController,
+            validator: bdayValidator,
+          ),
+          TextFormField(
+            decoration: InputDecoration(
+              labelText: 'Website', hintText: "www.example.com"),
+            controller: weblinkController,
+            validator: (value) {
+              return null;
+            },
+          ),
           Padding(
             padding: EdgeInsets.only(bottom: 10.0),
             child: RaisedButton(
@@ -219,7 +196,19 @@ class SettingsState extends State<Settings> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Edit Profile")
+          title: Text("Edit Profile"),
+          // Temporary Logout Button
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.exit_to_app),
+                  onPressed: () {
+                    _logout();
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => Login()));
+                  },
+                )
+              ],
         ),
         body: Container(
             padding: const EdgeInsets.all(20.0),

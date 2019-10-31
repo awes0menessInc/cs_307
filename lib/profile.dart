@@ -121,7 +121,7 @@ class ProfilePageState extends State<ProfilePage> {
               .document(currentuser.uid)
               .get()
               .then((DocumentSnapshot snapshot) => {
-                print('Current user is '+ currentuser.uid),
+                print('current user is '+ currentuser.uid),
                     setState(() {
                       _firstName = snapshot['firstName'];
                       _lastName = snapshot['lastName'];
