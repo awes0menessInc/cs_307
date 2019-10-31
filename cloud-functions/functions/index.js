@@ -6,8 +6,6 @@ const microblog = require("./microblog");
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
 
 exports.addUser = functions.https.onRequest((data, context) => {
@@ -21,7 +19,6 @@ exports.updateUser = functions.https.onRequest((data, context) => {
 exports.deleteUser = functions.https.onRequest((data, context) => {
   user.deleteUser(data, context, admin);
 });
-
 
 exports.testGet = functions.https.onRequest((req, res) => {
   var contents = [];
