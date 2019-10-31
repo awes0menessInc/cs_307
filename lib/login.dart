@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'home.dart';
+import 'currentUserInfo.dart';
 
 class Login extends StatefulWidget {
   Login({Key key}) : super(key: key);
@@ -15,9 +16,11 @@ class _LoginState extends State<Login> {
   TextEditingController emailInputController;
   TextEditingController pwdInputController;
   bool loading;
+  CurrentUserInfo cui;
 
   @override
   initState() {
+    cui = new CurrentUserInfo();
     emailInputController = new TextEditingController();
     pwdInputController = new TextEditingController();
     super.initState();
@@ -120,6 +123,9 @@ class _LoginState extends State<Login> {
                         ).catchError((err) => print(err))
                       ).catchError((err) => print(err));
                     }
+                    print('running cui.getUserInfo...');
+                    cui.getUserInfo();
+                    print('ran cui.getUserInfo');
                   },
                 ),
                 Text("Don't have an account?"),
