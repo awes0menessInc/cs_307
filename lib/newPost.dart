@@ -18,22 +18,40 @@ class _NewPostState extends State<NewPost> {
   var t = ["Purdue", "Science"];
   var dropdownvalue;
   var top = "";
-  TextEditingController postEditingController;
+  FirebaseUser currentUser;
+  String _firstName = "";
+  String _lastName = "";
+  List<String> _topic = [""];
+  String _dropdownvalue = "";
+  TextEditingController postEditingController = new TextEditingController();
+
+  HttpsCallable postMicroblogCallable =
+      CloudFunctions.instance.getHttpsCallable(functionName: "postMicroblog");
 
   initState() {
-    postEditingController = new TextEditingController();
-    FirebaseAuth.instance.currentUser().then((currentUser) => Firestore.instance
-            .collection("users")
-            .document(currentUser.uid)
-            .get()
-            .then((DocumentSnapshot ds) {
-          var temp = ds.data["topics"];
-          for (var i = 0; i < temp.length(); i++) {
-            t.add(temp[i]);
-          }
-        }));
-    dropdownvalue = t[0];
     super.initState();
+    _getUser();
+  }
+
+  Future _getUser() async {
+    await FirebaseAuth.instance.currentUser().then((currentuser) => {
+          Firestore.instance
+              .collection("users")
+              .document(currentuser.uid)
+              .get()
+              .then((DocumentSnapshot snapshot) => {
+                    setState(() {
+                      _firstName = snapshot["firstName"];
+                      _lastName = snapshot["lastName"];
+                      _topic = List.from(snapshot["topics"]);
+                      _dropdownvalue = _topic[0];
+                    })
+                  })
+        });
+  }
+
+  void getCurrentUser() async {
+    currentUser = await FirebaseAuth.instance.currentUser();
   }
 
   Widget build(BuildContext context) {
@@ -63,6 +81,8 @@ class _NewPostState extends State<NewPost> {
                                 dropdownvalue
                               ], // fix topics list and ui part
                               'userId': currentUser.uid,
+                              'firstName': _firstName,
+                              'lastName': _lastName,
                             }))
                         .then((result) => {
                               Navigator.pushAndRemoveUntil(
@@ -104,17 +124,17 @@ class _NewPostState extends State<NewPost> {
                     maxLength: 307,
                   ),
                   DropdownButton<String>(
-                    items: t.map((String value) {
+                    items: _topic.map((String value) {
                       return new DropdownMenuItem<String>(
                         value: value,
                         child: new Text(value),
                       );
                     }).toList(),
-                    value: dropdownvalue,
+                    value: _dropdownvalue,
                     onChanged: (String val) {
                       top = val;
                       setState(() {
-                        dropdownvalue = val;
+                        _dropdownvalue = val;
                       });
                     },
                   ),
