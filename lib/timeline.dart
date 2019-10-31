@@ -31,11 +31,11 @@ class _ListPageState extends State<ListPage> {
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sed odio morbi quis commodo odio. Integer eget aliquet nibh praesent tristique. Semper quis lectus nulla at volutpat diam. Fringilla est ullamcorper eget nulla facilisi etiam.";
   bool pressed = false;
   List<Post> posts = [];
-
+  String _name = "";
   void showTags(BuildContext context, Post post) {
     AlertDialog viewTags = AlertDialog(
       shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(32.0))),
+          borderRadius: BorderRadius.all(Radius.circular(32.0))),
       title: Text('Post Tags',
           textAlign: TextAlign.center, style: TextStyle(fontFamily: 'Poppins')),
       content: Container(
@@ -55,25 +55,21 @@ class _ListPageState extends State<ListPage> {
                 .toList()),
       ),
       actions: <Widget>[
-        Container( 
+        Container(
           padding: EdgeInsets.only(right: 75),
-          child: 
-              ButtonBar(
-              alignment: MainAxisAlignment.center,
-              children: <Widget>[
-                    SizedBox(
-                      width: 100,
-                      child: new RaisedButton(
-                        color: Color.fromRGBO(85, 176, 189, 1.0),
-                        onPressed: () {
-                          Navigator.of(context, rootNavigator: true).pop('dialog');
-                        },
-                        child: Text('Close',
-                          style: TextStyle(color: Colors.white)),
-                      ),
-                    ),
-              ]
+          child:
+              ButtonBar(alignment: MainAxisAlignment.center, children: <Widget>[
+            SizedBox(
+              width: 100,
+              child: new RaisedButton(
+                color: Color.fromRGBO(85, 176, 189, 1.0),
+                onPressed: () {
+                  Navigator.of(context, rootNavigator: true).pop('dialog');
+                },
+                child: Text('Close', style: TextStyle(color: Colors.white)),
               ),
+            ),
+          ]),
         ),
       ],
     );
@@ -91,7 +87,7 @@ class _ListPageState extends State<ListPage> {
     snap.forEach((f) {
       postsList.add(new Post(
         content: f['content'],
-        username: f['userId'],
+        username: f['firstName'].toString() + " " + f['lastName'].toString(),
         topics: List.from(f['topics']),
       ));
     });
