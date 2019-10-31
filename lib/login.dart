@@ -125,7 +125,7 @@ class _LoginState extends State<Login> {
                     }
                     print('running cui.getUserInfo...');
                     cui.getUserInfo();
-                    print('ran cui.getUserInfo');
+                    print('ran cui.getUserInfo. ');
                   },
                 ),
                 Text("Don't have an account?"),

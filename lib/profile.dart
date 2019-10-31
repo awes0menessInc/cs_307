@@ -26,6 +26,7 @@ class ProfilePageState extends State<ProfilePage> {
   String _bio;
   
   // String _viewingUser = "Rebecca Keys"; // currently a mock of the logged in user.
+  
   bool pressed = false;
   bool isAccountOwner = true; //TODO: Connect to a function on the back end
   // CurrentUserInfo cui;
@@ -36,7 +37,7 @@ class ProfilePageState extends State<ProfilePage> {
     // cui = new CurrentUserInfo();
     this.getUserInfo();
     super.initState();
-    t.uidClicked;
+    // t.uidClicked;
   }
 
   Timeline t = new Timeline();
@@ -162,17 +163,17 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildDemoButton() {
-    return FlatButton(
-        color: Colors.white,
-        onPressed: () {
-          setState(() {
-            isAccountOwner = !isAccountOwner;
-          });
-        },
-        child: Text('For Demo Purposes Only',
-            style: TextStyle(color: Colors.red)));
-  }
+  // Widget _buildDemoButton() {
+  //   return FlatButton(
+  //       color: Colors.white,
+  //       onPressed: () {
+  //         setState(() {
+  //           isAccountOwner = !isAccountOwner;
+  //         });
+  //       },
+  //       child: Text('For Demo Purposes Only',
+  //           style: TextStyle(color: Colors.red)));
+  // }
 
   Widget _buildBio(BuildContext context) {
     TextStyle bioTextStyle = TextStyle(
