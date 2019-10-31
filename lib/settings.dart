@@ -359,7 +359,7 @@ class SettingsState extends State<Settings> {
           // Temporary Logout Button
           actions: <Widget>[
             IconButton(
-              icon: Icon(Icons.exit_to_app),
+              icon: Icon(Icons.exit_to_app, color: Colors.black),
               onPressed: () {
                 _logout();
                 Navigator.pushReplacement(
