@@ -270,6 +270,7 @@ class SettingsState extends State<Settings> {
 
   @override
   Widget build(BuildContext context) {
+    _getUser();
     return Scaffold(
         appBar: AppBar(
           title: Text("Edit Profile"),
