@@ -139,6 +139,8 @@ class _RegisterState extends State<Register> {
                                     "lastName": lastNameInputController.text,
                                     "username": usernameInputController.text,
                                     "email": emailInputController.text,
+                                    "followingList": FieldValue.arrayUnion(
+                                        [currentUser.uid.toString()]),
                                   })
                                       // .then((currentUser) async => await add_user.call(<String, dynamic>{
                                       //   'uid': currentUser.uid,

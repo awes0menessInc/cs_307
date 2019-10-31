@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'post.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
 
 class Timeline extends StatelessWidget {
@@ -32,6 +33,27 @@ class _ListPageState extends State<ListPage> {
   bool pressed = false;
   List<Post> posts = [];
   String _name = "";
+  List<String> _following = [""];
+
+  initState() {
+    super.initState();
+    _getUser();
+  }
+
+  Future _getUser() async {
+    await FirebaseAuth.instance.currentUser().then((currentuser) => {
+          Firestore.instance
+              .collection("users")
+              .document(currentuser.uid)
+              .get()
+              .then((DocumentSnapshot snapshot) => {
+                    setState(() {
+                      _following = List.from(snapshot["followingList"]);
+                    })
+                  })
+        });
+  }
+
   void showTags(BuildContext context, Post post) {
     AlertDialog viewTags = AlertDialog(
       shape: RoundedRectangleBorder(
@@ -85,11 +107,13 @@ class _ListPageState extends State<ListPage> {
     List<Post> postsList = [];
     List<dynamic> tags = [];
     snap.forEach((f) {
-      postsList.add(new Post(
-        content: f['content'],
-        username: f['firstName'].toString() + " " + f['lastName'].toString(),
-        topics: List.from(f['topics']),
-      ));
+      if (_following.contains(f["userId"])) {
+        postsList.add(new Post(
+          content: f['content'],
+          username: f['firstName'].toString() + " " + f['lastName'].toString(),
+          topics: List.from(f['topics']),
+        ));
+      }
     });
     return postsList;
   }
