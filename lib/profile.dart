@@ -74,6 +74,7 @@ class ProfilePageState extends State<ProfilePage> {
   @override
   initState() {
     super.initState();
+    _getUser();
   }
 
                         // getUserInfo() async {
@@ -116,19 +117,16 @@ class ProfilePageState extends State<ProfilePage> {
 
   Future _getUser() async {
     FirebaseAuth.instance.currentUser().then((currentuser) => {
-          Firestore.instance
-              .collection("users")
-              .document(currentuser.uid)
-              .get()
-              .then((DocumentSnapshot snapshot) => {
-                print('current user is '+ currentuser.uid),
-                    setState(() {
-                      _firstName = snapshot['firstName'];
-                      _lastName = snapshot['lastName'];
-                      _email = snapshot['email'];
-                    })
-                  })
-        });
+      Firestore.instance.collection("users").document(currentuser.uid).get()
+        .then((DocumentSnapshot snapshot) => {
+          print('current user is '+ currentuser.uid),
+          setState(() {
+            _firstName = snapshot['firstName'];
+            _lastName = snapshot['lastName'];
+            _email = snapshot['email'];
+          })
+        })
+    });
   }
 
   Widget _buildProfileImage() {
@@ -496,7 +494,6 @@ class ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    _getUser();
     Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
       body: Stack(
