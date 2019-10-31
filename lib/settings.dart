@@ -116,7 +116,7 @@ class SettingsState extends State<Settings> {
         r'(0[1-9]|1[012])/(0[1-9]|[12][0-9]|3[01])/(19|20)\d\d';
     RegExp bdayRegex = new RegExp(bdayPattern);
     if (!bdayRegex.hasMatch(value)) {
-      return "Enter a valid birthday";
+      return "Enter a valid date";
     } else {
       return null;
     }
@@ -200,7 +200,7 @@ class SettingsState extends State<Settings> {
             ),
             TextFormField(
               decoration: InputDecoration(
-                  labelText: 'Birthday', hintText: "10/18/2019"),
+                  labelText: 'Birthday', hintText: "MM/DD/YYYY"),
               controller: bdayController,
               validator: bdayValidator,
             ),

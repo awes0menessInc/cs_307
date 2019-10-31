@@ -24,15 +24,26 @@ class _LoginState extends State<Login> {
     loading = false;
   }
 
-  String emailValidator(String value) {
+  // String emailValidator(String value) {
+  //   Pattern pattern =
+  //     r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+  //   RegExp regex = new RegExp(pattern);
+  //   if (!regex.hasMatch(value)) {
+  //     return 'Email format is invalid';
+  //   } else {
+  //     return null;
+  //   }
+  // }
+
+  bool emailValidator(String value) {
     Pattern pattern =
       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regex = new RegExp(pattern);
-    if (!regex.hasMatch(value)) {
-      return 'Email format is invalid';
-    } else {
-      return null;
-    }
+    return regex.hasMatch(value);
+  }
+
+  String userValidator(String value) {
+    if 
   }
 
   String pwdValidator(String value) {
@@ -98,7 +109,7 @@ class _LoginState extends State<Login> {
                           builder: (BuildContext context) {
                             return AlertDialog(
                               title: Text("Error"),
-                              content: Text("Incorrect email address or password"),
+                              content: Text("Incorrect login credentials"),
                               actions: <Widget>[
                                 FlatButton(
                                   child: Text("Close"),

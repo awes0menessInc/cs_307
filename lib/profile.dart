@@ -59,15 +59,13 @@ class ProfilePageState extends State<ProfilePage> {
 
   String _firstName;
   String _lastName;
-  String _username = "keyspleasee";
-  // final String _status = "Purdue Student";
-  String _bio =
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sed odio morbi quis commodo odio. Integer eget aliquet nibh praesent tristique. Semper quis lectus nulla at volutpat diam. Fringilla est ullamcorper eget nulla facilisi etiam.";
+  String _username;
+  String _bio;
   String _posts = "0";
   String _followers = "450";
   String _following = "127";
   String _email;
-  // String _viewingUser = "Rebecca Keys"; // currently a mock of the logged in user.
+  
   bool pressed = false;
   bool isAccountOwner = true; //TODO: Connect to a function on the back end
 
@@ -77,23 +75,23 @@ class ProfilePageState extends State<ProfilePage> {
     _getUser();
   }
 
-                        // getUserInfo() async {
-                        //   Firestore.instance
-                        //       .collection('users')
-                        //       .document(currentuser.uid)
-                        //       .get()
-                        //       .then((documentSnapshot) {
-                        //     if (documentSnapshot.exists) {
-                        //       var data = documentSnapshot.data;
-                        //       firstName = data['firstName'];
-                        //       print("The name of the current user is " + firstName);
-                        //       return documentSnapshot;
-                        //     } else {
-                        //       print('document not found');
-                        //       return null;
-                        //     }
-                        //   });
-                        // }
+  // getUserInfo() async {
+  //   Firestore.instance
+  //       .collection('users')
+  //       .document(currentuser.uid)
+  //       .get()
+  //       .then((documentSnapshot) {
+  //     if (documentSnapshot.exists) {
+  //       var data = documentSnapshot.data;
+  //       firstName = data['firstName'];
+  //       print("The name of the current user is " + firstName);
+  //       return documentSnapshot;
+  //     } else {
+  //       print('document not found');
+  //       return null;
+  //     }
+  //   });
+  // }
 
   // Future<QuerySnapshot> getData() async {
   //   Query userQuery = Firestore.instance
@@ -123,7 +121,9 @@ class ProfilePageState extends State<ProfilePage> {
           setState(() {
             _firstName = snapshot['firstName'];
             _lastName = snapshot['lastName'];
+            _username = snapshot['username'];
             _email = snapshot['email'];
+            _bio = snapshot['bio'];
           })
         })
     });
@@ -254,17 +254,17 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildDemoButton() {
-    return FlatButton(
-        color: Colors.white,
-        onPressed: () {
-          setState(() {
-            isAccountOwner = !isAccountOwner;
-          });
-        },
-        child: Text('For Demo Purposes Only',
-            style: TextStyle(color: Colors.red)));
-  }
+  // Widget _buildDemoButton() {
+  //   return FlatButton(
+  //       color: Colors.white,
+  //       onPressed: () {
+  //         setState(() {
+  //           isAccountOwner = !isAccountOwner;
+  //         });
+  //       },
+  //       child: Text('For Demo Purposes Only',
+  //           style: TextStyle(color: Colors.red)));
+  // }
 
   Widget _buildBio(BuildContext context) {
     TextStyle bioTextStyle = TextStyle(
@@ -511,7 +511,7 @@ class ProfilePageState extends State<ProfilePage> {
                   _buildStatContainer(),
                   _buildBio(context),
                   _buildSeparator(screenSize),
-                  _buildDemoButton(),
+                  // _buildDemoButton(),
                   _buildButtons(context),
                   _buildNoPosts(context),
                   _makeBody(context),
