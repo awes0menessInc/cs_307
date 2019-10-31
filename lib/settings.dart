@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:twistter/timeline.dart';
@@ -19,6 +20,7 @@ class SettingsState extends State<Settings> {
   String _email = "";
   String _bday = "";
   String _weblink = "";
+  String _uid = "";
 
   TextEditingController fnameController = new TextEditingController();
   TextEditingController lnameController = new TextEditingController();
@@ -28,6 +30,14 @@ class SettingsState extends State<Settings> {
   TextEditingController emailController = new TextEditingController();
   final GlobalKey<FormState> _editFormKey = GlobalKey<FormState>();
 
+  HttpsCallable updateProfileCallable = CloudFunctions.instance.getHttpsCallable(
+    functionName: "updateProfile"
+  );
+
+  HttpsCallable deleteAccountCallable = CloudFunctions.instance.getHttpsCallable(
+    functionName: "deleteUser"
+  );
+
   @override
   initState() {
     super.initState();
@@ -35,7 +45,7 @@ class SettingsState extends State<Settings> {
   }
 
   Future _getUser() async {
-     FirebaseAuth.instance.currentUser().then((currentuser) => {
+     await FirebaseAuth.instance.currentUser().then((currentuser) => {
       Firestore.instance.collection("users").
       document(currentuser.uid).
       get().
@@ -44,6 +54,8 @@ class SettingsState extends State<Settings> {
           _firstName = snapshot["firstName"];
           _lastName = snapshot["lastName"];
           _email = snapshot["email"];
+          _uid = snapshot["uid"];
+          print(_uid);
         })
       })
     });
@@ -131,7 +143,15 @@ class SettingsState extends State<Settings> {
             child: RaisedButton(
               child: Text("Save Changes"),
               onPressed: () {
-                // TODO: call cloud functions
+                Firestore.instance.collection("users").document(_uid).updateData({
+                  "firstName": fnameController.text,
+                  "lastName" : lnameController.text,
+                  "email" : emailController.text,
+                  "bio" : bioController.text,
+                  "birthday" : bdayController.text,
+                  "website" : weblinkController.text,
+                  "uid": _uid,
+                });
                 if (_editFormKey.currentState.validate()) {
                   final snackBar = SnackBar(
                     content: Text('Profile changes saved successfully'),
