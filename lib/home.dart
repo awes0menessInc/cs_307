@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:twistter/newPost.dart';
 import 'timeline.dart';
 import 'profile.dart';
+import 'settings.dart';
 // import 'profile_copy.dart';
 import 'newPost.dart';
 import 'login.dart';
 
 class Home extends StatefulWidget {
-  Home({Key key, this.uid}) : super(key: key); 
+  Home({Key title, this.uid}) : super(key: title); 
   final String uid;
 
   @override
@@ -83,8 +84,8 @@ class _HomeState extends State<Home> {
                     text: "Home",
                   ),
                   Tab(icon: Icon(Icons.search), text: "Search"),
-                  Tab(icon: Icon(Icons.favorite), text: "Followers"),
                   Tab(icon: Icon(Icons.person), text: "Profile"),
+                  Tab(icon: Icon(Icons.settings), text: "Settings"),
                 ],
                 unselectedLabelColor: Color(0xff999999),
                 labelColor: Color(0xff55b0bd),
@@ -93,8 +94,8 @@ class _HomeState extends State<Home> {
               children: [
                 Timeline(),
                 Center(child: Text("Page 2")),
-                Center(child: Text("Page 3")),
                 ProfilePage(),
+                Settings(),
               ],
             ),
           ),

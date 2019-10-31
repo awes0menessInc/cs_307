@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'home.dart';
+import 'register.dart';
+import 'login.dart';
 import 'splash.dart';
+import 'home.dart';
 import 'register.dart';
 import 'login.dart';
 
@@ -16,9 +18,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.white,
       ),
-      // home: Home(),
+      //home: Home(),
       home: Splash(),
-      routes: <String, WidgetBuilder>{
+      routes: <String, WidgetBuilder> {
         '/login': (BuildContext context) => Login(),
         '/register': (BuildContext context) => Register(),
       },

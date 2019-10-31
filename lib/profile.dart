@@ -3,10 +3,9 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-// import 'package:flutter/rendering.dart' show debugDumpRenderTree, debugDumpLayerTree, debugDumpSemanticsTree, DebugSemanticsDumpOrder;
-// import 'package:flutter/gestures.dart' show DragStartBehavior;
-
-
+import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:twistter/timeline.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -14,37 +13,119 @@ class ProfilePage extends StatefulWidget {
 }
 
 class ProfilePageState extends State<ProfilePage> {
-  final String _firstName = "Rebecca";
-  final String _lastName = "Keys";
-  final String _username = "keyspleasee";
+  // DocumentSnapshot userDoc() async {
+  //    var user = FirebaseAuth.instance.currentUser;
+  //     if (user != null) {
+  //       String uid = await user.uid;
+  //   }
+  // }
+  // // final db = Firestore.instance;
+  // // String uid = FirebaseAuth.instance.currentUser.uid;
+  // static CollectionReference collectionRef = Firestore.instance.collection('users');
+  // Query query = collectionRef.where('uid', =, );
+  // DocumentReference userInfo = Firestore.instance.collection('users').document(userDoc);
+  // // Future<DocumentSnapshot> getData(DocumentReference docReference) async{
+  // //     // var docReference = db.collection('cities').document('SF');
+  // //     DocumentSnapshot docSnap = await docReference.get();
+  // //     String name = await docSnap.get('FirstName');
+  // //     return docSnap;
+  // // }
+
+  // FirebaseUser currentUser;
+  // bool isSignedIn = false;
+  // void getCurrentUser() async {
+  //   currentUser = await FirebaseAuth.instance.currentUser();
+  //   setState(() {
+  //     if (currentUser != null) {
+  //       bool isSignedIn = true;
+  //     }
+  //   });
+  // }
+
+  // getCurrentUser();
+  // String _firstName;
+  // void setfirstName() {
+  //   if (!isSignedin) {
+  //     _firstName = "Rebecca";
+  //   }
+  //   else {
+  //     _firstName = currentUser.firstName.toString();
+  //   }
+  // }
+  
+  String _firstName = "Rebecca";
+  String _lastName = "Keys";
+  String _username = "keyspleasee";
   // final String _status = "Purdue Student";
-  final String _bio =
+   String _bio =
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sed odio morbi quis commodo odio. Integer eget aliquet nibh praesent tristique. Semper quis lectus nulla at volutpat diam. Fringilla est ullamcorper eget nulla facilisi etiam.";
-  final String _posts = "0";
-  final String _followers = "450";
-  final String _following = "127";
+  String _posts = "0";
+  String _followers = "450";
+  String _following = "127";
+  String _email = "";
   // String _viewingUser = "Rebecca Keys"; // currently a mock of the logged in user.
   bool pressed = false;
   bool isAccountOwner = true; //TODO: Connect to a function on the back end
+
+  @override
+  initState() {
+    super.initState();
+    _getUser();
+  }
+
+  Future _getUser() async {
+     FirebaseAuth.instance.currentUser().then((currentuser) => {
+      Firestore.instance.collection("users").
+      document(currentuser.uid).
+      get().
+      then((DocumentSnapshot snapshot) => {
+        setState((){
+          _firstName = snapshot["firstName"];
+          _lastName = snapshot["lastName"];
+          _email = snapshot["email"];
+        })
+      })
+    });
+  }
 
   Widget _buildProfileImage() {
     return Center(
       child: Container(
         width: 140.0,
         height: 140.0,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('lib/assets/images/profile.jpg'),
-            fit: BoxFit.cover,
+        child: new Container(
+          decoration: new BoxDecoration(
+            color: Color(0xff55b0bd),
+            borderRadius: BorderRadius.circular(80.0),
           ),
-          borderRadius: BorderRadius.circular(80.0),
-          border: Border.all(
-            color: Colors.white,
-            width: 2.0,
+          child: Center (
+          child: Text('${_firstName[0]}' + '${_lastName[0]}',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 50.0
+              )
           ),
+          // TODO: Add functionality to display profile picture if the user has uploaded one
+          // decoration: BoxDecoration(
+          //   // image: DecorationImage(
+          //   //   image: AssetImage('lib/assets/images/profile.jpg'),
+          //     // fit: BoxFit.cover,
+          //   ),
+          //   borderRadius: BorderRadius.circular(80.0),
+          //   border: Border.all(
+          //     color: Colors.white,
+          //     width: 2.0,
+          //   ),
+          // ),
         ),
       ),
+      ),
     );
+  }
+
+  Widget _buildAvatar() {
+    //TODO: create a default avatar with initials of the user
   }
 
   Widget _buildFullName(BuildContext context) {
@@ -110,6 +191,8 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // DocumentReference userDoc = Firestore.instance.collection('users').document('1giITpxQDkcH6aRd6dXj');
+
   Widget _buildStatContainer() {
     return Container(
       height: 60.0,
@@ -119,8 +202,15 @@ class ProfilePageState extends State<ProfilePage> {
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
+        // StreamBuilder(
+        //   stream: Firestore.instance.collection('users').snapshots(),
+        //   builder: (context, snapshot) {
+        //     return _buildStatItem("Followers", snapshot.data.document['followers']);
+        //   },
+        // ),
         children: <Widget>[
-          _buildStatItem("Followers", _followers),
+          _buildStatItem("Followers", _followers), //userDoc is the document in Firestore of the currently logged in user
+          // TODO: Add a function that gets the name of the doucment for the currently logged in user and stores it as 'userdoc' (match uid to the right doc)
           _buildStatItem("Following", _following),
           _buildStatItem("Posts", _posts), 
         ],
@@ -216,93 +306,10 @@ class ProfilePageState extends State<ProfilePage> {
                 )
               ]
             ),
-            Row(
-              children: <Widget>[
-                Visibility(
-                  visible: isAccountOwner,
-                  child: Expanded(
-                    child: RaisedButton(
-                      color: Color(0xffd1d1d1),
-                      shape: RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(15.0)),
-                      onPressed: () {
-                        showEdit(context);
-                        print("Clicked edit profile");
-                      }, 
-                      child: Text('Edit Profile')
-                  ),
-                )  
-              ),
-            ],
-          ),
         ],
       ));
   }
-
-  void showEdit(BuildContext context) { // TODO: replace with call to actual profile edit UI
-    // context: context;
-    // builder: (BuildContext context) {
-      AlertDialog editProfile = AlertDialog(
-        title: new Text("Edit Profile"),
-        content: Form(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: new InputDecoration(
-                    hintText: 'First Name'
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: new InputDecoration(
-                    hintText: 'Last Name'
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: new InputDecoration(
-                    hintText: 'Email '
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: new InputDecoration(
-                    hintText: 'Bio'
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: RaisedButton(
-                  child: Text("Submit"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    print("Submitted Pofile Edits"); // TODO: Connect to back end
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-      // show the dialog
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return editProfile;
-        },
-      );
-    }
-
+  
   Text _noPostsText() {
     TextStyle ts = TextStyle(
       fontFamily: 'Spectral',
@@ -389,6 +396,7 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
@@ -412,6 +420,7 @@ class ProfilePageState extends State<ProfilePage> {
                   _buildButtons(context),
                   _buildNoPosts(context),
                   _makeBody(context),
+
                 ],
               ),
             ),
