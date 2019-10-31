@@ -60,65 +60,65 @@ class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Register"),
-        ),
-        body: Container(
-            padding: const EdgeInsets.all(20.0),
-            child: SingleChildScrollView(
-                child: Form(
-              key: _registerFormKey,
-              child: Column(
-                children: <Widget>[
-                  TextFormField(
-                    decoration: InputDecoration(
-                        labelText: 'First Name*', hintText: "John"),
-                    controller: firstNameInputController,
-                    validator: (value) {
-                      if (value.length == 0) {
-                        return "Please enter your first name.";
-                      }
-                    },
-                  ),
-                  TextFormField(
-                      decoration: InputDecoration(
-                          labelText: 'Last Name*', hintText: "Doe"),
-                      controller: lastNameInputController,
-                      validator: (value) {
-                        if (value.length == 0) {
-                          return "Please enter your last name.";
-                        }
-                      }),
-                  TextFormField(
-                      decoration: InputDecoration(labelText: 'Username*'),
-                      controller: usernameInputController,
-                      validator: (value) {
-                        if (value.length < 8) {
-                          return "Please enter a valid username";
-                        }
-                      }),
-                  TextFormField(
-                    decoration: InputDecoration(
-                        labelText: 'Email*', hintText: "john.doe@gmail.com"),
-                    controller: emailInputController,
-                    keyboardType: TextInputType.emailAddress,
-                    validator: emailValidator,
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                        labelText: 'Password*', hintText: "********"),
-                    controller: pwdInputController,
-                    obscureText: true,
-                    validator: pwdValidator,
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                        labelText: 'Confirm Password*', hintText: "********"),
-                    controller: confirmPwdInputController,
-                    obscureText: true,
-                    validator: pwdValidator,
-                  ),
-                  RaisedButton(
+      appBar: AppBar(
+        title: Text("Register"),
+      ),
+      body: Container(
+        padding: const EdgeInsets.all(20.0),
+        child: SingleChildScrollView(
+          child: Form(
+            key: _registerFormKey,
+            child: Column(
+              children: <Widget>[
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'First Name*', hintText: "John"),
+                  controller: firstNameInputController,
+                  validator: (value) {
+                    if (value.length == 0) {
+                      return "Please enter your first name.";
+                    }
+                  },
+                ),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Last Name*', hintText: "Doe"),
+                  controller: lastNameInputController,
+                  validator: (value) {
+                    if (value.length == 0) {
+                      return "Please enter your last name.";
+                    }
+                  }),
+                TextFormField(
+                  decoration: InputDecoration(labelText: 'Username*'),
+                  controller: usernameInputController,
+                  validator: (value) {
+                    if (value.length < 8) {
+                      return "Please enter a valid username";
+                    }
+                  }),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Email*', hintText: "john.doe@gmail.com"),
+                  controller: emailInputController,
+                  keyboardType: TextInputType.emailAddress,
+                  validator: emailValidator,
+                ),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Password*', hintText: "********"),
+                  controller: pwdInputController,
+                  obscureText: true,
+                  validator: pwdValidator,
+                ),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Confirm Password*', hintText: "********"),
+                  controller: confirmPwdInputController,
+                  obscureText: true,
+                  validator: pwdValidator,
+                ),
+                RaisedButton(
                     child: Text("Register"),
                     color: Theme.of(context).primaryColor,
                     textColor: Colors.black,
@@ -131,9 +131,8 @@ class _RegisterState extends State<Register> {
                                   email: emailInputController.text,
                                   password: pwdInputController.text)
                               .then((currentUser) => Firestore.instance
-                                      .collection("users")
-                                      .document(currentUser.uid)
-                                      .setData({
+                                .collection("users").document(currentUser.uid)
+                                .setData({
                                     "uid": currentUser.uid,
                                     "firstName": firstNameInputController.text,
                                     "lastName": lastNameInputController.text,

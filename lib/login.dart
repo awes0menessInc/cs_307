@@ -14,8 +14,9 @@ class _LoginState extends State<Login> {
   final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
   TextEditingController emailInputController;
   TextEditingController pwdInputController;
+  TextEditingController resetInputController;
   bool loading;
-
+  
   @override
   initState() {
     emailInputController = new TextEditingController();
@@ -24,26 +25,15 @@ class _LoginState extends State<Login> {
     loading = false;
   }
 
-  // String emailValidator(String value) {
-  //   Pattern pattern =
-  //     r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-  //   RegExp regex = new RegExp(pattern);
-  //   if (!regex.hasMatch(value)) {
-  //     return 'Email format is invalid';
-  //   } else {
-  //     return null;
-  //   }
-  // }
-
-  bool emailValidator(String value) {
+  String emailValidator(String value) {
     Pattern pattern =
       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regex = new RegExp(pattern);
-    return regex.hasMatch(value);
-  }
-
-  String userValidator(String value) {
-    if 
+    if (!regex.hasMatch(value)) {
+      return 'Email format is invalid';
+    } else {
+      return null;
+    }
   }
 
   String pwdValidator(String value) {
@@ -90,7 +80,37 @@ class _LoginState extends State<Login> {
                     )
                   ),
                   /* TODO: implement forgot password function */
-                  onPressed: () => null,
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return SimpleDialog(
+                          title: Text("Password reset"),
+                          children: <Widget>[
+                            TextFormField(
+                              decoration: InputDecoration(
+                                labelText: 'Email', hintText: 'john.doe@gmail.com'),
+                              controller: resetInputController,
+                              keyboardType:TextInputType.emailAddress,
+                              validator: emailValidator,
+                            ),
+                            FlatButton(
+                              child: Text("Confirm"),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                FirebaseAuth.instance.sendPasswordResetEmail(email: resetInputController.text).then((result) => {
+                                  // Email sent.
+                                }).catchError((error) => {
+                                  // An error happened.
+                                });
+                                
+                              },
+                            )
+                          ],
+                        );
+                      });
+                    // 
+                  },
                 ),
                 RaisedButton(
                   child: Text("Login"),
