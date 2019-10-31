@@ -3,8 +3,10 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:twistter/currentUserInfo.dart';
 import 'package:twistter/home.dart';
+import 'package:twistter/timeline.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -13,126 +15,56 @@ class ProfilePage extends StatefulWidget {
 }
 
 class ProfilePageState extends State<ProfilePage> {
-  // static getCurrentUid() async {
-  //   FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
-  //   String currentUid = currentUser.uid.toString();
-  //   return currentUid;
-  // }
-
-  // static String currentUid = getCurrentUid();
-  // String firstName;
-  // String lastName;
-  // String bio;
-  // int followers;
-  // int following;
-
-  // int get age {
-  //     return vehicleAge;
-  // }
-
-  // String getFirstName() async {
-  //   Future<QuerySnapshot> currentUserDoc = getData();
-  //   String firstName = currentUserDoc.documents[0].data['firstName'];
-  // }
-
-  // FirebaseUser currentUser;
-  // bool isSignedIn = false;
-  // void getCurrentUser() async {
-  //   currentUser = await FirebaseAuth.instance.currentUser();
-  //   setState(() {
-  //     if (currentUser != null) {
-  //       bool isSignedIn = true;
-  //     }
-  //   });
-  // }
-
-  // getCurrentUser();
-  // String _firstName;
-  // void setfirstName() {
-  //   if (!isSignedin) {
-  //     _firstName = "Rebecca";
-  //   }
-  //   else {
-  //     _firstName = currentUser.firstName.toString();
-  //   }
-  // }
 
   String _firstName;
+  String _username;
   String _lastName;
-  String _username = "keyspleasee";
-  // final String _status = "Purdue Student";
-  String _bio =
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sed odio morbi quis commodo odio. Integer eget aliquet nibh praesent tristique. Semper quis lectus nulla at volutpat diam. Fringilla est ullamcorper eget nulla facilisi etiam.";
   String _posts = "0";
-  String _followers = "450";
-  String _following = "127";
+  String _followers;
+  String _following;
   String _email;
+  String _bio;
+  
   // String _viewingUser = "Rebecca Keys"; // currently a mock of the logged in user.
   bool pressed = false;
   bool isAccountOwner = true; //TODO: Connect to a function on the back end
+  // CurrentUserInfo cui;
 
   @override
   initState() {
+    // print('Creating new instance of CurrentUserInfo class');
+    // cui = new CurrentUserInfo();
+    this.getUserInfo();
     super.initState();
+    t.uidClicked;
   }
 
-                        // getUserInfo() async {
-                        //   Firestore.instance
-                        //       .collection('users')
-                        //       .document(currentuser.uid)
-                        //       .get()
-                        //       .then((documentSnapshot) {
-                        //     if (documentSnapshot.exists) {
-                        //       var data = documentSnapshot.data;
-                        //       firstName = data['firstName'];
-                        //       print("The name of the current user is " + firstName);
-                        //       return documentSnapshot;
-                        //     } else {
-                        //       print('document not found');
-                        //       return null;
-                        //     }
-                        //   });
-                        // }
+  Timeline t = new Timeline();
+  Home h = new Home();
 
-  // Future<QuerySnapshot> getData() async {
-  //   Query userQuery = Firestore.instance
-  //       .collection('users')
-  //       .where('uid', isEqualTo: currentUid);
-  //   print("The current uid is " +
-  //       currentUid +
-  //       " and the matching user document is: ");
-  //   QuerySnapshot docSnap = await userQuery.getDocuments();
-  //   print(docSnap);
-  //   if (docSnap.documents.length > 0) {
-  //     firstName = docSnap.documents[0].data['firstName'];
-  //     lastName = docSnap.documents[0].data['lastName'];
-  //     followers = docSnap.documents[0].data['followers'];
-  //     print("The name of the current user is " + firstName);
-  //   } else {
-  //     print("No document matches the uid of " + currentUid);
-  //   }
-  //   return docSnap;
-  // }
+  void getUserInfo() async{
+    // String uid = h.uid;
+    print('current user is '+ h.uid);
+    var userQuery = Firestore.instance.collection('users').where('uid', isEqualTo: h.uid).limit(1);
+    userQuery.getDocuments().then((data){ 
+    if (data.documents.length > 0){
+      setState(() {
+        _firstName = data.documents[0].data['firstName'];
+        _lastName = data.documents[0].data['lastName'];
+        _email = data.documents[0].data['email'];
+        _username = data.documents[0].data['username'];
+        _bio = data.documents[0].data['bio'];
+        _followers = data.documents[0].data['followers'].toString();
+        _following = data.documents[0].data['following'].toString();
+      });}
+    });
+  }
 
-  Future _getUser() async {
-    FirebaseAuth.instance.currentUser().then((currentuser) => {
-          Firestore.instance
-              .collection("users")
-              .document(currentuser.uid)
-              .get()
-              .then((DocumentSnapshot snapshot) => {
-                print('current user is '+ currentuser.uid),
-                    setState(() {
-                      _firstName = snapshot['firstName'];
-                      _lastName = snapshot['lastName'];
-                      _email = snapshot['email'];
-                    })
-                  })
-        });
+  String getUsername() {
+    return _username;
   }
 
   Widget _buildProfileImage() {
-    // getData();
     return Center(
       child: Container(
         width: 140.0,
@@ -145,7 +77,7 @@ class ProfilePageState extends State<ProfilePage> {
           child: Center(
             child: Text('${_firstName[0]}' + '${_lastName[0]}',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 50.0)),
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 50.0)),
             // TODO: Add functionality to display profile picture if the user has uploaded one
             // decoration: BoxDecoration(
             //   // image: DecorationImage(
@@ -164,14 +96,10 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Widget _buildAvatar() {
-  //   //TODO: create a default avatar with initials of the user
-  // }
-
   Widget _buildFullName(BuildContext context) {
     return Container(
         margin: EdgeInsets.symmetric(vertical: 10.0),
-        child: Text(_firstName + ' ' + _lastName + ' | @' + _username,
+        child: Text('$_firstName' + ' ' + _lastName + ' | @' + _username,
             style: TextStyle(
               fontFamily: 'Montserrat',
               color: Colors.black,
@@ -179,25 +107,6 @@ class ProfilePageState extends State<ProfilePage> {
               fontWeight: FontWeight.w500,
             )));
   }
-
-  // Widget _buildStatus(BuildContext context) {
-  //   return Container(
-  //     padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 6.0),
-  //     decoration: BoxDecoration(
-  //       color: Theme.of(context).scaffoldBackgroundColor,
-  //       borderRadius: BorderRadius.circular(4.0),
-  //     ),
-  //     child: Text(
-  //       _status,
-  //       style: TextStyle(
-  //         fontFamily: 'Spectral',
-  //         color: Colors.black,
-  //         fontSize: 20.0,
-  //         fontWeight: FontWeight.w300,
-  //       ),
-  //     ),
-  //   );
-  // }
 
   Widget _buildStatItem(String label, String count) {
     TextStyle _statLabelTextStyle = TextStyle(
@@ -212,7 +121,6 @@ class ProfilePageState extends State<ProfilePage> {
       fontSize: 24.0,
       fontWeight: FontWeight.bold,
     );
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -227,8 +135,6 @@ class ProfilePageState extends State<ProfilePage> {
       ],
     );
   }
-
-  // DocumentReference userDoc = Firestore.instance.collection('users').document('1giITpxQDkcH6aRd6dXj');
 
   Widget _buildStatContainer() {
     return Container(
@@ -276,7 +182,6 @@ class ProfilePageState extends State<ProfilePage> {
       color: Color(0xFF799497),
       fontSize: 16.0,
     );
-
     return Container(
       color: Theme.of(context).scaffoldBackgroundColor,
       padding: EdgeInsets.all(8.0),
@@ -286,7 +191,7 @@ class ProfilePageState extends State<ProfilePage> {
         style: bioTextStyle,
       ),
     );
-  }
+    }
 
   Widget _buildSeparator(Size screenSize) {
     return Container(
@@ -333,24 +238,24 @@ class ProfilePageState extends State<ProfilePage> {
                               borderRadius: new BorderRadius.circular(15.0)),
                           child: getText(pressed))))
             ]),
-            Row(
-              children: <Widget>[
-                Visibility(
-                  visible: isAccountOwner,
-                  child: Expanded(
-                    child: RaisedButton(
-                      child: Text("Delete Account"),
-                      color: Color(0xffd1d1d1),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(15.0)),
-                      onPressed: () {
-                        print("Clicked Delete");
-                      },
-                    ),
-                  ),
-                )
-              ],
-            )
+            // Row(
+            //   children: <Widget>[
+            //     Visibility(
+            //       visible: isAccountOwner,
+            //       child: Expanded(
+            //         child: RaisedButton(
+            //           child: Text("Delete Account"),
+            //           color: Color(0xffd1d1d1),
+            //           shape: RoundedRectangleBorder(
+            //               borderRadius: new BorderRadius.circular(15.0)),
+            //           onPressed: () {
+            //             print("Clicked Delete");
+            //           },
+            //         ),
+            //       ),
+            //     )
+            //   ],
+            // )
           ],
         ));
   }
@@ -496,7 +401,7 @@ class ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    _getUser();
+    // getInfo();
     Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
       body: Stack(
@@ -514,7 +419,7 @@ class ProfilePageState extends State<ProfilePage> {
                   _buildStatContainer(),
                   _buildBio(context),
                   _buildSeparator(screenSize),
-                  _buildDemoButton(),
+                  // _buildDemoButton(),
                   _buildButtons(context),
                   _buildNoPosts(context),
                   _makeBody(context),
