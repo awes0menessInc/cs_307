@@ -130,6 +130,22 @@ class _RegisterState extends State<Register> {
                               .createUserWithEmailAndPassword(
                                   email: emailInputController.text,
                                   password: pwdInputController.text)
+                              .catchError((err) => showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("Registration failed"),
+                                    content: Text('An account already exists with the email address you entered.'),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        child: Text("Close"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      )
+                                    ],
+                                  );
+                                }))
                               .then((currentUser) => Firestore.instance
                                 .collection("users").document(currentUser.uid)
                                 .setData({
