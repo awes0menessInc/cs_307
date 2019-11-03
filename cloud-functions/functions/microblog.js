@@ -107,13 +107,12 @@ exports.postMicroblog = function(req, res, admin) {
   blogDoc.set(blog);
 
   // add ref to microblogs in user doc in user collection
-  db.collection("users")
+  res.send("Added new microblog successfully: " + blogDoc.id);
+  return db.collection("users")
     .doc(blog.userId)
     .update({
       microblogs: admin.firestore.FieldValue.arrayUnion(blogDoc.id)
     });
-
-  res.send("Added new microblog successfully: " + blogDoc.id);
   // db.collection('microblogs').add(req.body).then(snapshot => {
   //     res.send('Added new microblog successfully: ', snapshot.id);
   //     return "";

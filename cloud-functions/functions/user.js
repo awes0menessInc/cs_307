@@ -1,12 +1,7 @@
 exports = {};
 
 exports.addUser = function(data, context, admin) {
-<<<<<<< HEAD
   const users = admin.firestore().collection("users");
-=======
-  const users = admin.firestore().collection("testUsers");
-  // TODO: Add uid to the corresponding doc of the users collection when a new user is added
->>>>>>> 7a84f74d3c537832222c3916806369927c3aaf2a
   var user = {
     uid: data.body.uid,
     firstName: data.body.firstName,
