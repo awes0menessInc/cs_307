@@ -18,7 +18,7 @@ class ProfilePageState extends State<ProfilePage> {
   String _firstName;
   String _username;
   String _lastName;
-  String _posts = "0";
+  String _posts = "1";
   String _followers;
   String _following;
   String _email;
@@ -53,6 +53,7 @@ class ProfilePageState extends State<ProfilePage> {
         _bio = data.documents[0].data['bio'];
         _followers = data.documents[0].data['followers'].toString();
         _following = data.documents[0].data['following'].toString();
+        // _posts = data.documents[0].data['microblogs'].length().toString();
       });}
     });
   }

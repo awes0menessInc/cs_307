@@ -56,51 +56,55 @@ class _NewPostState extends State<NewPost> {
     currentUser = await FirebaseAuth.instance.currentUser();
   }
 
+  final HttpsCallable post_blog = CloudFunctions.instance.getHttpsCallable(
+    functionName: 'postMicroblog',
+  );
 
   Widget build(BuildContext context) {
     pps.getUserInfo();
     return Scaffold(
-        appBar: AppBar(
-          title: Text("NewPost"),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.add_comment),
-              onPressed: () {
-                FirebaseAuth.instance
-                    .currentUser()
-                    .then((currentUser) => Firestore.instance
-                        .collection("users")
-                        .document(currentUser.uid)
-                        .get()
-                        .then((doc) => Firestore.instance
-                                .collection('microblogs')
-                                .document()
-                                .setData({
-                              'content': postEditingController.text,
-                              'likes': '0',
-                              'quotes': '0',
-                              'timestamp':
-                                  new DateTime.now().millisecondsSinceEpoch,
-                              'topics': [
-                                dropdownvalue
-                              ], // fix topics list and ui part
-                              'userId': currentUser.uid,
-                              // 'userName': getUsername(),
-                              'firstName': _firstName,
-                              'lastName': _lastName,
-                            }))
-                        .then((result) => {
-                              Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Home(
-                                            uid: currentUser.uid,
-                                          )),
-                                  (_) => false),
-                              postEditingController.clear()
-                            })
-                        .catchError((err) => print(err)))
-                    .catchError((err) => print(err));
+      appBar: AppBar(
+        title: Text("NewPost"),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.add_comment),
+            onPressed: () async {
+              FirebaseAuth.instance.currentUser()
+              .then((currentUser) => Firestore.instance.collection("users")
+              .document(currentUser.uid).get().then((doc) => Firestore.instance
+                .collection('microblogs').document().setData({
+                  'content': postEditingController.text,
+                  'likes': '0',
+                  'quotes': '0',
+                  'timestamp': new DateTime.now().millisecondsSinceEpoch,
+                  'topics': [dropdownvalue], // fix topics list and ui part
+                  'userId': currentUser.uid,
+                  // 'userName': getUsername(),
+                  'firstName': _firstName,
+                  'lastName': _lastName,
+                })
+              )
+              // post_blog.call(<String, dynamic>{
+              //   'content': postEditingController.text,
+              //   'likes': '0',
+              //   'quotes': '0',
+              //   'timestamp': new DateTime.now().millisecondsSinceEpoch,
+              //   'topics': [dropdownvalue],
+              //   'userId': currentUser.uid,                
+              //   'firstName': _firstName,
+              //   'lastName': _lastName,
+              //   })
+              .then((result) => {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Home(
+                      uid: currentUser.uid,
+                      )),
+                      (_) => false),
+                      postEditingController.clear()
+              }).catchError((err) => print(err))
+              .catchError((err) => print(err)));
               },
             )
           ],

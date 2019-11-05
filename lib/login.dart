@@ -123,9 +123,15 @@ class _LoginState extends State<Login> {
                         ).catchError((err) => print(err))
                       ).catchError((err) => print(err));
                     }
+<<<<<<< HEAD
                     // print('running cui.getUserInfo...');
                     // cui.getUserInfo();
                     // print('ran cui.getUserInfo. ');
+=======
+                    print('running cui.getUserInfo...');
+                    // cui.getUserInfo();
+                    print('ran cui.getUserInfo. ');
+>>>>>>> f0eebf9bbaa14c82fdd934e179cbd2aa93171eea
                   },
                 ),
                 Text("Don't have an account?"),
