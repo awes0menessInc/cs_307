@@ -37,7 +37,7 @@ class _RegisterState extends State<Register> {
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp emailRegex = new RegExp(emailPattern);
     if (!emailRegex.hasMatch(value)) {
-      return 'Please enter a valid e-mail';
+      return 'Invalid email address';
     } else {
       return null;
     }
@@ -53,7 +53,53 @@ class _RegisterState extends State<Register> {
     }
   }
 
-  String usernameValidator(String username) {}
+  String confirmPwdValidator (String value) {
+    if (value != pwdInputController.text) {
+      return 'Passwords must match';
+    }
+    else {
+      return null;
+    }
+  }
+
+  String usernameValidator(String username) {
+    var query = Firestore.instance.collection('users').where('username', isEqualTo: username).limit(1);
+    query.getDocuments().then((snapshot) => {
+      if (snapshot.) {
+
+      }
+    })
+
+  //   final QuerySnapshot result = await Firestore.instance
+  //   .collection('company')
+  //   .where('name', isEqualTo: name)
+  //   .limit(1)
+  //   .getDocuments();
+  // final List<DocumentSnapshot> documents = result.documents;
+  // return documents.length == 1;
+
+
+//      fs_collection: AngularFirestoreCollection<UserItems>;
+
+//  this.db.collection<UserItems>('Users’).ref.where('username', '==',
+//  this.model.username).get().then((ref) => {
+
+//              let results = ref.docs.map(doc => doc.data() as UserItems);
+//              if (results.length > 0) {
+//                 console.log(userData); //do what you want with code
+//             }
+//              else {
+//                  this.error(“no user.”);
+//              }
+//          });
+    
+    if (query.getDocuments() != null) {
+      return 'Username already exists';
+    }
+    else {
+      return null;
+    }
+  }
 
   // final HttpsCallable add_user = CloudFunctions.instance.getHttpsCallable(functionName: 'addUser',);
 
@@ -68,6 +114,7 @@ class _RegisterState extends State<Register> {
         child: SingleChildScrollView(
           child: Form(
             key: _registerFormKey,
+            autovalidate: true,
             child: Column(
               children: <Widget>[
                 TextFormField(
@@ -92,11 +139,8 @@ class _RegisterState extends State<Register> {
                 TextFormField(
                   decoration: InputDecoration(labelText: 'Username*'),
                   controller: usernameInputController,
-                  validator: (value) {
-                    if (value.length < 8) {
-                      return "Please enter a valid username";
-                    }
-                  }),
+                  validator: usernameValidator,
+                ),
                 TextFormField(
                   decoration: InputDecoration(
                     labelText: 'Email*', hintText: "john.doe@gmail.com"),
@@ -116,7 +160,7 @@ class _RegisterState extends State<Register> {
                     labelText: 'Confirm Password*', hintText: "********"),
                   controller: confirmPwdInputController,
                   obscureText: true,
-                  validator: pwdValidator,
+                  validator: confirmPwdValidator,
                 ),
                 RaisedButton(
                     child: Text("Register"),
@@ -124,8 +168,7 @@ class _RegisterState extends State<Register> {
                     textColor: Colors.black,
                     onPressed: () {
                       if (_registerFormKey.currentState.validate()) {
-                        if (pwdInputController.text ==
-                            confirmPwdInputController.text) {
+                        if (pwdInputController.text == confirmPwdInputController.text) {
                           FirebaseAuth.instance
                               .createUserWithEmailAndPassword(
                                   email: emailInputController.text,
