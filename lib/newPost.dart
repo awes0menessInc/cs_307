@@ -61,7 +61,7 @@ class _NewPostState extends State<NewPost> {
   );
 
   Widget build(BuildContext context) {
-    pps.getUserInfo();
+    // pps.getUserInfo();
     return Scaffold(
       appBar: AppBar(
         title: Text("NewPost"),

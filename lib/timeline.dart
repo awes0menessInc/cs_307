@@ -225,7 +225,11 @@ class _ListPageState extends State<ListPage> {
                   if (snapshot.hasError) return new Text('Error');
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
-                      return new Text('Loading...');
+                      // return new Text('Loading...');
+                      return Container(
+                        alignment: Alignment.bottomCenter,
+                        child: LinearProgressIndicator()
+                      );
                     default:
                       return _makeBody(context, snapshot.data.documents);
                   } //switch
