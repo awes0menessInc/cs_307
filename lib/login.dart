@@ -107,6 +107,7 @@ class _LoginState extends State<Login> {
                                   child: Text("Close"),
                                   onPressed: () {
                                     Navigator.of(context).pop();
+                                    loading = false;
                                   },
                                 )
                               ],
