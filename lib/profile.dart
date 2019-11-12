@@ -52,6 +52,7 @@ class ProfilePageState extends State<ProfilePage> {
         _bio = data.documents[0].data['bio'];
         _followers = data.documents[0].data['followers'].toString();
         _following = data.documents[0].data['following'].toString();
+        _following == "null" ? _following = "0" : _following = _following;
         // _posts = data.documents[0].data['microblogs'].length().toString();
       }
       );}
@@ -476,6 +477,7 @@ class ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     // getInfo();
     Size screenSize = MediaQuery.of(context).size;
+    print("\n$_firstName is following $_following people");
     return Scaffold(
       body: Stack(
         children: <Widget>[

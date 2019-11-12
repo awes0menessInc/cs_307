@@ -12,11 +12,8 @@ import 'user.dart';
 class Home extends StatefulWidget {
   Home({Key title, this.uid, this.current_user}) : super(key: title); 
   final String uid;
-<<<<<<< HEAD
-=======
   User current_user;
 
->>>>>>> 97c5fb6f2ef30539da6f6ef472ebb0b955e9088c
   @override
   _HomeState createState() => _HomeState();
 
