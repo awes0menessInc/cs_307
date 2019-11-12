@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       home: Splash(),
       routes: <String, WidgetBuilder> {
         '/login': (BuildContext context) => Login(),
-        '/register': (BuildContext context) => Register(),
+        // '/register': (BuildContext context) => Register(),
       },
       debugShowCheckedModeBanner: false,
     );

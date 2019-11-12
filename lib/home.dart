@@ -10,7 +10,6 @@ import 'login.dart';
 class Home extends StatefulWidget {
   Home({Key title, this.uid}) : super(key: title); 
   final String uid;
-
   @override
   _HomeState createState() => _HomeState();
 }

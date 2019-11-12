@@ -65,10 +65,10 @@ class _RegisterState extends State<Register> {
   String usernameValidator(String username) {
     var query = Firestore.instance.collection('users').where('username', isEqualTo: username).limit(1);
     query.getDocuments().then((snapshot) => {
-      if (snapshot.) {
+      // if (snapshot.) {
 
-      }
-    })
+      // }
+    });
 
   //   final QuerySnapshot result = await Firestore.instance
   //   .collection('company')

@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 // import 'package:twistter/currentUserInfo.dart';
 import 'package:twistter/timeline.dart';
+import 'package:twistter/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -16,13 +17,13 @@ class ProfilePage extends StatefulWidget {
 class ProfilePageState extends State<ProfilePage> {
 
   String _firstName;
-  String _username;
-  String _lastName;
+  String _username = "keyspleasee";
+  String _lastName = "Keys";
   String _posts = "0";
   String _followers;
-  String _following;
+  String _following = "4";
   String _email;
-  String _bio;
+  String _bio = "test 1";
   
   // String _viewingUser = "Rebecca Keys"; // currently a mock of the logged in user.
   bool pressed = false;
@@ -33,48 +34,68 @@ class ProfilePageState extends State<ProfilePage> {
   initState() {
     // getUserInfo();
     super.initState();
-    _getUser();
+    getUserInfo();
   }
 
   Timeline t = new Timeline();
 
-  // void getUserInfo() async{
-  //   final FirebaseUser user = await FirebaseAuth.instance.currentUser();
-  //   print('current user is '+ user.uid);
-  //   var userQuery = Firestore.instance.collection('users').where('uid', isEqualTo: user.uid).limit(1);
-  //   userQuery.getDocuments().then((data){ 
-  //   if (data.documents.length > 0){
-  //     setState(() {
-  //       _firstName = data.documents[0].data['firstName'];
-  //       _lastName = data.documents[0].data['lastName'];
-  //       _email = data.documents[0].data['email'];
-  //       _username = data.documents[0].data['username'];
-  //       _bio = data.documents[0].data['bio'];
-  //       _followers = data.documents[0].data['followers'].toString();
-  //       _following = data.documents[0].data['following'].toString();
-  //       // _posts = data.documents[0].data['microblogs'].length().toString();
-  //     });}
+  void getUserInfo() async{
+    final FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    print('current user is '+ user.uid);
+    var userQuery = Firestore.instance.collection('users').where('uid', isEqualTo: user.uid).limit(1);
+    userQuery.getDocuments().then((data){ 
+    if (data.documents.length > 0){
+      setState(() {
+        _firstName = data.documents[0].data['firstName'];
+        _lastName = data.documents[0].data['lastName'];
+        _email = data.documents[0].data['email'];
+        _username = data.documents[0].data['username'];
+        _bio = data.documents[0].data['bio'];
+        _followers = data.documents[0].data['followers'].toString();
+        _following = data.documents[0].data['following'].toString();
+        // _posts = data.documents[0].data['microblogs'].length().toString();
+      }
+      );}
+    });
+  }
+
+  // Future _getUser() async {
+  //   await FirebaseAuth.instance.currentUser().then((currentuser) => {
+  //     Firestore.instance
+  //     .collection('users')
+  //     .document(currentuser.uid)
+  //     .get()
+  //     .then((DocumentSnapshot snapshot) => {
+  //       setState(() {
+  //         _following = List.from(snapshot['followingList']).length.toString();
+  //         _username = snapshot['username'];
+  //         _firstName = snapshot['firstName'];
+  //         _lastName = snapshot['lastName'];
+  //         _email = snapshot['email'];
+  //         _bio = snapshot['bio'];
+  //       })
+  //     })
   //   });
   // }
 
-  Future _getUser() async {
-    await FirebaseAuth.instance.currentUser().then((currentuser) => {
-      Firestore.instance
-      .collection('users')
-      .document(currentuser.uid)
-      .get()
-      .then((DocumentSnapshot snapshot) => {
-        setState(() {
-          _following = List.from(snapshot['followingList']).length.toString();
-          _username = snapshot['username'];
-          _firstName = snapshot['firstName'];
-          _lastName = snapshot['lastName'];
-          _email = snapshot['email'];
-          _bio = snapshot['bio'];
-        })
-      })
-    });
-  }
+  // Home h = new Home();
+  // // _HomeState hs = new _HomeState();
+  // void getUser() {
+  //   Firestore.instance
+  //   .collection('users')
+  //   .document(h.currentUser.uid)
+  //   .get()
+  //   .then((DocumentSnapshot snapshot) => {
+  //     setState(() {
+  //       _following = List.from(snapshot['followingList']).length.toString();
+  //       _username = snapshot['username'];
+  //       _firstName = snapshot['firstName'];
+  //       _lastName = snapshot['lastName'];
+  //       _email = snapshot['email'];
+  //       _bio = snapshot['bio'];
+  //     })
+  //   });
+  // }
 
   String getUsername() {
     return _username;
