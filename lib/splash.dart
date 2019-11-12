@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/semantics.dart';
+import 'package:twistter/user.dart';
+// import 'package:flutter/semantics.dart';
 import 'home.dart';
 
 class Splash extends StatefulWidget {
@@ -12,24 +13,33 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
+  User curr;
   @override
   void initState() {
-    FirebaseAuth.instance.currentUser()
-      .then((currentUser) => {
-        if (currentUser == null) {
-          Navigator.pushReplacementNamed(context, '/login')
-        }
-        else {
-          Firestore.instance.collection('users').document(currentUser.uid).get()
-          .then((DocumentSnapshot snapshot) => Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => Home(
-                uid: currentUser.uid,
-                ))))
-                .catchError((err) => print(err))
-              }
-          }).catchError((err) => print(err));
+    FirebaseAuth.instance.currentUser().then((currentUser) => {
+      if (currentUser == null) {
+        Navigator.pushReplacementNamed(context, '/login')
+      }
+      else {
+        // Firestore.instance.collection('users').document(currentUser.uid).get()
+        // .then((DocumentSnapshot snapshot) => () {
+        //   curr = snapshot as User;
+        //   Navigator.pushReplacement(
+        //     context,
+        //     MaterialPageRoute(
+        //       builder:(context) => Home(uid: currentUser.uid, current_user: curr)
+        //     )
+        //   );
+        // }).catchError((err) => print(err))
+        Firestore.instance.collection('users').document(currentUser.uid).get()
+        .then((DocumentSnapshot snapshot) => Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Home(uid: currentUser.uid,)
+          )
+        )).catchError((err) => print(err))
+      }
+    }).catchError((err) => print(err));
     super.initState();
   }
 

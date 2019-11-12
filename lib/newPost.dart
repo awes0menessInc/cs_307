@@ -7,9 +7,12 @@ import 'package:twistter/home.dart';
 import 'package:twistter/profile.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:twistter/user.dart';
 
 class NewPost extends StatefulWidget {
-  NewPost({Key key}) : super(key: key);
+  NewPost({Key key, this.current_user}) : super(key: key);
+  User current_user;
+
   _NewPostState createState() => _NewPostState();
 }
 
@@ -26,9 +29,6 @@ class _NewPostState extends State<NewPost> {
   List<String> _topic = [""];
   String _dropdownvalue = "";
   TextEditingController postEditingController = new TextEditingController();
-
-  HttpsCallable postMicroblogCallable =
-      CloudFunctions.instance.getHttpsCallable(functionName: "postMicroblog");
 
   initState() {
     super.initState();
@@ -51,6 +51,24 @@ class _NewPostState extends State<NewPost> {
                   })
         });
   }
+  
+  // void _getCurrentUser() {
+  //   FirebaseAuth.instance.currentUser().then((currentuser) => {
+  //     Firestore.instance.collection("users").document(currentuser.uid).get()
+  //     .then((DocumentSnapshot snapshot) => {
+  //       setState(() {
+  //         _firstName = snapshot["firstName"];
+  //         _lastName = snapshot["lastName"];
+  //         _topic = List.from(snapshot["topics"]);
+  //         _dropdownvalue = _topic[0];
+  //       })
+  //     })
+  //   });
+  // }
+
+  // void _getUser() {
+  //   _firstName = current_user.firstName;
+  // }
 
   void getCurrentUser() async {
     currentUser = await FirebaseAuth.instance.currentUser();
