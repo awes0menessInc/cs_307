@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'register.dart';
 import 'login.dart';
 import 'splash.dart';
-import 'home.dart';
-import 'register.dart';
-import 'login.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'search.dart';
 
 void main() => runApp(MyApp());
 
@@ -23,6 +20,7 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder> {
         '/login': (BuildContext context) => Login(),
         '/register': (BuildContext context) => Register(),
+        '/search': (BuildContext context) => Search(),
       },
       debugShowCheckedModeBanner: false,
     );

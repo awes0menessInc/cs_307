@@ -6,6 +6,7 @@ import 'timeline.dart';
 import 'profile.dart';
 import 'settings.dart';
 import 'newPost.dart';
+import 'search.dart';
 import 'user.dart';
 
 class Home extends StatefulWidget {
@@ -115,7 +116,7 @@ class _HomeState extends State<Home> {
             body: TabBarView(
               children: [
                 Timeline(),
-                Center(child: Text("Page 2")),
+                Search(),
                 ProfilePage(),
                 Settings(),
               ],
