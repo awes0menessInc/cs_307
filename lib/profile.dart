@@ -8,6 +8,7 @@ import 'package:twistter/timeline.dart';
 import 'package:twistter/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'user.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -15,7 +16,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class ProfilePageState extends State<ProfilePage> {
-
   String _firstName;
   String _username = "keyspleasee";
   String _lastName = "Keys";
@@ -25,7 +25,6 @@ class ProfilePageState extends State<ProfilePage> {
   String _email;
   String _bio = "test 1";
   
-  // String _viewingUser = "Rebecca Keys"; // currently a mock of the logged in user.
   bool pressed = false;
   bool isAccountOwner = true; //TODO: Connect to a function on the back end
   // CurrentUserInfo cui;
@@ -39,7 +38,7 @@ class ProfilePageState extends State<ProfilePage> {
 
   Timeline t = new Timeline();
 
-  void getUserInfo() async{
+  void getUserInfo() async {
     final FirebaseUser user = await FirebaseAuth.instance.currentUser();
     print('current user is '+ user.uid);
     var userQuery = Firestore.instance.collection('users').where('uid', isEqualTo: user.uid).limit(1);
@@ -95,6 +94,40 @@ class ProfilePageState extends State<ProfilePage> {
   //       _bio = snapshot['bio'];
   //     })
   //   });
+  //   userQuery.getDocuments().then((data) { 
+  //     if (data.documents.length > 0) {
+  //       setState(() {
+  //         // _firstName = Home.current.firstName;
+  //         // _lastName = Home.current.lastName;
+  //         // _email = Home.current.email;
+  //         // _username = Home.current.username
+  //         // _bio = data.documents[0].data['bio'];
+  //         // _followers = data.documents[0].data['followers'].toString();
+  //         // _following = data.documents[0].data['following'].toString();
+  //         // _posts = data.documents[0].data['microblogs'].length().toString();
+          
+  //         _firstName = data.documents[0].data['firstName'];
+  //         _lastName = data.documents[0].data['lastName'];
+  //         _email = data.documents[0].data['email'];
+  //         _username = data.documents[0].data['username'];
+  //         _bio = data.documents[0].data['bio'];
+  //         _followers = data.documents[0].data['followers'].toString();
+  //         _following = data.documents[0].data['following'].toString();
+  //         // _posts = data.documents[0].data['microblogs'].length().toString();
+  //       });
+  //     }
+  //   });
+  // }
+
+  // void getUserInfo() {
+  //   _firstName = Home.current.firstName;
+  //       _lastName = Home.current.lastName;
+  //       _email = Home.current.email;
+  //       _username = Home.current.username;
+  //       _bio = Home.current.bio;
+  //       _followers = Home.current.numFollowers;
+  //       _following = Home.current.numFollowing;
+  //       // _posts = data.documents[0].data['microblogs'].length().toString();
   // }
 
   String getUsername() {
@@ -135,14 +168,17 @@ class ProfilePageState extends State<ProfilePage> {
 
   Widget _buildFullName(BuildContext context) {
     return Container(
-        margin: EdgeInsets.symmetric(vertical: 10.0),
-        child: Text('$_firstName' + ' ' + _lastName + ' | @' + _username,
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              color: Colors.black,
-              fontSize: 20.0,
-              fontWeight: FontWeight.w500,
-            )));
+      margin: EdgeInsets.symmetric(vertical: 10.0),
+      child: Text('$_firstName' + ' ' + _lastName + ' | @' + _username,
+        style: TextStyle(
+          fontFamily: 'Montserrat',
+          color: Colors.black,
+          fontSize: 20.0,
+          fontWeight: FontWeight.w500,
+        ),
+      )
+ 
+    );
   }
 
   Widget _buildStatItem(String label, String count) {

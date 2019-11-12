@@ -106,8 +106,9 @@ class _LoginState extends State<Login> {
                                 FlatButton(
                                   child: Text("Close"),
                                   onPressed: () {
-                                    Navigator.of(context).pop();
                                     loading = false;
+                                    pwdInputController.clear();
+                                    Navigator.of(context).pop();
                                   },
                                 )
                               ],

@@ -1,23 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:twistter/user.dart';
 import 'post.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
 
-class Timeline extends StatelessWidget {
+class Timeline extends StatefulWidget {
+  Timeline({Key title, this.current_user}) : super(key: title); 
+  final User current_user;
+
+  @override
+  _TimelineState createState() => _TimelineState();
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return new MaterialApp(
+  //     theme: new ThemeData(primaryColor: Colors.white),
+  //     home: new ListPage(title: 'Timeline'),
+  //     debugShowCheckedModeBanner: false,
+  //   );
+  // }
+}
+
+class _TimelineState extends State<Timeline> {
+
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
       theme: new ThemeData(primaryColor: Colors.white),
-      home: new ListPage(title: 'Timeline'),
+      home: new ListPage(title: 'Timeline',),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
 class ListPage extends StatefulWidget {
-  ListPage({Key key, this.title}) : super(key: key);
+  ListPage({Key key, this.title, this.current_user}) : super(key: key);
   final String title;
+  final User current_user;
 
   @override
   _ListPageState createState() => _ListPageState();
@@ -27,9 +47,7 @@ class _ListPageState extends State<ListPage> {
   static const String KEY_LAST_FETCH = "last_fetch";
   static const int MILLISECONDS_IN_HOUR = 3600000;
   static const int REFRESH_THRESHOLD = 3 * MILLISECONDS_IN_HOUR;
-  final String _username = "BoilerMaker";
-  final String _blogtext =
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sed odio morbi quis commodo odio. Integer eget aliquet nibh praesent tristique. Semper quis lectus nulla at volutpat diam. Fringilla est ullamcorper eget nulla facilisi etiam.";
+  
   bool pressed = false;
   List<Post> posts = [];
   String _name = "";
@@ -110,7 +128,8 @@ class _ListPageState extends State<ListPage> {
       if (_following.contains(f["userId"])) {
         postsList.add(new Post(
           content: f['content'],
-          username: f['firstName'].toString() + " " + f['lastName'].toString(),
+          username: f['username'],
+          fullName: f['firstName'].toString() + " " + f['lastName'].toString(),
           topics: List.from(f['topics']),
         ));
       }
@@ -120,19 +139,17 @@ class _ListPageState extends State<ListPage> {
 
   Widget _makeBody(BuildContext context, List<DocumentSnapshot> snap) {
     posts = getPosts(snap);
-    //debugPrint("PLLLLLLLSSSSSS" + posts[1].content);
     return Container(
         child: new ListView.builder(
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-      itemBuilder: (content, index) => _makeCard(context, posts[index]),
-      itemCount: posts.length,
-    ));
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          itemBuilder: (content, index) => _makeCard(context, posts[index]),
+          itemCount: posts.length,
+        )
+      );
   }
 
   Widget _makeListTile(BuildContext context, Post post) {
-    //debugPrint("PLLLLLLLSSSSSS" + posts[1].content);
-
     return ListTile(
       contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
       leading: Container(
@@ -144,16 +161,27 @@ class _ListPageState extends State<ListPage> {
           )),
       title: Container(
           padding: EdgeInsets.all(0),
-          child: Text(
-            // _username,
-            post.username,
-            style: TextStyle(
-              color: Color.fromRGBO(7, 113, 136, 1.0),
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-              fontFamily: 'Poppins',
-            ),
-          )),
+          child: InkWell(
+            onTap: () {
+              print("tap!");
+              // Navigator.pushReplacement(
+              //   context, 
+              //   MaterialPageRoute(
+              //     builder: (context) => Userline()
+              //   )
+              // );
+            },
+            child: Text(
+              post.fullName,
+              style: TextStyle(
+                color: Color.fromRGBO(7, 113, 136, 1.0),
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+                fontFamily: 'Poppins',
+              ),
+            )
+          )
+        ),
       subtitle: Text(
         //_blogtext,
         post.content,
