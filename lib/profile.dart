@@ -11,6 +11,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'user.dart';
 
 class ProfilePage extends StatefulWidget {
+
+  String userPage;
+  ProfilePage({Key key, this.userPage}) : super(key: key);
+
   @override
   ProfilePageState createState() => ProfilePageState();
 }
@@ -24,10 +28,8 @@ class ProfilePageState extends State<ProfilePage> {
   String _following = "4";
   String _email;
   String _bio = "test 1";
-  
   bool pressed = false;
   bool isAccountOwner = true; //TODO: Connect to a function on the back end
-  // CurrentUserInfo cui;
 
   @override
   initState() {
@@ -41,7 +43,10 @@ class ProfilePageState extends State<ProfilePage> {
   void getUserInfo() async {
     final FirebaseUser user = await FirebaseAuth.instance.currentUser();
     print('current user is '+ user.uid);
-    var userQuery = Firestore.instance.collection('users').where('uid', isEqualTo: user.uid).limit(1);
+    if (widget.userPage == null) {
+      widget.userPage = user.uid;
+    }
+    var userQuery = Firestore.instance.collection('users').where('uid', isEqualTo: widget.userPage).limit(1);
     userQuery.getDocuments().then((data){ 
     if (data.documents.length > 0){
       setState(() {
@@ -251,9 +256,9 @@ class ProfilePageState extends State<ProfilePage> {
   Widget _buildBio(BuildContext context) {
     TextStyle bioTextStyle = TextStyle(
       fontFamily: 'Spectral',
-      fontWeight: FontWeight.w400,
-      fontStyle: FontStyle.italic,
-      color: Color(0xFF799497),
+      fontWeight: FontWeight.w600,
+      // fontStyle: FontStyle.italic,
+      color: Colors.black,
       fontSize: 16.0,
     );
     return Container(

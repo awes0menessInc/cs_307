@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:twistter/user.dart';
+import 'package:twistter/profile.dart';
 import 'post.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
@@ -131,6 +132,7 @@ class _ListPageState extends State<ListPage> {
           username: f['username'],
           fullName: f['firstName'].toString() + " " + f['lastName'].toString(),
           topics: List.from(f['topics']),
+          uid: f['userId']
         ));
       }
     });
@@ -164,12 +166,11 @@ class _ListPageState extends State<ListPage> {
           child: InkWell(
             onTap: () {
               print("tap!");
-              // Navigator.pushReplacement(
-              //   context, 
-              //   MaterialPageRoute(
-              //     builder: (context) => Userline()
-              //   )
-              // );
+                var route = new MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      new ProfilePage(userPage: post.uid),
+                );
+                Navigator.of(context).push(route);
             },
             child: Text(
               post.fullName,
