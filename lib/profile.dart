@@ -24,8 +24,8 @@ class ProfilePageState extends State<ProfilePage> {
   String _username = "keyspleasee";
   String _lastName = "Keys";
   String _posts = "0";
-  String _followers;
-  String _following = "4";
+  int _followers = 0;
+  int _following = 4;
   String _email;
   String _bio = "test 1";
   bool pressed = false;
@@ -40,101 +40,56 @@ class ProfilePageState extends State<ProfilePage> {
 
   Timeline t = new Timeline();
 
+  // void getUserInfo() async {
+  //   final FirebaseUser user = await FirebaseAuth.instance.currentUser();
+  //   print('current user is '+ user.uid);
+  //   if (widget.userPage == null) {
+  //     widget.userPage = user.uid;
+  //   }
+  //   var userQuery = Firestore.instance.collection('users').where('uid', isEqualTo: widget.userPage).limit(1);
+  //   userQuery.getDocuments().then((data){ 
+  //   if (data.documents.length > 0){
+  //     setState(() {
+  //       _firstName = data.documents[0].data['firstName'];
+  //       _lastName = data.documents[0].data['lastName'];
+  //       _email = data.documents[0].data['email'];
+  //       _username = data.documents[0].data['username'];
+  //       _bio = data.documents[0].data['bio'];
+  //       _followers = data.documents[0].data['followers'];
+  //       _following = data.documents[0].data['following'];
+  //       _following == null ? _following = 0 : _following = _following;
+  //       // _posts = data.documents[0].data['microblogs'].length().toString();
+  //     }
+  //     );}
+  //   });
+  // }
+
   void getUserInfo() async {
     final FirebaseUser user = await FirebaseAuth.instance.currentUser();
     print('current user is '+ user.uid);
     if (widget.userPage == null) {
       widget.userPage = user.uid;
     }
-    var userQuery = Firestore.instance.collection('users').where('uid', isEqualTo: widget.userPage).limit(1);
-    userQuery.getDocuments().then((data){ 
-    if (data.documents.length > 0){
+    var docReference = Firestore.instance.collection('users').document(widget.userPage);
+    docReference.get().then((data){ 
+      if (data.exists) {
       setState(() {
-        _firstName = data.documents[0].data['firstName'];
-        _lastName = data.documents[0].data['lastName'];
-        _email = data.documents[0].data['email'];
-        _username = data.documents[0].data['username'];
-        _bio = data.documents[0].data['bio'];
-        _followers = data.documents[0].data['followers'].toString();
-        _following = data.documents[0].data['following'].toString();
-        _following == "null" ? _following = "0" : _following = _following;
-        // _posts = data.documents[0].data['microblogs'].length().toString();
+        _firstName = data['firstName'];
+        _lastName = data['lastName'];
+        _email = data['email'];
+        _username = data['username'];
+        _bio = data['bio'];
+        _followers = data['followers'];
+        _following = data['followingList'].length;
+        _following == null ? _following = 0 : _following = _following;
+        // _posts = data['microblogs'].length().toString();
       }
       );}
+      else {
+      print('User information not found');
+    }
     });
   }
-
-  // Future _getUser() async {
-  //   await FirebaseAuth.instance.currentUser().then((currentuser) => {
-  //     Firestore.instance
-  //     .collection('users')
-  //     .document(currentuser.uid)
-  //     .get()
-  //     .then((DocumentSnapshot snapshot) => {
-  //       setState(() {
-  //         _following = List.from(snapshot['followingList']).length.toString();
-  //         _username = snapshot['username'];
-  //         _firstName = snapshot['firstName'];
-  //         _lastName = snapshot['lastName'];
-  //         _email = snapshot['email'];
-  //         _bio = snapshot['bio'];
-  //       })
-  //     })
-  //   });
-  // }
-
-  // Home h = new Home();
-  // // _HomeState hs = new _HomeState();
-  // void getUser() {
-  //   Firestore.instance
-  //   .collection('users')
-  //   .document(h.currentUser.uid)
-  //   .get()
-  //   .then((DocumentSnapshot snapshot) => {
-  //     setState(() {
-  //       _following = List.from(snapshot['followingList']).length.toString();
-  //       _username = snapshot['username'];
-  //       _firstName = snapshot['firstName'];
-  //       _lastName = snapshot['lastName'];
-  //       _email = snapshot['email'];
-  //       _bio = snapshot['bio'];
-  //     })
-  //   });
-  //   userQuery.getDocuments().then((data) { 
-  //     if (data.documents.length > 0) {
-  //       setState(() {
-  //         // _firstName = Home.current.firstName;
-  //         // _lastName = Home.current.lastName;
-  //         // _email = Home.current.email;
-  //         // _username = Home.current.username
-  //         // _bio = data.documents[0].data['bio'];
-  //         // _followers = data.documents[0].data['followers'].toString();
-  //         // _following = data.documents[0].data['following'].toString();
-  //         // _posts = data.documents[0].data['microblogs'].length().toString();
-          
-  //         _firstName = data.documents[0].data['firstName'];
-  //         _lastName = data.documents[0].data['lastName'];
-  //         _email = data.documents[0].data['email'];
-  //         _username = data.documents[0].data['username'];
-  //         _bio = data.documents[0].data['bio'];
-  //         _followers = data.documents[0].data['followers'].toString();
-  //         _following = data.documents[0].data['following'].toString();
-  //         // _posts = data.documents[0].data['microblogs'].length().toString();
-  //       });
-  //     }
-  //   });
-  // }
-
-  // void getUserInfo() {
-  //   _firstName = Home.current.firstName;
-  //       _lastName = Home.current.lastName;
-  //       _email = Home.current.email;
-  //       _username = Home.current.username;
-  //       _bio = Home.current.bio;
-  //       _followers = Home.current.numFollowers;
-  //       _following = Home.current.numFollowing;
-  //       // _posts = data.documents[0].data['microblogs'].length().toString();
-  // }
 
   String getUsername() {
     return _username;
@@ -191,7 +146,7 @@ class ProfilePageState extends State<ProfilePage> {
     TextStyle _statLabelTextStyle = TextStyle(
       fontFamily: 'Montserrat',
       color: Colors.black,
-      fontSize: 16.0,
+      fontSize: 12.0,
       fontWeight: FontWeight.w200,
     );
 
@@ -215,6 +170,20 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  String formatStat(int stat) {
+    String newStat;
+    if ((stat >= 1000) && (stat < 1000000)) {
+      newStat = (stat/1000).toStringAsFixed(1) + "K";
+    }
+    else if (stat >= 1000000) {
+      newStat = (stat/1000000).toStringAsFixed(1) + "M";
+    }
+    else {
+      newStat = stat.toString();
+    }
+    return newStat;
+  }
+
   Widget _buildStatContainer() {
     return Container(
       height: 60.0,
@@ -231,11 +200,10 @@ class ProfilePageState extends State<ProfilePage> {
         //   },
         // ),
         children: <Widget>[
-          _buildStatItem("Followers",
-              _followers), //userDoc is the document in Firestore of the currently logged in user
-          // TODO: Add a function that gets the name of the doucment for the currently logged in user and stores it as 'userdoc' (match uid to the right doc)
-          _buildStatItem("Following", _following),
+          _buildStatItem("Followers", formatStat(_followers)),
+          _buildStatItem("Following", formatStat(_following)),
           _buildStatItem("Posts", _posts),
+          _buildStatItem("Topics", "14"),
         ],
       ),
     );
@@ -282,11 +250,8 @@ class ProfilePageState extends State<ProfilePage> {
   }
 
   Color getColor(bool pressed) {
-    if (pressed) {
-      return Color(0xffd1d1d1);
-    } else {
-      return Color(0xff077188);
-    }
+    if (pressed) { return Color(0xffd1d1d1); } 
+    else { return Color(0xff077188); }
   }
 
   Text getText(bool pressed) {
