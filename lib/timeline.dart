@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:twistter/profile.dart';
 import 'package:twistter/user.dart';
 import 'package:twistter/post.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:shared_preferences/shared_preferences.dart';
+
 
 class Timeline extends StatefulWidget {
   Timeline({Key title, this.current_user}) : super(key: title); 

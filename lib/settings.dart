@@ -1,16 +1,9 @@
-// Copyright 2015 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:twistter/timeline.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:twistter/profile.dart';
 
-import 'auth_service.dart';
-import 'login.dart';
+import 'package:twistter/auth_service.dart';
+import 'package:twistter/login.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -97,10 +90,6 @@ class SettingsState extends State<Settings> {
       });
     });
   }
-
-  // void getCurrentUser() async {
-  //   currentUser = await FirebaseAuth.instance.currentUser();
-  // }
 
   void _logout() async {
     await FirebaseAuth.instance.signOut();

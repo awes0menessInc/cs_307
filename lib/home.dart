@@ -1,12 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:twistter/newPost.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+
+import 'package:twistter/newPost.dart';
 import 'package:twistter/timeline.dart';
 import 'package:twistter/profile.dart';
 import 'package:twistter/settings.dart';
-import 'package:twistter/newPost.dart';
 import 'package:twistter/search.dart';
+
 import 'package:twistter/user.dart';
 
 class Home extends StatefulWidget {

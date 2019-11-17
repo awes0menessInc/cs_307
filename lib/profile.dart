@@ -1,16 +1,12 @@
-// Copyright 2015 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+
 import 'package:twistter/auth_service.dart';
-// import 'package:twistter/currentUserInfo.dart';
+
 import 'package:twistter/timeline.dart';
 import 'package:twistter/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:twistter/user.dart';
+
 
 class ProfilePage extends StatefulWidget {
   String userPage;
@@ -27,7 +23,7 @@ class ProfilePageState extends State<ProfilePage> {
   String _followers = "45";
   String _following = "32";
   String _email;
-  String _bio = "test 1";
+  String _bio;
   bool pressed = false;
   bool isAccountOwner = true; //TODO: Connect to a function on the back end
 
