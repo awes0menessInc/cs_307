@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:twistter/user.dart';
-import 'post.dart';
+import 'package:twistter/post.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
 
@@ -238,30 +238,28 @@ class _ListPageState extends State<ListPage> {
   @override
   Widget build(BuildContext context) {
     //Firestore.instance
-
     return Scaffold(
-        backgroundColor: Color.fromRGBO(85, 176, 189, 1.0),
-        body: Stack(
-          children: <Widget>[
-            StreamBuilder<QuerySnapshot>(
-                stream: Firestore.instance
-                    .collection('microblogs')
-                    .orderBy('timestamp', descending: true)
-                    .snapshots(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasError) return new Text('Error');
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.waiting:
-                      return new Text('Loading...');
-                    default:
-                      return _makeBody(context, snapshot.data.documents);
-                  } //switch
-                } //asyncsnapshot
-                )
-
+      backgroundColor: Color.fromRGBO(85, 176, 189, 1.0),
+      body: Stack(
+        children: <Widget>[
+          StreamBuilder<QuerySnapshot>(
+            stream: Firestore.instance
+              .collection('microblogs')
+              .orderBy('timestamp', descending: true)
+              .snapshots(),
+            builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasError) return new Text('Error');
+              switch (snapshot.connectionState) {
+                case ConnectionState.waiting:
+                  return new Text('Loading...');
+                default:
+                  return _makeBody(context, snapshot.data.documents);
+              } //switch
+            } //asyncsnapshot
+          )
             //_makeBody(context, posts),
-          ],
-        ));
+        ],
+      )
+    );
   }
 }

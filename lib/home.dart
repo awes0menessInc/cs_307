@@ -2,12 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:twistter/newPost.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'timeline.dart';
-import 'profile.dart';
-import 'settings.dart';
-import 'newPost.dart';
-import 'search.dart';
-import 'user.dart';
+import 'package:twistter/timeline.dart';
+import 'package:twistter/profile.dart';
+import 'package:twistter/settings.dart';
+import 'package:twistter/newPost.dart';
+import 'package:twistter/search.dart';
+import 'package:twistter/user.dart';
 
 class Home extends StatefulWidget {
   Home({Key title, this.uid, this.current_user}) : super(key: title); 
@@ -46,17 +46,17 @@ class _HomeState extends State<Home> {
       if (data.documents.length > 0){
         setState(() {
           // current_user = current;
-          // Home.current.uid = currentUser.uid;
-          // Home.current.username = data.documents[0].data['username'];
-          // Home.current.firstName = data.documents[0].data['firstName'];
-          // Home.current.lastName = data.documents[0].data['lastName'];
-          // Home.current.email = data.documents[0].data['email'];
-          // Home.current.bio = data.documents[0].data['bio'];
-          // Home.current.birthday = data.documents[0].data['birthday'];
-          // Home.current.website = data.documents[0].data['website'];
+          // widget.current_user.uid = currentUser.uid;
+          // widget.current_user.username = data.documents[0].data['username'];
+          // widget.current_user.firstName = data.documents[0].data['firstName'];
+          // widget.current_user.lastName = data.documents[0].data['lastName'];
+          // widget.current_user.email = data.documents[0].data['email'];
+          // widget.current_user.bio = data.documents[0].data['bio'];
+          // widget.current_user.birthday = data.documents[0].data['birthday'];
+          // widget.current_user.website = data.documents[0].data['website'];
 
-          // Home.current.numFollowing = data.documents[0].data['following'].toString();
-          // Home.current.numFollowers = data.documents[0].data['followers'].toString();
+          // widget.current_user.numFollowing = data.documents[0].data['following'].toString();
+          // widget.current_user.numFollowers = data.documents[0].data['followers'].toString();
           // _posts = data.documents[0].data['microblogs'].length().toString();
 
 

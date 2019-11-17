@@ -14,12 +14,16 @@ description: CS 307 Group Project.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
   provider: ^3.1.0+1
   flutter:
     sdk: flutter
+
+  redux: ^3.0.0
+  flutter_redux: ^0.5.4
+  redux_logging: ^0.3.0
 
   # dependency for Firebase Core Flutter SDK
   firebase_core: ^0.4.0+1
