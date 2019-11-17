@@ -1,7 +1,6 @@
-import 'dart:io';
-
+// import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:twistter/home.dart';
 import 'package:twistter/profile.dart';
@@ -21,6 +20,7 @@ class _NewPostState extends State<NewPost> {
   var t = ["Purdue", "Science"];
   var dropdownvalue;
   var top = "";
+  bool isSelected = false;
   // TextEditingController postEditingController;
   ProfilePageState pps = new ProfilePageState();
   FirebaseUser currentUser;
@@ -28,6 +28,7 @@ class _NewPostState extends State<NewPost> {
   String _lastName = "";
   List<String> _topic = [""];
   String _dropdownvalue = "";
+  int _value = 1;
   TextEditingController postEditingController = new TextEditingController();
 
   initState() {
@@ -78,8 +79,31 @@ class _NewPostState extends State<NewPost> {
     functionName: 'postMicroblog',
   );
 
+  List<String> selectedTopics = List();
+  List<Widget> _buildChoiceList(List<String> topic) {
+    List<Widget> choices = List();
+    topic.forEach((item) {
+      choices.add(Container(
+        padding: const EdgeInsets.all(2.0),
+        child: ChoiceChip(
+          label: Text(item),
+          selected: selectedTopics.contains(item),
+          onSelected: (selected) {
+            setState(() {
+              selectedTopics.contains(item)
+                  ? selectedTopics.remove(item)
+                  : selectedTopics.add(item);
+              // widget.onSelectionChanged(selectedTopics); // +added
+            });
+          },
+        ),
+      ));
+    });
+    return choices;
+  }
+
   Widget build(BuildContext context) {
-    pps.getUserInfo();
+    // pps.getUserInfo();
     return Scaffold(
       appBar: AppBar(
         title: Text("NewPost"),
@@ -150,24 +174,13 @@ class _NewPostState extends State<NewPost> {
                     controller: postEditingController,
                     maxLength: 307,
                   ),
-                  DropdownButton<String>(
-                    items: _topic.map((String value) {
-                      return new DropdownMenuItem<String>(
-                        value: value,
-                        child: new Text(value),
-                      );
-                    }).toList(),
-                    value: _dropdownvalue,
-                    onChanged: (String val) {
-                      top = val;
-                      setState(() {
-                        _dropdownvalue = val;
-                      });
-                    },
+                  
+                  Wrap(
+                    children: _buildChoiceList(_topic),
+                  )
+                    ],
                   ),
-                  // add(),
-                  // cancel()
-                ]))))));
+                )))));
   }
 
   // Widget add() {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:twistter/profile.dart';
 import 'package:twistter/user.dart';
 import 'package:twistter/post.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -131,6 +132,7 @@ class _ListPageState extends State<ListPage> {
           username: f['username'],
           fullName: f['firstName'].toString() + " " + f['lastName'].toString(),
           topics: List.from(f['topics']),
+          uid: f['userId']
         ));
       }
     });
@@ -164,12 +166,11 @@ class _ListPageState extends State<ListPage> {
           child: InkWell(
             onTap: () {
               print("tap!");
-              // Navigator.pushReplacement(
-              //   context, 
-              //   MaterialPageRoute(
-              //     builder: (context) => Userline()
-              //   )
-              // );
+                var route = new MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      new ProfilePage(userPage: post.uid),
+                );
+                Navigator.of(context).push(route);
             },
             child: Text(
               post.fullName,
@@ -239,24 +240,30 @@ class _ListPageState extends State<ListPage> {
   Widget build(BuildContext context) {
     //Firestore.instance
     return Scaffold(
-      backgroundColor: Color.fromRGBO(85, 176, 189, 1.0),
-      body: Stack(
-        children: <Widget>[
-          StreamBuilder<QuerySnapshot>(
-            stream: Firestore.instance
-              .collection('microblogs')
-              .orderBy('timestamp', descending: true)
-              .snapshots(),
-            builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (snapshot.hasError) return new Text('Error');
-              switch (snapshot.connectionState) {
-                case ConnectionState.waiting:
-                  return new Text('Loading...');
-                default:
-                  return _makeBody(context, snapshot.data.documents);
-              } //switch
-            } //asyncsnapshot
-          )
+        backgroundColor: Color.fromRGBO(85, 176, 189, 1.0),
+        body: Stack(
+          children: <Widget>[
+            StreamBuilder<QuerySnapshot>(
+                stream: Firestore.instance
+                    .collection('microblogs')
+                    .orderBy('timestamp', descending: true)
+                    .snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.hasError) return new Text('Error');
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                      // return new Text('Loading...');
+                      return Container(
+                        alignment: Alignment.bottomCenter,
+                        child: LinearProgressIndicator()
+                      );
+                    default:
+                      return _makeBody(context, snapshot.data.documents);
+                  } //switch
+                } //asyncsnapshot
+                )
+
             //_makeBody(context, posts),
         ],
       )

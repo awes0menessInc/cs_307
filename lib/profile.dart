@@ -7,11 +7,13 @@ import 'package:provider/provider.dart';
 import 'package:twistter/auth_service.dart';
 // import 'package:twistter/currentUserInfo.dart';
 import 'package:twistter/timeline.dart';
+import 'package:twistter/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:twistter/user.dart';
 
 class ProfilePage extends StatefulWidget {
+  String userPage;
   
   @override
   ProfilePageState createState() => ProfilePageState();
@@ -25,11 +27,9 @@ class ProfilePageState extends State<ProfilePage> {
   String _followers = "45";
   String _following = "32";
   String _email;
-  String _bio;
-  
+  String _bio = "test 1";
   bool pressed = false;
   bool isAccountOwner = true; //TODO: Connect to a function on the back end
-  // CurrentUserInfo cui;
 
   @override
   initState() {
@@ -138,7 +138,7 @@ class ProfilePageState extends State<ProfilePage> {
     TextStyle _statLabelTextStyle = TextStyle(
       fontFamily: 'Montserrat',
       color: Colors.black,
-      fontSize: 16.0,
+      fontSize: 12.0,
       fontWeight: FontWeight.w200,
     );
 
@@ -162,6 +162,20 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  String formatStat(int stat) {
+    String newStat;
+    if ((stat >= 1000) && (stat < 1000000)) {
+      newStat = (stat/1000).toStringAsFixed(1) + "K";
+    }
+    else if (stat >= 1000000) {
+      newStat = (stat/1000000).toStringAsFixed(1) + "M";
+    }
+    else {
+      newStat = stat.toString();
+    }
+    return newStat;
+  }
+
   Widget _buildStatContainer() {
     return Container(
       height: 60.0,
@@ -178,9 +192,10 @@ class ProfilePageState extends State<ProfilePage> {
         //   },
         // ),
         children: <Widget>[
-          _buildStatItem("Followers", _followers),
-          _buildStatItem("Following", _following),
+          _buildStatItem("Followers", formatStat(_followers)),
+          _buildStatItem("Following", formatStat(_following)),
           _buildStatItem("Posts", _posts),
+          _buildStatItem("Topics", "14"),
         ],
       ),
     );
@@ -201,9 +216,9 @@ class ProfilePageState extends State<ProfilePage> {
   Widget _buildBio(BuildContext context) {
     TextStyle bioTextStyle = TextStyle(
       fontFamily: 'Spectral',
-      fontWeight: FontWeight.w400,
-      fontStyle: FontStyle.italic,
-      color: Color(0xFF799497),
+      fontWeight: FontWeight.w600,
+      // fontStyle: FontStyle.italic,
+      color: Colors.black,
       fontSize: 16.0,
     );
     return Container(
@@ -227,11 +242,8 @@ class ProfilePageState extends State<ProfilePage> {
   }
 
   Color getColor(bool pressed) {
-    if (pressed) {
-      return Color(0xffd1d1d1);
-    } else {
-      return Color(0xff077188);
-    }
+    if (pressed) { return Color(0xffd1d1d1); } 
+    else { return Color(0xff077188); }
   }
 
   Text getText(bool pressed) {
@@ -427,6 +439,7 @@ class ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     // getInfo();
     Size screenSize = MediaQuery.of(context).size;
+    print("\n$_firstName is following $_following people");
     return Scaffold(
       body: Stack(
         children: <Widget>[

@@ -178,6 +178,8 @@ class _RegisterState extends State<Register> {
                                     "lastName": lastNameInputController.text,
                                     "username": usernameInputController.text,
                                     "email": emailInputController.text,
+                                    "followers": 0,
+                                    "bio": "",
                                     "followingList": FieldValue.arrayUnion(
                                         [currentUser.uid.toString()]),
                                 })
