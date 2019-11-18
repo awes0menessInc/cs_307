@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 
 import 'package:twistter/auth_service.dart';
-
 import 'package:twistter/timeline.dart';
-import 'package:twistter/home.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 
 class ProfilePage extends StatefulWidget {
   String userPage;
+  ProfilePage({Key key, this.userPage}) : super(key: key);
   
   @override
   ProfilePageState createState() => ProfilePageState();
@@ -20,10 +16,11 @@ class ProfilePageState extends State<ProfilePage> {
   String _username;
   String _lastName;
   String _posts = "1";
-  String _followers = "45";
-  String _following = "32";
   String _email;
   String _bio;
+
+  int _followers = 45;
+  int _following = 32;
   bool pressed = false;
   bool isAccountOwner = true; //TODO: Connect to a function on the back end
 
@@ -73,11 +70,17 @@ class ProfilePageState extends State<ProfilePage> {
   // }
 
   void getUserInfo() {
+    if (widget.userPage == null) {
+      widget.userPage = AuthService.getUserInfo().uid;
+    }
+
     this._firstName = AuthService.getUserInfo().firstName;
     this._lastName = AuthService.getUserInfo().lastName;
     this._email = AuthService.getUserInfo().email;
     this._username = AuthService.getUserInfo().username;
     this._bio = AuthService.getUserInfo().bio;
+    // this._following == "null" ? _following = "0" : _following = _following;
+
     // this._followers = AuthService.getUserInfo().;
     // this._following = AuthService.getUserInfo().following.length.toString();
     // this._posts = AuthService.getUserInfo().numMicroblogs;
@@ -126,7 +129,6 @@ class ProfilePageState extends State<ProfilePage> {
           fontWeight: FontWeight.w500,
         ),
       )
- 
     );
   }
 
@@ -252,24 +254,28 @@ class ProfilePageState extends State<ProfilePage> {
 
   Widget _buildButtons(BuildContext context) {
     return Padding(
-        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-        child: Column(
-          children: <Widget>[
-            Row(children: <Widget>[
-              Visibility(
-                  visible: !isAccountOwner,
-                  child: Expanded(
-                      child: RaisedButton(
-                          color: getColor(pressed),
-                          onPressed: () {
-                            setState(() {
-                              pressed = !pressed;
-                            });
-                          },
-                          shape: RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(15.0)),
-                          child: getText(pressed))))
-            ]),
+      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      child: Column(
+        children: <Widget>[
+          Row(children: <Widget>[
+            Visibility(
+              visible: !isAccountOwner,
+              child: Expanded(
+                child: RaisedButton(
+                  color: getColor(pressed),
+                  onPressed: () {
+                    setState(() {
+                      pressed = !pressed;
+                    });
+                  },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(15.0)
+                  ),
+                  child: getText(pressed)
+                )
+              )
+            )
+          ]),
             // Row(
             //   children: <Widget>[
             //     Visibility(
@@ -433,7 +439,6 @@ class ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    // getInfo();
     Size screenSize = MediaQuery.of(context).size;
     print("\n$_firstName is following $_following people");
     return Scaffold(

@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
-import 'package:twistter/auth_button_container.dart';
 import 'package:twistter/auth_service.dart';
 import 'package:twistter/home.dart';
-// import 'currentUserInfo.dart';
+
 
 class Login extends StatefulWidget {
   Login({Key key}) : super(key: key);
@@ -19,11 +18,9 @@ class _LoginState extends State<Login> {
   TextEditingController emailInputController;
   TextEditingController pwdInputController;
   bool loading;
-  // CurrentUserInfo cui;
 
   @override
   initState() {
-    // cui = new CurrentUserInfo();
     emailInputController = new TextEditingController();
     pwdInputController = new TextEditingController();
     loading = false;
@@ -51,22 +48,23 @@ class _LoginState extends State<Login> {
 
   Future buildErrorDialog(BuildContext context, message) {
     return showDialog(
+      context: context,
       builder: (context) {
         return AlertDialog(
           title: Text('Error'),
           content: Text(message),
           actions: <Widget>[
             FlatButton(
-                child: Text('Close'),
-                onPressed: () {
-                  loading = false;
-                  pwdInputController.clear();
-                  Navigator.of(context).pop();
-                })
+              child: Text('Close'),
+              onPressed: () {
+                loading = false;
+                pwdInputController.clear();
+                Navigator.of(context).pop();
+              }
+            )
           ],
         );
       },
-      context: context,
     );
   }
 

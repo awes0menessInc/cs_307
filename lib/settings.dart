@@ -26,7 +26,7 @@ class SettingsState extends State<Settings> {
   TextEditingController lnameController = new TextEditingController();
   TextEditingController bioController = new TextEditingController();
   TextEditingController bdayController = new TextEditingController();
-  TextEditingController weblinkController = new TextEditingController();
+  TextEditingController websiteController = new TextEditingController();
   TextEditingController emailController = new TextEditingController();
   TextEditingController topicController = new TextEditingController();
   final GlobalKey<FormState> _editFormKey = GlobalKey<FormState>();
@@ -37,41 +37,41 @@ class SettingsState extends State<Settings> {
     super.initState();
   }
 
-  Future getUser() async {
-     await FirebaseAuth.instance.currentUser().then((currentuser) => {
-      Firestore.instance.collection("users").
-      document(currentuser.uid).
-      get().
-      then((DocumentSnapshot snapshot) => {
-        setState((){
-          _firstName = snapshot["firstName"];
-          _lastName = snapshot["lastName"];
-          _email = snapshot["email"];
-          _uid = snapshot["uid"];
-          _topics = List.from(snapshot["topics"]);
-          if (snapshot.data.containsKey("uid")) {
-            _bio = snapshot["bio"];
-          }
-          if (snapshot.data.containsKey("website")) {
-            _website = snapshot["website"];
-          }
-          if (snapshot.data.containsKey("birthday")) {
-            _birthday = snapshot["birthday"];
-          }
-        })
-      })
-    });
-  }
-
-  // void getUser() {
-  //   this._uid = currentUser.uid;
-  //   this._firstName = AuthService.getUserInfo().firstName;
-  //   this._lastName = AuthService.getUserInfo().lastName;
-  //   this._email = AuthService.getUserInfo().email;
-  //   this._bio = AuthService.getUserInfo().bio;
-  //   this._website = AuthService.getUserInfo().website;
-  //   this._birthday = AuthService.getUserInfo().birthday;
+  // Future getUser() async {
+  //    await FirebaseAuth.instance.currentUser().then((currentuser) => {
+  //     Firestore.instance.collection("users").
+  //     document(currentuser.uid).
+  //     get().
+  //     then((DocumentSnapshot snapshot) => {
+  //       setState((){
+  //         _firstName = snapshot["firstName"];
+  //         _lastName = snapshot["lastName"];
+  //         _email = snapshot["email"];
+  //         _uid = snapshot["uid"];
+  //         _topics = List.from(snapshot["topics"]);
+  //         if (snapshot.data.containsKey("uid")) {
+  //           _bio = snapshot["bio"];
+  //         }
+  //         if (snapshot.data.containsKey("website")) {
+  //           _website = snapshot["website"];
+  //         }
+  //         if (snapshot.data.containsKey("birthday")) {
+  //           _birthday = snapshot["birthday"];
+  //         }
+  //       })
+  //     })
+  //   });
   // }
+
+  void getUser() {
+    this._uid = AuthService.getUserInfo().uid;
+    this._firstName = AuthService.getUserInfo().firstName;
+    this._lastName = AuthService.getUserInfo().lastName;
+    this._email = AuthService.getUserInfo().email;
+    this._bio = AuthService.getUserInfo().bio;
+    this._website = AuthService.getUserInfo().website;
+    this._birthday = AuthService.getUserInfo().birthday;
+  }
 
   Future deleteUser() async {
     Firestore.instance.collection("users").document(_uid).delete();
@@ -93,7 +93,7 @@ class SettingsState extends State<Settings> {
 
   void _logout() async {
     await FirebaseAuth.instance.signOut();
-    AuthService.wipeUser();
+    // AuthService.wipeUser();
   }
 
   String emailValidator(String value) {
@@ -119,17 +119,14 @@ class SettingsState extends State<Settings> {
   }
 
   void buildDeleteDialog() {
-    // flutter defined function
     showDialog(
       context: context,
       builder: (context) {
-        // return object of type Dialog
         return AlertDialog(
           title: Text("Delete account?"),
           content: Text(
               'Are you sure you want to delete your account? This will permanently remove all Twistter data associated with your account.'),
           actions: <Widget>[
-            // usually buttons at the bottom of the dialog
             FlatButton(
               child: Text("Cancel"),
               onPressed: () {
@@ -138,7 +135,7 @@ class SettingsState extends State<Settings> {
             ),
             FlatButton(
               child: new Text("Delete Account",
-                  style: TextStyle(color: Color(0xff990C04))),
+                style: TextStyle(color: Color(0xff990C04))),
               onPressed: () {
                 deleteUser();
                 deleteMicroblogs();
@@ -157,7 +154,7 @@ class SettingsState extends State<Settings> {
     emailController.text = _email;
     bdayController.text = _birthday;
     bioController.text = _bio;
-    weblinkController.text = _website;
+    websiteController.text = _website;
     return Form(
       key: _editFormKey,
       child: Column(
@@ -167,9 +164,12 @@ class SettingsState extends State<Settings> {
             decoration: InputDecoration(
               labelText: 'First Name', hintText: "John"),
             controller: fnameController,
+            onSaved: (value) {
+              AuthService.currentUser.firstName = value;
+            },
             validator: (value) {
               if (value.length == 0) {
-                return "Please enter your first name.";
+                return "Please enter your first name";
               }
               return null;
             },
@@ -178,9 +178,12 @@ class SettingsState extends State<Settings> {
             decoration: InputDecoration(
               labelText: 'Last Name', hintText: "Doe"),
             controller: lnameController,
+            onSaved: (value) {
+              AuthService.currentUser.lastName = value;
+            },
             validator: (value) {
               if (value.length == 0) {
-                return "Please enter your last name.";
+                return "Please enter your last name";
               }
               return null;
             },
@@ -189,25 +192,34 @@ class SettingsState extends State<Settings> {
             decoration: InputDecoration(
               labelText: 'Email', hintText: "example@email.com"),
             controller: emailController,
+            onSaved: (value) {
+              AuthService.currentUser.email = value;
+            },
             validator: emailValidator
           ),
           TextFormField(
             decoration: InputDecoration(
               labelText: 'Bio', hintText: "Bio"),
             controller: bioController,
+            onSaved: (value) {
+              AuthService.currentUser.bio = value;
+            },
           ),
           TextFormField(
             decoration: InputDecoration(
               labelText: 'Birthday', hintText: "10/18/2019"),
             controller: bdayController,
+            onSaved: (value) {
+              AuthService.currentUser.birthday = value;
+            },
             validator: bdayValidator,
           ),
           TextFormField(
             decoration: InputDecoration(
               labelText: 'Website', hintText: "www.example.com"),
-            controller: weblinkController,
-            validator: (value) {
-              return null;
+            controller: websiteController,
+            onSaved: (value) {
+              AuthService.currentUser.website = value;
             },
           ),
           Padding(
@@ -219,13 +231,14 @@ class SettingsState extends State<Settings> {
                   _topics.add(topicController.text);
                 });
                 if (_editFormKey.currentState.validate()) {
+                  _editFormKey.currentState.save();
                   Firestore.instance.collection("users").document(_uid).updateData({
                     "firstName": fnameController.text,
                     "lastName": lnameController.text,
                     "email": emailController.text,
                     "bio": bioController.text,
                     "birthday": bdayController.text,
-                    "website": weblinkController.text,
+                    "website": websiteController.text,
                     "uid": _uid,
                     "topics": _topics,
                   });
@@ -235,12 +248,12 @@ class SettingsState extends State<Settings> {
                     emailController.text,
                     bioController.text,
                     bdayController.text,
-                    weblinkController.text,
+                    websiteController.text,
                     _topics,
                   );
                   final snackBar = SnackBar(
                     content: Text('Profile changes saved successfully'),
-                    duration: const Duration(seconds: 5),
+                    duration: const Duration(seconds: 3),
                     action: SnackBarAction(
                       label: 'Dismiss',
                       onPressed: () {
