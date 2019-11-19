@@ -31,7 +31,7 @@ class _LoginState extends State<Login> {
     Pattern pattern =
       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regex = new RegExp(pattern);
-    if (!regex.hasMatch(value)) {
+    if (!regex.hasMatch(value.trim())) {
       return 'Email format is invalid';
     } else {
       return null;
@@ -191,7 +191,7 @@ class _LoginState extends State<Login> {
                   },
                 ),
                 Text("Don't have an account?"),
-                FlatButton(
+                RaisedButton(
                   child: Text("Register"),
                   onPressed: () {
                     Navigator.pushNamed(context, "/register");

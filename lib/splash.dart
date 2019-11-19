@@ -42,11 +42,25 @@ class _SplashState extends State<Splash> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Container(
-          child: Text('Loading...'),
-        ),
+    return LoadingCircle();
+    // return Scaffold(
+    //   body: Center(
+    //     child: Container(
+    //       child: Text('Loading...'),
+    //     ),
+    //   ),
+    // );
+  }
+}
+
+class LoadingCircle extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        color: Colors.white,
+        child: CircularProgressIndicator(),
+        alignment: Alignment(0.0, 0.0),
       ),
     );
   }
