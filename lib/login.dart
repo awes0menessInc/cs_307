@@ -78,11 +78,28 @@ class _LoginState extends State<Login> {
                     "Forgot password?",
                     style: TextStyle(
                       color: Colors.lightBlue,
-                      fontSize: 11,
+                      fontSize: 12,
                     )
                   ),
-                  /* TODO: implement forgot password function */
-                  onPressed: () => null,
+                  onPressed: (){
+                     FirebaseAuth.instance.sendPasswordResetEmail(email: emailInputController.text).catchError((err) => showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("Error"),
+                              content: Text("Incorrect email address"),
+                              actions: <Widget>[
+                                FlatButton(
+                                  child: Text("Close"),
+                                  onPressed: () {
+                                    emailInputController.clear();
+                                    Navigator.of(context).pop();
+                                  },
+                                )
+                              ],
+                            );
+                          }));
+                  }
                 ),
                 RaisedButton(
                   child: Text("Login"),
