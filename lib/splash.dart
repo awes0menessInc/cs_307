@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:twistter/user.dart';
-// import 'package:flutter/semantics.dart';
-import 'home.dart';
+
+import 'package:twistter/home.dart';
 
 class Splash extends StatefulWidget {
   Splash({Key key}) : super(key: key);
@@ -13,7 +12,6 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
-  User curr;
   @override
   void initState() {
     FirebaseAuth.instance.currentUser().then((currentUser) => {
@@ -23,7 +21,6 @@ class _SplashState extends State<Splash> {
       else {
         // Firestore.instance.collection('users').document(currentUser.uid).get()
         // .then((DocumentSnapshot snapshot) => () {
-        //   curr = snapshot as User;
         //   Navigator.pushReplacement(
         //     context,
         //     MaterialPageRoute(
