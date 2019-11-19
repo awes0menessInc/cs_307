@@ -131,10 +131,10 @@ class _LoginState extends State<Login> {
                   color: Theme.of(context).primaryColor,
                   textColor: Colors.black,
                   onPressed: () async {
-                    setState(() {
-                      loading = !loading;
-                    });
                     if (_loginFormKey.currentState.validate()) {
+                      setState(() {
+                        loading = !loading;
+                      });
                       try {
                         FirebaseUser result = 
                         await Provider.of<AuthService>(context).loginUser(
