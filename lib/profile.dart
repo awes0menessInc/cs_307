@@ -26,65 +26,56 @@ class ProfilePageState extends State<ProfilePage> {
 
   @override
   initState() {
-    this.getUserInfo();
+    getUserInfo();
     super.initState();
   }
 
   Timeline t = new Timeline();
 
-  // void getUserInfo() async {
-  //   final FirebaseUser user = await FirebaseAuth.instance.currentUser();
-  //   // print('current user is '+ user.uid);
-  //   var userQuery = Firestore.instance.collection('users').where('uid', isEqualTo: user.uid).limit(1);
-  //   userQuery.getDocuments().then((data) { 
-  //     if (data.documents.length > 0) {
-  //       setState(() {
-  //         this._firstName = AuthService.getUserInfo().firstName;
-  //   this._lastName = AuthService.getUserInfo().lastName;
-  //   this._email = AuthService.getUserInfo().email;
-  //   this._username = AuthService.getUserInfo().username;
-  //   this._bio = AuthService.getUserInfo().bio;
-  //   // this._followers = AuthService.getUserInfo().numFollowers;
-  //   // this._following = AuthService.getUserInfo().numFollowing;
-
-  //         print(AuthService.getUserInfo().numFollowers);
-
-  //         // _email = Home.current.email;
-  //         // _username = Home.current.username
-  //         // _bio = data.documents[0].data['bio'];
-  //         // _followers = data.documents[0].data['followers'].toString();
-  //         // _following = data.documents[0].data['following'].toString();
-  //         // _posts = data.documents[0].data['microblogs'].length().toString();
-          
-  //         // _firstName = data.documents[0].data['firstName'];
-  //         // _lastName = data.documents[0].data['lastName'];
-  //         // _email = data.documents[0].data['email'];
-  //         // _username = data.documents[0].data['username'];
-  //         // _bio = data.documents[0].data['bio'];
-  //         // _followers = data.documents[0].data['followers'].toString();
-  //         // _following = data.documents[0].data['following'].toString();
-  //         // _posts = data.documents[0].data['microblogs'].length().toString();
-  //       });
-  //     }
-  //   });
-  // }
-
-  void getUserInfo() {
-    if (widget.userPage == null) {
-      widget.userPage = AuthService.getUserInfo().uid;
-    }
-
-    this._firstName = AuthService.getUserInfo().firstName;
+  void getUserInfo() async {
+    final FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    // print('current user is '+ user.uid);
+    var userQuery = Firestore.instance.collection('users').where('uid', isEqualTo: user.uid).limit(1);
+    userQuery.getDocuments().then((data) { 
+      if (data.documents.length > 0) {
+        setState(() {
+          this._firstName = AuthService.getUserInfo().firstName;
     this._lastName = AuthService.getUserInfo().lastName;
     this._email = AuthService.getUserInfo().email;
     this._username = AuthService.getUserInfo().username;
     this._bio = AuthService.getUserInfo().bio;
-    // this._following == "null" ? _following = "0" : _following = _following;
-
-    // this._followers = AuthService.getUserInfo().;
-    // this._following = AuthService.getUserInfo().following.length.toString();
-    // this._posts = AuthService.getUserInfo().numMicroblogs;
+    // this._followers = AuthService.getUserInfo().numFollowers;
+    // this._following = AuthService.getUserInfo().numFollowing;
+          
+          // _firstName = data.documents[0].data['firstName'];
+          // _lastName = data.documents[0].data['lastName'];
+          // _email = data.documents[0].data['email'];
+          // _username = data.documents[0].data['username'];
+          // _bio = data.documents[0].data['bio'];
+          // _followers = data.documents[0].data['followers'].toString();
+          // _following = data.documents[0].data['following'].toString();
+          // _posts = data.documents[0].data['microblogs'].length().toString();
+        });
+      }
+    });
   }
+
+  // void getUserInfo() {
+  //   // if (widget.userPage == null) {
+  //   //   widget.userPage = AuthService.getUserInfo().uid;
+  //   // }
+
+  //   _firstName = AuthService.getUserInfo().firstName;
+  //   _lastName = AuthService.getUserInfo().lastName;
+  //   _email = AuthService.getUserInfo().email;
+  //   _username = AuthService.getUserInfo().username;
+  //   _bio = AuthService.getUserInfo().bio;
+  //   // this._following == "null" ? _following = "0" : _following = _following;
+
+  //   // this._followers = AuthService.getUserInfo().;
+  //   // this._following = AuthService.getUserInfo().following.length.toString();
+  //   // this._posts = AuthService.getUserInfo().numMicroblogs;
+  // }
 
   Widget _buildProfileImage() {
     return Center(

@@ -29,7 +29,7 @@ class AuthService with ChangeNotifier {
 
   Future logout() async {
     var result = FirebaseAuth.instance.signOut();
-    currentUser = null;
+    // currentUser = null;
     notifyListeners();
     return result;
   }
