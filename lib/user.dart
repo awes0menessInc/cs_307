@@ -35,7 +35,6 @@ class User {
     // List<String> followers,
     this.following,
     // List<String> microblogs,
-    
     this.topics,
     }
   );
