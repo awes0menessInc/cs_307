@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:twistter/auth_service.dart';
@@ -12,12 +14,12 @@ class ProfilePage extends StatefulWidget {
 }
 
 class ProfilePageState extends State<ProfilePage> {
-  String _firstName;
-  String _username;
-  String _lastName;
+  String _firstName = "";
+  String _username = "";
+  String _lastName = "";
   String _posts = "1";
-  String _email;
-  String _bio;
+  String _email = "";
+  String _bio = "";
 
   int _followers = 45;
   int _following = 32;
@@ -39,19 +41,19 @@ class ProfilePageState extends State<ProfilePage> {
     userQuery.getDocuments().then((data) { 
       if (data.documents.length > 0) {
         setState(() {
-          this._firstName = AuthService.getUserInfo().firstName;
-    this._lastName = AuthService.getUserInfo().lastName;
-    this._email = AuthService.getUserInfo().email;
-    this._username = AuthService.getUserInfo().username;
-    this._bio = AuthService.getUserInfo().bio;
+    //       this._firstName = AuthService.getUserInfo().firstName;
+    // this._lastName = AuthService.getUserInfo().lastName;
+    // this._email = AuthService.getUserInfo().email;
+    // this._username = AuthService.getUserInfo().username;
+    // this._bio = AuthService.getUserInfo().bio;
     // this._followers = AuthService.getUserInfo().numFollowers;
     // this._following = AuthService.getUserInfo().numFollowing;
           
-          // _firstName = data.documents[0].data['firstName'];
-          // _lastName = data.documents[0].data['lastName'];
-          // _email = data.documents[0].data['email'];
-          // _username = data.documents[0].data['username'];
-          // _bio = data.documents[0].data['bio'];
+          _firstName = data.documents[0].data['firstName'];
+          _lastName = data.documents[0].data['lastName'];
+          _email = data.documents[0].data['email'];
+          _username = data.documents[0].data['username'];
+          _bio = data.documents[0].data['bio'];
           // _followers = data.documents[0].data['followers'].toString();
           // _following = data.documents[0].data['following'].toString();
           // _posts = data.documents[0].data['microblogs'].length().toString();
