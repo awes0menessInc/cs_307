@@ -1,21 +1,31 @@
 import 'package:flutter/material.dart';
-import 'register.dart';
-import 'login.dart';
-import 'splash.dart';
-import 'search.dart';
+import 'package:provider/provider.dart';   
 
-void main() => runApp(MyApp());
+import 'package:twistter/register.dart';
+import 'package:twistter/login.dart';
+import 'package:twistter/splash.dart';
+import 'package:twistter/search.dart';
+import 'package:twistter/auth_service.dart';
+
+void main() => runApp(
+      ChangeNotifierProvider<AuthService>(
+        child: MyApp(),
+        builder: (BuildContext context) {
+          return AuthService();
+        },
+      ),
+    );
 
 class MyApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return new MaterialApp(
       title: 'twistter',
       theme: ThemeData(
         primaryColor: Colors.white,
         accentColor: Color(0xff55b0bd)
       ),
-      // home: Home(),
       home: Splash(),
       routes: <String, WidgetBuilder> {
         '/login': (BuildContext context) => Login(),

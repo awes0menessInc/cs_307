@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:twistter/user.dart';
-import 'package:twistter/profile.dart';
-import 'post.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:shared_preferences/shared_preferences.dart';
+import 'package:twistter/auth_service.dart';
+
+import 'package:twistter/profile.dart';
+import 'package:twistter/user.dart';
+import 'package:twistter/post.dart';
+
 
 class Timeline extends StatefulWidget {
-  Timeline({Key title, this.current_user}) : super(key: title); 
-  final User current_user;
+  Timeline({Key title}) : super(key: title); 
 
   @override
   _TimelineState createState() => _TimelineState();
@@ -36,9 +37,8 @@ class _TimelineState extends State<Timeline> {
 }
 
 class ListPage extends StatefulWidget {
-  ListPage({Key key, this.title, this.current_user}) : super(key: key);
+  ListPage({Key key, this.title}) : super(key: key);
   final String title;
-  final User current_user;
 
   @override
   _ListPageState createState() => _ListPageState();
@@ -57,6 +57,7 @@ class _ListPageState extends State<ListPage> {
   initState() {
     super.initState();
     _getUser();
+    // _following = AuthService.getUserInfo().following;
   }
 
   Future _getUser() async {
@@ -239,7 +240,6 @@ class _ListPageState extends State<ListPage> {
   @override
   Widget build(BuildContext context) {
     //Firestore.instance
-
     return Scaffold(
         backgroundColor: Color.fromRGBO(85, 176, 189, 1.0),
         body: Stack(
@@ -266,7 +266,8 @@ class _ListPageState extends State<ListPage> {
                 )
 
             //_makeBody(context, posts),
-          ],
-        ));
+        ],
+      )
+    );
   }
 }

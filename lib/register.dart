@@ -178,26 +178,26 @@ class _RegisterState extends State<Register> {
                                     "lastName": lastNameInputController.text,
                                     "username": usernameInputController.text,
                                     "email": emailInputController.text,
-                                    "followers": 0,
+                                    "followers": 1,
                                     "bio": "",
                                     "followingList": FieldValue.arrayUnion(
                                         [currentUser.uid.toString()]),
                                 })
                                 .then((result) => {
-                                            Navigator.pushAndRemoveUntil(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) => Home(
-                                                          uid: currentUser.uid,
-                                                        )),
-                                                (_) => false),
-                                            firstNameInputController.clear(),
-                                            lastNameInputController.clear(),
-                                            usernameInputController.clear(),
-                                            emailInputController.clear(),
-                                            pwdInputController.clear(),
-                                            confirmPwdInputController.clear()
-                                          }))
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Home(
+                                                uid: currentUser.uid,
+                                              )),
+                                      (_) => false),
+                                  firstNameInputController.clear(),
+                                  lastNameInputController.clear(),
+                                  usernameInputController.clear(),
+                                  emailInputController.clear(),
+                                  pwdInputController.clear(),
+                                  confirmPwdInputController.clear()
+                                }))
                               .catchError((err) => print(err))
                               .catchError((err) => print(err));
                         } else {
@@ -222,7 +222,7 @@ class _RegisterState extends State<Register> {
                     },
                   ),
                   Text("Already have an account?"),
-                  FlatButton(
+                  RaisedButton(
                     child: Text("Click here to Login"),
                     onPressed: () {
                       Navigator.pop(context);
