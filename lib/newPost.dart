@@ -94,6 +94,9 @@ class _NewPostState extends State<NewPost> {
                   ? selectedTopics.remove(item)
                   : selectedTopics.add(item);
               // widget.onSelectionChanged(selectedTopics); // +added
+              // for (String items in selectedTopics) {
+              //   print(items);
+              // }
             });
           },
         ),
