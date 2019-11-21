@@ -178,8 +178,16 @@ class _RegisterState extends State<Register> {
                                     "lastName": lastNameInputController.text,
                                     "username": usernameInputController.text,
                                     "email": emailInputController.text,
-                                    "followers": 1,
+                                    "birthday": "",
                                     "bio": "",
+                                    "website": "",
+                                    "followers": 0,
+                                    "following": 0,
+                                    "microblogs": 0,
+                                    "topics": 0,
+                                    "microblogsList": [""],
+                                    "topicsList": [""],
+                                    "followersList": [""],
                                     "followingList": FieldValue.arrayUnion(
                                         [currentUser.uid.toString()]),
                                 })
@@ -223,7 +231,7 @@ class _RegisterState extends State<Register> {
                   ),
                   Text("Already have an account?"),
                   RaisedButton(
-                    child: Text("Click here to Login"),
+                    child: Text("Login"),
                     onPressed: () {
                       Navigator.pop(context);
                     },
@@ -233,3 +241,5 @@ class _RegisterState extends State<Register> {
             ))));
   }
 }
+
+

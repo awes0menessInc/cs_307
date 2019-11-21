@@ -17,6 +17,26 @@ class AuthService with ChangeNotifier {
     return currentUser;
   }
 
+  static void initUser(String uid) {
+    Firestore.instance.collection("users").document(uid).get().then((document) => {
+      currentUser = User(
+        uid: document['uid'],
+        username: document['username'],
+        firstName: document['firstName'],
+        lastName: document['lastName'],
+        email: document['email'],
+        bio: document['bio'],
+        birthday: document['birthday'],
+        website: document['website'],
+
+        following: List<String>.from(document['followingList']),
+
+        // numFollowers: .length,
+        // numFollowing: document['following'],
+      )
+    });
+  }
+
   static void updateUser(firstName, lastName, email, bio, birthday, website, topics) {
     currentUser.firstName = firstName;
     currentUser.lastName = lastName;
@@ -29,7 +49,7 @@ class AuthService with ChangeNotifier {
 
   Future logout() async {
     var result = FirebaseAuth.instance.signOut();
-    // currentUser = null;
+    currentUser = null;
     notifyListeners();
     return result;
   }
@@ -38,27 +58,42 @@ class AuthService with ChangeNotifier {
     try {
       var result = await _auth.signInWithEmailAndPassword(email: email, password: password);
       FirebaseUser current = await _auth.currentUser();
-      Firestore.instance.collection("users").document(current.uid).get().then((document) => {
-        currentUser = new User(
-          uid: document['uid'],
-          username: document['username'],
-          firstName: document['firstName'],
-          lastName: document['lastName'],
-          email: document['email'],
-          bio: document['bio'],
-          birthday: document['birthday'],
-          website: document['website'],
+      initUser(current.uid);
+      // Firestore.instance.collection("users").document(current.uid).get().then((document) => {
+      //   currentUser = User(
+      //     uid: document['uid'],
+      //     username: document['username'],
+      //     firstName: document['firstName'],
+      //     lastName: document['lastName'],
+      //     email: document['email'],
+      //     bio: document['bio'],
+      //     birthday: document['birthday'],
+      //     website: document['website'],
 
-          following: List<String>.from(document['followingList']),
+      //     following: List<String>.from(document['followingList']),
 
-          // numFollowers: .length,
-          // numFollowing: document['following'],
-        )
-      });
+      //     // numFollowers: .length,
+      //     // numFollowing: document['following'],
+      //   )
+      // });
       notifyListeners();
       return result;
-    }  catch (e) {
+    } catch (e) {
       throw new AuthException(e.code, e.message);
     }
+  }
+
+  Future<FirebaseUser> registerUser(
+    {String email, String password, 
+    String username, String firstName, String lastName, DatePickerDateOrder birthday}) async {
+      try {
+        var result = _auth.createUserWithEmailAndPassword(email: email, password: email);
+        FirebaseUser current = await _auth.currentUser();
+        initUser(current.uid);
+        notifyListeners();
+        return result;
+      } catch (e) {
+        throw new AuthException(e.code, e.message);
+      }
   }
 }

@@ -107,7 +107,8 @@ class _LoginState extends State<Login> {
                     )
                   ),
                   onPressed: (){
-                     FirebaseAuth.instance.sendPasswordResetEmail(email: emailInputController.text).then((currentUser) => showDialog(context: context,
+                     FirebaseAuth.instance.sendPasswordResetEmail(email: emailInputController.text)
+                     .then((currentUser) => showDialog(context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
                               title: Text("Email Sent!"),
@@ -126,7 +127,7 @@ class _LoginState extends State<Login> {
                           builder: (BuildContext context) {
                             return AlertDialog(
                               title: Text("Error"),
-                              content: Text("Incorrect email address"),
+                              content: Text("An account doesn't exist with this email address"),
                               actions: <Widget>[
                                 FlatButton(
                                   child: Text("Close"),

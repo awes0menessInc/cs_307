@@ -39,10 +39,9 @@ class SettingsState extends State<Settings> {
 
   Future getUser() async {
      await FirebaseAuth.instance.currentUser().then((currentuser) => {
-      Firestore.instance.collection("users").
-      document(currentuser.uid).
-      get().
-      then((DocumentSnapshot snapshot) => {
+      Firestore.instance.collection("users")
+      .document(currentuser.uid).get()
+      .then((DocumentSnapshot snapshot) => {
         setState((){
           _firstName = snapshot["firstName"];
           _lastName = snapshot["lastName"];
@@ -92,8 +91,7 @@ class SettingsState extends State<Settings> {
   }
 
   void _logout() async {
-    await FirebaseAuth.instance.signOut();
-    // AuthService.wipeUser();
+    await FirebaseAuth.instance.signOut();    
   }
 
   String emailValidator(String value) {

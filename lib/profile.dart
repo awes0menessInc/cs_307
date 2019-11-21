@@ -17,12 +17,13 @@ class ProfilePageState extends State<ProfilePage> {
   String _firstName = "";
   String _username = "";
   String _lastName = "";
-  String _posts = "1";
   String _email = "";
   String _bio = "";
-
   int _followers = 45;
   int _following = 32;
+  int _posts = 1;
+  int _topics = 0;
+
   bool pressed = false;
   bool isAccountOwner = true; //TODO: Connect to a function on the back end
 
@@ -185,8 +186,8 @@ class ProfilePageState extends State<ProfilePage> {
         children: <Widget>[
           _buildStatItem("Followers", formatStat(_followers)),
           _buildStatItem("Following", formatStat(_following)),
-          _buildStatItem("Posts", _posts),
-          _buildStatItem("Topics", "14"),
+          _buildStatItem("Posts", _posts.toString()),
+          _buildStatItem("Topics", _topics.toString()),
         ],
       ),
     );
