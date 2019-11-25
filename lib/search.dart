@@ -56,7 +56,7 @@ class _SearchState extends State<Search> {
     if (doc["lastName"].toString().toLowerCase().contains(query)) {
       return true;
     }
-    
+
     return false;
   }
 
@@ -64,7 +64,6 @@ class _SearchState extends State<Search> {
     _results.clear();
     await Firestore.instance.collection("users").getDocuments().then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((doc) => {
-        print(doc["firstName"] + " " + doc["lastName"] + ", add: " + shouldAdd(doc, query).toString()),
         if (shouldAdd(doc, query)) {
           _results.add(new User(
             uid: doc['uid'],
@@ -102,9 +101,7 @@ class _SearchState extends State<Search> {
         IconButton (
           icon: Icon(Icons.search),
           onPressed: () {
-            
-              FocusScope.of(context).requestFocus(FocusNode());
-            
+            FocusScope.of(context).requestFocus(FocusNode());
           },
         )
       ],
