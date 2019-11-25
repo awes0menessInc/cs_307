@@ -37,41 +37,40 @@ class SettingsState extends State<Settings> {
     super.initState();
   }
 
-  // Future getUser() async {
-  //    await FirebaseAuth.instance.currentUser().then((currentuser) => {
-  //     Firestore.instance.collection("users").
-  //     document(currentuser.uid).
-  //     get().
-  //     then((DocumentSnapshot snapshot) => {
-  //       setState((){
-  //         _firstName = snapshot["firstName"];
-  //         _lastName = snapshot["lastName"];
-  //         _email = snapshot["email"];
-  //         _uid = snapshot["uid"];
-  //         _topics = List.from(snapshot["topics"]);
-  //         if (snapshot.data.containsKey("uid")) {
-  //           _bio = snapshot["bio"];
-  //         }
-  //         if (snapshot.data.containsKey("website")) {
-  //           _website = snapshot["website"];
-  //         }
-  //         if (snapshot.data.containsKey("birthday")) {
-  //           _birthday = snapshot["birthday"];
-  //         }
-  //       })
-  //     })
-  //   });
-  // }
-
-  void getUser() {
-    this._uid = AuthService.getUserInfo().uid;
-    this._firstName = AuthService.getUserInfo().firstName;
-    this._lastName = AuthService.getUserInfo().lastName;
-    this._email = AuthService.getUserInfo().email;
-    this._bio = AuthService.getUserInfo().bio;
-    this._website = AuthService.getUserInfo().website;
-    this._birthday = AuthService.getUserInfo().birthday;
+  Future getUser() async {
+     await FirebaseAuth.instance.currentUser().then((currentuser) => {
+      Firestore.instance.collection("users")
+      .document(currentuser.uid).get()
+      .then((DocumentSnapshot snapshot) => {
+        setState((){
+          _firstName = snapshot["firstName"];
+          _lastName = snapshot["lastName"];
+          _email = snapshot["email"];
+          _uid = snapshot["uid"];
+          _topics = List.from(snapshot["topics"]);
+          if (snapshot.data.containsKey("uid")) {
+            _bio = snapshot["bio"];
+          }
+          if (snapshot.data.containsKey("website")) {
+            _website = snapshot["website"];
+          }
+          if (snapshot.data.containsKey("birthday")) {
+            _birthday = snapshot["birthday"];
+          }
+        })
+      })
+    });
   }
+
+  // void getUser() {
+  //   this._uid = AuthService.getUserInfo().uid;
+  //   this._firstName = AuthService.getUserInfo().firstName;
+  //   this._lastName = AuthService.getUserInfo().lastName;
+  //   this._email = AuthService.getUserInfo().email;
+  //   this._bio = AuthService.getUserInfo().bio;
+  //   this._website = AuthService.getUserInfo().website;
+  //   this._birthday = AuthService.getUserInfo().birthday;
+  // }
 
   Future deleteUser() async {
     Firestore.instance.collection("users").document(_uid).delete();
@@ -92,8 +91,7 @@ class SettingsState extends State<Settings> {
   }
 
   void _logout() async {
-    await FirebaseAuth.instance.signOut();
-    // AuthService.wipeUser();
+    await FirebaseAuth.instance.signOut();    
   }
 
   String emailValidator(String value) {
