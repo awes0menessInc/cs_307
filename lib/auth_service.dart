@@ -7,11 +7,12 @@ import 'package:twistter/user.dart';
 
 class AuthService with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseUser firebaseUser;
   static User currentUser;
 
-  Future<FirebaseUser> getUser() {
-    return _auth.currentUser();
-  }
+  // Future<FirebaseUser> getUser() {
+  //   return _auth.currentUser();
+  // }
 
   static User getUserInfo() {
     return currentUser;
@@ -29,10 +30,12 @@ class AuthService with ChangeNotifier {
         birthday: document['birthday'],
         website: document['website'],
 
-        following: List<String>.from(document['followingList']),
+        followers: document['followers'],
+        following: document['following'],
+        posts: document['posts'],
+        topics: document['topics'],
 
-        // numFollowers: .length,
-        // numFollowing: document['following'],
+        followingList: List<String>.from(document['followingList']),
       )
     });
   }
@@ -57,8 +60,9 @@ class AuthService with ChangeNotifier {
   Future<FirebaseUser> loginUser({String email, String password}) async {
     try {
       var result = await _auth.signInWithEmailAndPassword(email: email, password: password);
-      FirebaseUser current = await _auth.currentUser();
-      initUser(current.uid);
+      firebaseUser = await _auth.currentUser();
+      initUser(firebaseUser.uid);
+      // print("Currently following " + currentUser.followingList.length.toString() + " people");
       // Firestore.instance.collection("users").document(current.uid).get().then((document) => {
       //   currentUser = User(
       //     uid: document['uid'],
@@ -88,8 +92,8 @@ class AuthService with ChangeNotifier {
     String username, String firstName, String lastName, DatePickerDateOrder birthday}) async {
       try {
         var result = _auth.createUserWithEmailAndPassword(email: email, password: email);
-        FirebaseUser current = await _auth.currentUser();
-        initUser(current.uid);
+        firebaseUser = await _auth.currentUser();
+        initUser(firebaseUser.uid);
         notifyListeners();
         return result;
       } catch (e) {

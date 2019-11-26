@@ -19,10 +19,10 @@ class ProfilePageState extends State<ProfilePage> {
   String _lastName = "";
   String _email = "";
   String _bio = "";
-  int _followers = 45;
-  int _following = 32;
-  int _posts = 1;
-  int _topics = 0;
+  int _followers = 405;
+  int _following = 322;
+  int _posts = 199;
+  int _topics = 333;
 
   bool pressed = false;
   bool isAccountOwner = true; //TODO: Connect to a function on the back end
@@ -35,50 +35,50 @@ class ProfilePageState extends State<ProfilePage> {
 
   Timeline t = new Timeline();
 
-  void getUserInfo() async {
-    final FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    // print('current user is '+ user.uid);
-    var userQuery = Firestore.instance.collection('users').where('uid', isEqualTo: user.uid).limit(1);
-    userQuery.getDocuments().then((data) { 
-      if (data.documents.length > 0) {
-        setState(() {
-    //       this._firstName = AuthService.getUserInfo().firstName;
-    // this._lastName = AuthService.getUserInfo().lastName;
-    // this._email = AuthService.getUserInfo().email;
-    // this._username = AuthService.getUserInfo().username;
-    // this._bio = AuthService.getUserInfo().bio;
-    // this._followers = AuthService.getUserInfo().numFollowers;
-    // this._following = AuthService.getUserInfo().numFollowing;
+  // void getUserInfo() async {
+  //   final FirebaseUser user = await FirebaseAuth.instance.currentUser();
+  //   // print('current user is '+ user.uid);
+  //   var userQuery = Firestore.instance.collection('users').where('uid', isEqualTo: user.uid).limit(1);
+  //   userQuery.getDocuments().then((data) { 
+  //     if (data.documents.length > 0) {
+  //       setState(() {
+  //   //       this._firstName = AuthService.getUserInfo().firstName;
+  //   // this._lastName = AuthService.getUserInfo().lastName;
+  //   // this._email = AuthService.getUserInfo().email;
+  //   // this._username = AuthService.getUserInfo().username;
+  //   // this._bio = AuthService.getUserInfo().bio;
+  //   // this._followers = AuthService.getUserInfo().numFollowers;
+  //   // this._following = AuthService.getUserInfo().numFollowing;
           
-          _firstName = data.documents[0].data['firstName'];
-          _lastName = data.documents[0].data['lastName'];
-          _email = data.documents[0].data['email'];
-          _username = data.documents[0].data['username'];
-          _bio = data.documents[0].data['bio'];
-          // _followers = data.documents[0].data['followers'].toString();
-          // _following = data.documents[0].data['following'].toString();
-          // _posts = data.documents[0].data['microblogs'].length().toString();
-        });
-      }
-    });
-  }
-
-  // void getUserInfo() {
-  //   // if (widget.userPage == null) {
-  //   //   widget.userPage = AuthService.getUserInfo().uid;
-  //   // }
-
-  //   _firstName = AuthService.getUserInfo().firstName;
-  //   _lastName = AuthService.getUserInfo().lastName;
-  //   _email = AuthService.getUserInfo().email;
-  //   _username = AuthService.getUserInfo().username;
-  //   _bio = AuthService.getUserInfo().bio;
-  //   // this._following == "null" ? _following = "0" : _following = _following;
-
-  //   // this._followers = AuthService.getUserInfo().;
-  //   // this._following = AuthService.getUserInfo().following.length.toString();
-  //   // this._posts = AuthService.getUserInfo().numMicroblogs;
+  //         _firstName = data.documents[0].data['firstName'];
+  //         _lastName = data.documents[0].data['lastName'];
+  //         _email = data.documents[0].data['email'];
+  //         _username = data.documents[0].data['username'];
+  //         _bio = data.documents[0].data['bio'];
+  //         // _followers = data.documents[0].data['followers'].toString();
+  //         // _following = data.documents[0].data['following'].toString();
+  //         // _posts = data.documents[0].data['microblogs'].length().toString();
+  //       });
+  //     }
+  //   });
   // }
+
+  void getUserInfo() {
+    // if (widget.userPage == null) {
+    //   widget.userPage = AuthService.getUserInfo().uid;
+    // }
+
+    _firstName = AuthService.getUserInfo().firstName;
+    _lastName = AuthService.getUserInfo().lastName;
+    _email = AuthService.getUserInfo().email;
+    _username = AuthService.getUserInfo().username;
+    _bio = AuthService.getUserInfo().bio;
+
+    _followers = AuthService.currentUser.followers;
+    _following = AuthService.currentUser.following;
+    _posts = AuthService.currentUser.posts;
+    _topics = AuthService.currentUser.topics;
+  }
 
   Widget _buildProfileImage() {
     return Center(
@@ -434,7 +434,7 @@ class ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-    print("\n$_firstName is following $_following people");
+    // print("\n$_firstName is following $_following people");
     return Scaffold(
       body: Stack(
         children: <Widget>[

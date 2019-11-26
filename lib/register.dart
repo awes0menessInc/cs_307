@@ -159,7 +159,7 @@ class _RegisterState extends State<Register> {
                             builder: (BuildContext context) {
                               return AlertDialog(
                                 title: Text("Registration failed"),
-                                content: Text('An account already exists with the email address you entered.'),
+                                content: Text('An account already exists with the email address you entered'),
                                 actions: <Widget>[
                                   FlatButton(
                                     child: Text("Close"),
@@ -173,23 +173,22 @@ class _RegisterState extends State<Register> {
                               .then((currentUser) => Firestore.instance
                                 .collection("users").document(currentUser.uid)
                                 .setData({
-                                    "uid": currentUser.uid,
-                                    "firstName": firstNameInputController.text,
-                                    "lastName": lastNameInputController.text,
-                                    "username": usernameInputController.text,
-                                    "email": emailInputController.text,
-                                    "birthday": "",
-                                    "bio": "",
-                                    "website": "",
-                                    "followers": 0,
-                                    "following": 0,
-                                    "microblogs": 0,
-                                    "topics": 0,
-                                    "microblogsList": [""],
-                                    "topicsList": [""],
-                                    "followersList": [""],
-                                    "followingList": FieldValue.arrayUnion(
-                                        [currentUser.uid.toString()]),
+                                  "uid": currentUser.uid,
+                                  "firstName": firstNameInputController.text,
+                                  "lastName": lastNameInputController.text,
+                                  "username": usernameInputController.text,
+                                  "email": emailInputController.text,
+                                  "birthday": "",
+                                  "bio": "",
+                                  "website": "",
+                                  "followers": 0,
+                                  "following": 0,
+                                  "posts": 0,
+                                  "topics": 0,
+                                  "postsList": [""],
+                                  "topicsList": [""],
+                                  "followersList": [""],
+                                  "followingList": FieldValue.arrayUnion([currentUser.uid.toString()]),
                                 })
                                 .then((result) => {
                                   Navigator.pushAndRemoveUntil(
