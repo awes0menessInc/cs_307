@@ -1,10 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:twistter/auth_service.dart';
 import 'package:twistter/profile.dart';
 import 'package:twistter/post.dart';
-
 
 class Timeline extends StatefulWidget {
   Timeline({Key title}) : super(key: title); 
@@ -52,21 +52,20 @@ class _ListPageState extends State<ListPage> {
   List<String> following;
 
   initState() {
+    getUser();
     super.initState();
-    // _getUser();
-    following = AuthService.currentUser.followingList;
   }
 
-  // Future _getUser() async {
-  //   await FirebaseAuth.instance.currentUser().then((currentuser) => {
-  //     Firestore.instance.collection("users").document(currentuser.uid).get()
-  //     .then((DocumentSnapshot snapshot) => {
-  //       setState(() {
-  //         following = List.from(snapshot["followingList"]);
-  //       })
-  //     })
-  //   });
-  // }
+  Future getUser() async {
+    await FirebaseAuth.instance.currentUser().then((currentuser) => {
+      Firestore.instance.collection("users").document(currentuser.uid).get()
+      .then((DocumentSnapshot snapshot) => {
+        setState(() {
+          following = List.from(snapshot["followingList"]);
+        })
+      })
+    });
+  }
 
   void showTags(BuildContext context, Post post) {
     AlertDialog viewTags = AlertDialog(

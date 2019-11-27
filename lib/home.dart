@@ -20,8 +20,8 @@ class _HomeState extends State<Home> {
   _HomeState(this.uid);
   @override
   void initState() {
-    super.initState();
     AuthService.initUser(uid);
+    super.initState();
   }
 
   @override
