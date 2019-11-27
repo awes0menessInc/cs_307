@@ -37,7 +37,7 @@ class User {
     // this.followersList,
     this.followingList,
     // this.postsList,
-    // this.topicsList,
+    this.topicsList,
     }
   );
 }

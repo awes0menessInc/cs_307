@@ -36,6 +36,7 @@ class AuthService with ChangeNotifier {
         topics: document['topics'],
 
         followingList: List<String>.from(document['followingList']),
+        topicsList: List<String>.from(document['topicsList']),
       )
     });
   }

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:twistter/auth_service.dart';
 
+import 'package:twistter/auth_service.dart';
 import 'package:twistter/profile.dart';
-import 'package:twistter/user.dart';
 import 'package:twistter/post.dart';
 
 
@@ -51,28 +49,24 @@ class _ListPageState extends State<ListPage> {
   
   bool pressed = false;
   List<Post> posts = [];
-  String _name = "";
-  List<String> _following = [""];
+  List<String> following;
 
   initState() {
     super.initState();
-    _getUser();
-    // _following = AuthService.getUserInfo().following;
+    // _getUser();
+    following = AuthService.currentUser.followingList;
   }
 
-  Future _getUser() async {
-    await FirebaseAuth.instance.currentUser().then((currentuser) => {
-          Firestore.instance
-              .collection("users")
-              .document(currentuser.uid)
-              .get()
-              .then((DocumentSnapshot snapshot) => {
-                    setState(() {
-                      _following = List.from(snapshot["followingList"]);
-                    })
-                  })
-        });
-  }
+  // Future _getUser() async {
+  //   await FirebaseAuth.instance.currentUser().then((currentuser) => {
+  //     Firestore.instance.collection("users").document(currentuser.uid).get()
+  //     .then((DocumentSnapshot snapshot) => {
+  //       setState(() {
+  //         following = List.from(snapshot["followingList"]);
+  //       })
+  //     })
+  //   });
+  // }
 
   void showTags(BuildContext context, Post post) {
     AlertDialog viewTags = AlertDialog(
@@ -127,13 +121,13 @@ class _ListPageState extends State<ListPage> {
     List<Post> postsList = [];
     List<dynamic> tags = [];
     snap.forEach((f) {
-      if (_following.contains(f["userId"])) {
-        postsList.add(new Post(
+      if (following.contains(f["uid"])) {
+        postsList.add( Post(
           content: f['content'],
           username: f['username'],
           fullName: f['firstName'].toString() + " " + f['lastName'].toString(),
           topics: List.from(f['topics']),
-          uid: f['userId']
+          uid: f['uid']
         ));
       }
     });
@@ -246,7 +240,7 @@ class _ListPageState extends State<ListPage> {
           children: <Widget>[
             StreamBuilder<QuerySnapshot>(
                 stream: Firestore.instance
-                    .collection('microblogs')
+                    .collection('posts')
                     .orderBy('timestamp', descending: true)
                     .snapshots(),
                 builder: (BuildContext context,
@@ -254,7 +248,6 @@ class _ListPageState extends State<ListPage> {
                   if (snapshot.hasError) return new Text('Error');
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
-                      // return new Text('Loading...');
                       return Container(
                         alignment: Alignment.bottomCenter,
                         child: LinearProgressIndicator()
