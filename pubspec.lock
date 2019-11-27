@@ -80,6 +80,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.2"
+  datetime_picker_formfield:
+    dependency: "direct main"
+    description:
+      name: datetime_picker_formfield
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.3"
   firebase_analytics:
     dependency: "direct main"
     description:
@@ -106,13 +113,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_redux:
-    dependency: "direct main"
-    description:
-      name: flutter_redux
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.5.4"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -125,13 +125,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.4"
-  logging:
+  intl:
     dependency: transitive
     description:
-      name: logging
+      name: intl
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.11.3+2"
+    version: "0.15.8"
   matcher:
     dependency: transitive
     description:
@@ -181,20 +181,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.5"
-  redux:
-    dependency: "direct main"
-    description:
-      name: redux
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.0"
-  redux_logging:
-    dependency: "direct main"
-    description:
-      name: redux_logging
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.3.0"
   sky_engine:
     dependency: transitive
     description: flutter

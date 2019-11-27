@@ -7,7 +7,7 @@ class User {
   String bio;
   String website;
 
-  String birthday;
+  DateTime birthday;
 
   int followers;
   int following;

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:intl/intl.dart';
 
 import 'package:twistter/auth_service.dart';
 import 'package:twistter/login.dart';
@@ -17,7 +19,7 @@ class SettingsState extends State<Settings> {
   String _lastName;
   String _bio;
   String _email;
-  String _birthday;
+  DateTime _birthday;
   String _website;
   String _uid;
   List<String> _topics;
@@ -63,13 +65,13 @@ class SettingsState extends State<Settings> {
   // }
 
   void getUser() {
-    this._uid = AuthService.getUserInfo().uid;
-    this._firstName = AuthService.getUserInfo().firstName;
-    this._lastName = AuthService.getUserInfo().lastName;
-    this._email = AuthService.getUserInfo().email;
-    this._bio = AuthService.getUserInfo().bio;
-    this._website = AuthService.getUserInfo().website;
-    this._birthday = AuthService.getUserInfo().birthday;
+    _uid = AuthService.currentUser.uid;
+    _firstName = AuthService.currentUser.firstName;
+    _lastName = AuthService.currentUser.lastName;
+    _email = AuthService.currentUser.email;
+    _bio = AuthService.currentUser.bio;
+    _website = AuthService.currentUser.website;
+    _birthday = AuthService.currentUser.birthday;
   }
 
   Future deleteUser() async {
@@ -150,7 +152,7 @@ class SettingsState extends State<Settings> {
     fnameController.text = _firstName;
     lnameController.text = _lastName;
     emailController.text = _email;
-    bdayController.text = _birthday;
+    bdayController.text = _birthday.toString();
     bioController.text = _bio;
     websiteController.text = _website;
     return Form(
@@ -203,15 +205,31 @@ class SettingsState extends State<Settings> {
               AuthService.currentUser.bio = value;
             },
           ),
-          TextFormField(
-            decoration: InputDecoration(
-              labelText: 'Birthday', hintText: "10/18/2019"),
+          DateTimeField(
             controller: bdayController,
+            format: DateFormat("yyyy-MM-dd"),
+            decoration: InputDecoration(labelText: 'Birthday'),
+            onShowPicker: (context, currentValue) {
+              return showDatePicker(
+                context: context,
+                firstDate: DateTime(1930),
+                initialDate: currentValue ?? DateTime.now(),
+                lastDate: DateTime(2100)
+              );
+            },
             onSaved: (value) {
               AuthService.currentUser.birthday = value;
             },
-            validator: bdayValidator,
           ),
+          // TextFormField(
+          //   decoration: InputDecoration(
+          //     labelText: 'Birthday', hintText: "10/18/2019"),
+          //   controller: bdayController,
+          //   onSaved: (value) {
+          //     AuthService.currentUser.birthday = value;
+          //   },
+          //   // validator: bdayValidator,
+          // ),
           TextFormField(
             decoration: InputDecoration(
               labelText: 'Website', hintText: "www.example.com"),
@@ -225,9 +243,9 @@ class SettingsState extends State<Settings> {
             child: RaisedButton(
               child: Text("Save"),
               onPressed: () {
-                setState(() {
-                  _topics.add(topicController.text);
-                });
+                // setState(() {
+                //   _topics.add(topicController.text);
+                // });
                 if (_editFormKey.currentState.validate()) {
                   _editFormKey.currentState.save();
                   Firestore.instance.collection("users").document(_uid).updateData({
@@ -235,20 +253,20 @@ class SettingsState extends State<Settings> {
                     "lastName": lnameController.text,
                     "email": emailController.text,
                     "bio": bioController.text,
-                    "birthday": bdayController.text,
+                    "birthday": AuthService.currentUser.birthday.toUtc().millisecondsSinceEpoch,
                     "website": websiteController.text,
                     "uid": _uid,
-                    "topics": _topics,
+                    // "topics": _topics,
                   });
-                  AuthService.updateUser(
-                    fnameController.text,
-                    lnameController.text,
-                    emailController.text,
-                    bioController.text,
-                    bdayController.text,
-                    websiteController.text,
-                    _topics,
-                  );
+                  // AuthService.updateUser(
+                  //   fnameController.text,
+                  //   lnameController.text,
+                  //   emailController.text,
+                  //   bioController.text,
+                  //   bdayController.text,
+                  //   websiteController.text,
+                  //   _topics,
+                  // );
                   final snackBar = SnackBar(
                     content: Text('Profile changes saved successfully'),
                     duration: const Duration(seconds: 3),

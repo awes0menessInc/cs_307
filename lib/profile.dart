@@ -68,11 +68,11 @@ class ProfilePageState extends State<ProfilePage> {
     //   widget.userPage = AuthService.getUserInfo().uid;
     // }
 
-    _firstName = AuthService.getUserInfo().firstName;
-    _lastName = AuthService.getUserInfo().lastName;
-    _email = AuthService.getUserInfo().email;
-    _username = AuthService.getUserInfo().username;
-    _bio = AuthService.getUserInfo().bio;
+    _firstName = AuthService.currentUser.firstName;
+    _lastName = AuthService.currentUser.lastName;
+    _email = AuthService.currentUser.email;
+    _username = AuthService.currentUser.username;
+    _bio = AuthService.currentUser.bio;
 
     _followers = AuthService.currentUser.followers;
     _following = AuthService.currentUser.following;

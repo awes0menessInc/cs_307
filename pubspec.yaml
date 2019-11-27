@@ -21,9 +21,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  redux: ^3.0.0
-  flutter_redux: ^0.5.4
-  redux_logging: ^0.3.0
+  datetime_picker_formfield: ^0.4.3
 
   # dependency for Firebase Core Flutter SDK
   firebase_core: ^0.4.0+1

@@ -27,7 +27,7 @@ class AuthService with ChangeNotifier {
         lastName: document['lastName'],
         email: document['email'],
         bio: document['bio'],
-        birthday: document['birthday'],
+        birthday: document['birthday'].toDate(),
         website: document['website'],
 
         followers: document['followers'],
@@ -62,24 +62,6 @@ class AuthService with ChangeNotifier {
       var result = await _auth.signInWithEmailAndPassword(email: email, password: password);
       firebaseUser = await _auth.currentUser();
       initUser(firebaseUser.uid);
-      // print("Currently following " + currentUser.followingList.length.toString() + " people");
-      // Firestore.instance.collection("users").document(current.uid).get().then((document) => {
-      //   currentUser = User(
-      //     uid: document['uid'],
-      //     username: document['username'],
-      //     firstName: document['firstName'],
-      //     lastName: document['lastName'],
-      //     email: document['email'],
-      //     bio: document['bio'],
-      //     birthday: document['birthday'],
-      //     website: document['website'],
-
-      //     following: List<String>.from(document['followingList']),
-
-      //     // numFollowers: .length,
-      //     // numFollowing: document['following'],
-      //   )
-      // });
       notifyListeners();
       return result;
     } catch (e) {

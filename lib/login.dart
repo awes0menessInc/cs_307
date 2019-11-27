@@ -156,7 +156,7 @@ class _LoginState extends State<Login> {
                         await Provider.of<AuthService>(context).loginUser(
                                   email: emailInputController.text,
                                   password: pwdInputController.text);
-                          print(result);
+                          // print(result);
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(builder: (context) => Home())
@@ -201,9 +201,6 @@ class _LoginState extends State<Login> {
                     //     ).catchError((err) => print(err))
                     //   ).catchError((err) => print(err));
                     // }
-                    // print('running cui.getUserInfo...');
-                    // // cui.getUserInfo();
-                    // print('ran cui.getUserInfo. ');
                   },
                 ),
                 Text("Don't have an account?"),
