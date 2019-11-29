@@ -14,9 +14,9 @@ class User {
   int posts;
   int topics;
 
-  // List<String> followersList;
+  List<String> followersList;
   List<String> followingList;
-  // List<String> postsList;
+  List<String> postsList;
   List<String> topicsList; 
 
   User({
@@ -34,9 +34,9 @@ class User {
     this.posts,
     this.topics,
 
-    // this.followersList,
+    this.followersList,
     this.followingList,
-    // this.postsList,
+    this.postsList,
     this.topicsList,
     }
   );

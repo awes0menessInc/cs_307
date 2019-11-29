@@ -134,7 +134,7 @@ class SettingsState extends State<Settings> {
               },
             ),
             FlatButton(
-              child: new Text("Delete Account",
+              child: new Text("Delete",
                 style: TextStyle(color: Color(0xff990C04))),
               onPressed: () {
                 deleteUser();

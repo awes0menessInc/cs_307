@@ -234,7 +234,7 @@ class _ListPageState extends State<ListPage> {
   Widget build(BuildContext context) {
     //Firestore.instance
     return Scaffold(
-        backgroundColor: Color.fromRGBO(85, 176, 189, 1.0),
+        // backgroundColor: Color.fromRGBO(85, 176, 189, 1.0),
         body: Stack(
           children: <Widget>[
             StreamBuilder<QuerySnapshot>(
@@ -256,8 +256,6 @@ class _ListPageState extends State<ListPage> {
                   } //switch
                 } //asyncsnapshot
                 )
-
-            //_makeBody(context, posts),
         ],
       )
     );

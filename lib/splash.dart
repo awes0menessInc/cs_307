@@ -19,15 +19,6 @@ class _SplashState extends State<Splash> {
         Navigator.pushReplacementNamed(context, '/login')
       }
       else {
-        // Firestore.instance.collection('users').document(currentUser.uid).get()
-        // .then((DocumentSnapshot snapshot) => () {
-        //   Navigator.pushReplacement(
-        //     context,
-        //     MaterialPageRoute(
-        //       builder:(context) => Home(uid: currentUser.uid, current_user: curr)
-        //     )
-        //   );
-        // }).catchError((err) => print(err))
         Firestore.instance.collection('users').document(currentUser.uid).get()
         .then((DocumentSnapshot snapshot) => Navigator.pushReplacement(
           context,
@@ -43,13 +34,6 @@ class _SplashState extends State<Splash> {
   @override
   Widget build(BuildContext context) {
     return LoadingCircle();
-    // return Scaffold(
-    //   body: Center(
-    //     child: Container(
-    //       child: Text('Loading...'),
-    //     ),
-    //   ),
-    // );
   }
 }
 
