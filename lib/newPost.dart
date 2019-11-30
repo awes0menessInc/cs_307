@@ -26,9 +26,9 @@ class _NewPostState extends State<NewPost> {
   FirebaseUser currentUser;
   String _firstName = "";
   String _lastName = "";
-  List<String> _topic = [""];
-  String _dropdownvalue = "";
-  int _value = 1;
+  List<String> _topic;
+  // String _dropdownvalue = "";
+  // int _value = 1;
   TextEditingController postEditingController = new TextEditingController();
 
   initState() {
@@ -47,7 +47,7 @@ class _NewPostState extends State<NewPost> {
                       _firstName = snapshot["firstName"];
                       _lastName = snapshot["lastName"];
                       _topic = List.from(snapshot["topics"]);
-                      _dropdownvalue = _topic[0];
+                      // _dropdownvalue = _topic[0];
                     })
                   })
         });
@@ -81,6 +81,10 @@ class _NewPostState extends State<NewPost> {
 
   List<String> selectedTopics = List();
   List<Widget> _buildChoiceList(List<String> topic) {
+  topic.removeWhere((item) => item == ""); //removes any empty strings from the topic list before displaying
+    if (topic.length == 0) {
+      return null;
+    }
     List<Widget> choices = List();
     topic.forEach((item) {
       choices.add(Container(
@@ -174,7 +178,6 @@ class _NewPostState extends State<NewPost> {
                     controller: postEditingController,
                     maxLength: 307,
                   ),
-                  
                   Wrap(
                     children: _buildChoiceList(_topic),
                   )
