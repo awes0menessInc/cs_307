@@ -1,14 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:twistter/user.dart';
+
+import 'package:twistter/auth_service.dart';
 import 'package:twistter/profile.dart';
-import 'post.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:shared_preferences/shared_preferences.dart';
+import 'package:twistter/post.dart';
 
 class Timeline extends StatefulWidget {
-  Timeline({Key title, this.current_user}) : super(key: title); 
-  final User current_user;
+  Timeline({Key title}) : super(key: title); 
 
   @override
   _TimelineState createState() => _TimelineState();
@@ -36,9 +35,8 @@ class _TimelineState extends State<Timeline> {
 }
 
 class ListPage extends StatefulWidget {
-  ListPage({Key key, this.title, this.current_user}) : super(key: key);
+  ListPage({Key key, this.title}) : super(key: key);
   final String title;
-  final User current_user;
 
   @override
   _ListPageState createState() => _ListPageState();
@@ -51,26 +49,22 @@ class _ListPageState extends State<ListPage> {
   
   bool pressed = false;
   List<Post> posts = [];
-  String _name = "";
-  List<String> _following = [""];
+  List<String> following;
 
   initState() {
+    getUser();
     super.initState();
-    _getUser();
   }
 
-  Future _getUser() async {
+  Future getUser() async {
     await FirebaseAuth.instance.currentUser().then((currentuser) => {
-          Firestore.instance
-              .collection("users")
-              .document(currentuser.uid)
-              .get()
-              .then((DocumentSnapshot snapshot) => {
-                    setState(() {
-                      _following = List.from(snapshot["followingList"]);
-                    })
-                  })
-        });
+      Firestore.instance.collection("users").document(currentuser.uid).get()
+      .then((DocumentSnapshot snapshot) => {
+        setState(() {
+          following = List.from(snapshot["followingList"]);
+        })
+      })
+    });
   }
 
   void showTags(BuildContext context, Post post) {
@@ -126,13 +120,13 @@ class _ListPageState extends State<ListPage> {
     List<Post> postsList = [];
     List<dynamic> tags = [];
     snap.forEach((f) {
-      if (_following.contains(f["userId"])) {
-        postsList.add(new Post(
+      if (following.contains(f["uid"])) {
+        postsList.add( Post(
           content: f['content'],
           username: f['username'],
           fullName: f['firstName'].toString() + " " + f['lastName'].toString(),
           topics: List.from(f['topics']),
-          uid: f['userId']
+          uid: f['uid']
         ));
       }
     });
@@ -239,14 +233,13 @@ class _ListPageState extends State<ListPage> {
   @override
   Widget build(BuildContext context) {
     //Firestore.instance
-
     return Scaffold(
         backgroundColor: Color.fromRGBO(85, 176, 189, 1.0),
         body: Stack(
           children: <Widget>[
             StreamBuilder<QuerySnapshot>(
                 stream: Firestore.instance
-                    .collection('microblogs')
+                    .collection('posts')
                     .orderBy('timestamp', descending: true)
                     .snapshots(),
                 builder: (BuildContext context,
@@ -254,7 +247,6 @@ class _ListPageState extends State<ListPage> {
                   if (snapshot.hasError) return new Text('Error');
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
-                      // return new Text('Loading...');
                       return Container(
                         alignment: Alignment.bottomCenter,
                         child: LinearProgressIndicator()
@@ -266,7 +258,8 @@ class _ListPageState extends State<ListPage> {
                 )
 
             //_makeBody(context, posts),
-          ],
-        ));
+        ],
+      )
+    );
   }
 }

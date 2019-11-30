@@ -1,6 +1,9 @@
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:twistter/auth_service.dart';
+import 'package:intl/intl.dart';
 
 import 'home.dart';
 
@@ -19,6 +22,7 @@ class _RegisterState extends State<Register> {
   TextEditingController emailInputController;
   TextEditingController pwdInputController;
   TextEditingController confirmPwdInputController;
+  TextEditingController bdayController;
 
   @override
   initState() {
@@ -28,6 +32,7 @@ class _RegisterState extends State<Register> {
     emailInputController = new TextEditingController();
     pwdInputController = new TextEditingController();
     confirmPwdInputController = new TextEditingController();
+    bdayController = new TextEditingController();
     super.initState();
   }
 
@@ -100,7 +105,6 @@ class _RegisterState extends State<Register> {
                     }
                     else return null;
                   },
-                  autovalidate: true,
                 ),
                 TextFormField(
                   decoration: InputDecoration(labelText: 'Last Name*', hintText: "Doe"),
@@ -111,13 +115,11 @@ class _RegisterState extends State<Register> {
                     }
                     else return null;
                   },
-                  autovalidate: true,
                 ),
                 TextFormField(
                   decoration: InputDecoration(labelText: 'Username*'),
                   controller: usernameInputController,
                   validator: usernameValidator,
-                  autovalidate: true,
                 ),
                 TextFormField(
                   decoration: InputDecoration(
@@ -125,7 +127,6 @@ class _RegisterState extends State<Register> {
                   controller: emailInputController,
                   keyboardType: TextInputType.emailAddress,
                   validator: emailValidator,
-                  autovalidate: true,
                 ),
                 TextFormField(
                   decoration: InputDecoration(
@@ -133,7 +134,6 @@ class _RegisterState extends State<Register> {
                   controller: pwdInputController,
                   obscureText: true,
                   validator: pwdValidator,
-                  autovalidate: true,
                 ),
                 TextFormField(
                   decoration: InputDecoration(
@@ -141,7 +141,22 @@ class _RegisterState extends State<Register> {
                   controller: confirmPwdInputController,
                   obscureText: true,
                   validator: confirmPwdValidator,
-                  autovalidate: true,
+                ),
+                DateTimeField(
+                  controller: bdayController,
+                  format: DateFormat("yyyy-MM-dd"),
+                  decoration: InputDecoration(labelText: 'Birthday'),
+                  onShowPicker: (context, currentValue) {
+                    return showDatePicker(
+                      context: context,
+                      firstDate: DateTime(1930),
+                      initialDate: currentValue ?? DateTime.now(),
+                      lastDate: DateTime(2100)
+                    );
+                  },
+                  onSaved: (value) {
+                    AuthService.currentUser.birthday = value;
+                  },
                 ),
                 RaisedButton(
                   child: Text("Register"),
@@ -159,7 +174,7 @@ class _RegisterState extends State<Register> {
                             builder: (BuildContext context) {
                               return AlertDialog(
                                 title: Text("Registration failed"),
-                                content: Text('An account already exists with the email address you entered.'),
+                                content: Text('An account already exists with the email address you entered'),
                                 actions: <Widget>[
                                   FlatButton(
                                     child: Text("Close"),
@@ -173,31 +188,38 @@ class _RegisterState extends State<Register> {
                               .then((currentUser) => Firestore.instance
                                 .collection("users").document(currentUser.uid)
                                 .setData({
-                                    "uid": currentUser.uid,
-                                    "firstName": firstNameInputController.text,
-                                    "lastName": lastNameInputController.text,
-                                    "username": usernameInputController.text,
-                                    "email": emailInputController.text,
-                                    "followers": 0,
-                                    "bio": "",
-                                    "followingList": FieldValue.arrayUnion(
-                                        [currentUser.uid.toString()]),
+                                  "uid": currentUser.uid,
+                                  "firstName": firstNameInputController.text,
+                                  "lastName": lastNameInputController.text,
+                                  "username": usernameInputController.text,
+                                  "email": emailInputController.text,
+                                  "birthday": DateTime.now(),
+                                  "bio": "",
+                                  "website": "",
+                                  "followers": 0,
+                                  "following": 0,
+                                  "posts": 0,
+                                  "topics": 0,
+                                  "postsList": [""],
+                                  "topicsList": [""],
+                                  "followersList": [""],
+                                  "followingList": FieldValue.arrayUnion([currentUser.uid.toString()]),
                                 })
                                 .then((result) => {
-                                            Navigator.pushAndRemoveUntil(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) => Home(
-                                                          uid: currentUser.uid,
-                                                        )),
-                                                (_) => false),
-                                            firstNameInputController.clear(),
-                                            lastNameInputController.clear(),
-                                            usernameInputController.clear(),
-                                            emailInputController.clear(),
-                                            pwdInputController.clear(),
-                                            confirmPwdInputController.clear()
-                                          }))
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Home(
+                                                uid: currentUser.uid,
+                                              )),
+                                      (_) => false),
+                                  firstNameInputController.clear(),
+                                  lastNameInputController.clear(),
+                                  usernameInputController.clear(),
+                                  emailInputController.clear(),
+                                  pwdInputController.clear(),
+                                  confirmPwdInputController.clear()
+                                }))
                               .catchError((err) => print(err))
                               .catchError((err) => print(err));
                         } else {
@@ -222,8 +244,8 @@ class _RegisterState extends State<Register> {
                     },
                   ),
                   Text("Already have an account?"),
-                  FlatButton(
-                    child: Text("Click here to Login"),
+                  RaisedButton(
+                    child: Text("Login"),
                     onPressed: () {
                       Navigator.pop(context);
                     },
@@ -233,3 +255,5 @@ class _RegisterState extends State<Register> {
             ))));
   }
 }
+
+

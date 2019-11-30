@@ -1,26 +1,20 @@
-// import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+
+import 'package:twistter/auth_service.dart';
 import 'package:twistter/home.dart';
-import 'package:twistter/profile.dart';
-import 'package:cloud_functions/cloud_functions.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:twistter/user.dart';
 
 class NewPost extends StatefulWidget {
-  NewPost({Key key, this.current_user}) : super(key: key);
-  User current_user;
 
+  @override
   _NewPostState createState() => _NewPostState();
 }
 
 class _NewPostState extends State<NewPost> {
-  final GlobalKey<FormState> _NewPostFormKey = GlobalKey<FormState>();
-  var t = ["Purdue", "Science"];
+  TextEditingController postEditingController = new TextEditingController();
   var dropdownvalue;
-  var top = "";
   bool isSelected = false;
+<<<<<<< HEAD
   // TextEditingController postEditingController;
   ProfilePageState pps = new ProfilePageState();
   FirebaseUser currentUser;
@@ -30,12 +24,21 @@ class _NewPostState extends State<NewPost> {
   // String _dropdownvalue = "";
   // int _value = 1;
   TextEditingController postEditingController = new TextEditingController();
+=======
+  
+  String uid;
+  String firstName;
+  String lastName;
+  String username;
+  List<String> topics;
+>>>>>>> a57845ab338c6b3c4a2205626a1e91656bca17da
 
   initState() {
     super.initState();
-    _getUser();
+    getUser();
   }
 
+<<<<<<< HEAD
   Future _getUser() async {
     await FirebaseAuth.instance.currentUser().then((currentuser) => {
           Firestore.instance
@@ -69,15 +72,32 @@ class _NewPostState extends State<NewPost> {
 
   // void _getUser() {
   //   _firstName = current_user.firstName;
+=======
+  // Future _getUser() async {
+  //   await FirebaseAuth.instance.currentUser().then((currentuser) => {
+  //         Firestore.instance
+  //             .collection("users")
+  //             .document(currentuser.uid)
+  //             .get()
+  //             .then((DocumentSnapshot snapshot) => {
+  //                   setState(() {
+  //                     firstName = snapshot["firstName"];
+  //                     lastName = snapshot["lastName"];
+  //                     topics = List.from(snapshot["topics"]);
+  //                     _dropdownvalue = topics[0];
+  //                   })
+  //                 })
+  //       });
+>>>>>>> a57845ab338c6b3c4a2205626a1e91656bca17da
   // }
 
-  void getCurrentUser() async {
-    currentUser = await FirebaseAuth.instance.currentUser();
+  void getUser() {
+    uid = AuthService.currentUser.uid;
+    firstName = AuthService.currentUser.firstName;
+    lastName = AuthService.currentUser.lastName;
+    username = AuthService.currentUser.username;
+    topics = List.from(AuthService.currentUser.topicsList);
   }
-
-  final HttpsCallable post_blog = CloudFunctions.instance.getHttpsCallable(
-    functionName: 'postMicroblog',
-  );
 
   List<String> selectedTopics = List();
   List<Widget> _buildChoiceList(List<String> topic) {
@@ -98,6 +118,9 @@ class _NewPostState extends State<NewPost> {
                   ? selectedTopics.remove(item)
                   : selectedTopics.add(item);
               // widget.onSelectionChanged(selectedTopics); // +added
+              // for (String items in selectedTopics) {
+              //   print(items);
+              // }
             });
           },
         ),
@@ -107,50 +130,36 @@ class _NewPostState extends State<NewPost> {
   }
 
   Widget build(BuildContext context) {
-    // pps.getUserInfo();
     return Scaffold(
       appBar: AppBar(
-        title: Text("NewPost"),
+        title: Text("Create New Post"),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.add_comment),
             onPressed: () async {
-              FirebaseAuth.instance.currentUser()
-              .then((currentUser) => Firestore.instance.collection("users")
-              .document(currentUser.uid).get().then((doc) => Firestore.instance
-                .collection('microblogs').document().setData({
-                  'content': postEditingController.text,
-                  'likes': '0',
-                  'quotes': '0',
-                  'timestamp': new DateTime.now().millisecondsSinceEpoch,
-                  'topics': [dropdownvalue], // fix topics list and ui part
-                  'userId': currentUser.uid,
-                  // 'userName': getUsername(),
-                  'firstName': _firstName,
-                  'lastName': _lastName,
-                })
-              )
-              // post_blog.call(<String, dynamic>{
-              //   'content': postEditingController.text,
-              //   'likes': '0',
-              //   'quotes': '0',
-              //   'timestamp': new DateTime.now().millisecondsSinceEpoch,
-              //   'topics': [dropdownvalue],
-              //   'userId': currentUser.uid,                
-              //   'firstName': _firstName,
-              //   'lastName': _lastName,
-              //   })
+              Firestore.instance.collection('posts').add({
+                'content': postEditingController.text,
+                'likes': 0,
+                'quotes': 0,
+                'timestamp': new DateTime.now().millisecondsSinceEpoch,
+                'topics': [dropdownvalue], // fix topics list and ui part
+                'uid': uid,
+                'username': username,
+                'firstName': firstName,
+                'lastName': lastName,
+              })
+              .then((value) => Firestore.instance.collection('users').document(uid).updateData({
+                'postsList': FieldValue.arrayUnion([value.documentID]),
+              }))
               .then((result) => {
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Home(
-                      uid: currentUser.uid,
-                      )),
+                    builder: (context) => Home(uid: uid,)),
                       (_) => false),
                       postEditingController.clear()
               }).catchError((err) => print(err))
-              .catchError((err) => print(err)));
+              .catchError((err) => print(err));
               },
             )
           ],
@@ -167,7 +176,7 @@ class _NewPostState extends State<NewPost> {
                   TextFormField(
                     decoration: InputDecoration(
                       labelText: 'Create New Post',
-                      hintText: "Write Something?",
+                      hintText: "Write something!",
                     ),
                     maxLines: 7,
                     autofocus: true,
@@ -179,7 +188,7 @@ class _NewPostState extends State<NewPost> {
                     maxLength: 307,
                   ),
                   Wrap(
-                    children: _buildChoiceList(_topic),
+                    children: _buildChoiceList(topics),
                   )
                     ],
                   ),
@@ -200,7 +209,7 @@ class _NewPostState extends State<NewPost> {
   //                   .document(currentUser.uid)
   //                   .get()
   //                   .then((doc) => Firestore.instance
-  //                           .collection('microblogs')
+  //                           .collection('posts')
   //                           .document()
   //                           .setData({
   //                         'content': postEditingController.text,

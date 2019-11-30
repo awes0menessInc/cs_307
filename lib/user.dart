@@ -5,17 +5,19 @@ class User {
   String lastName;
   String email;
   String bio;
-  String birthday;
   String website;
 
-  String numFollowing;
-  String numFollowers;
-  String numMicroblogs;
+  DateTime birthday;
 
-  // List<String> microblogs;
-  // List<String> following;
-  // List<String> followers;
-  // List<String> topics; 
+  int followers;
+  int following;
+  int posts;
+  int topics;
+
+  // List<String> followersList;
+  List<String> followingList;
+  // List<String> postsList;
+  List<String> topicsList; 
 
   User({
     this.uid,
@@ -24,17 +26,18 @@ class User {
     this.lastName,
     this.email,
     this.bio,
-    this.birthday,
     this.website,
+    this.birthday,
 
-    this.numFollowing,
-    this.numFollowers,
-    this.numMicroblogs,
+    this.followers,
+    this.following,
+    this.posts,
+    this.topics,
 
-    // List<String> microblogs,
-    // List<String> following,
-    // List<String> followers,
-    // List<String> topics,
+    // this.followersList,
+    this.followingList,
+    // this.postsList,
+    this.topicsList,
     }
   );
 }
