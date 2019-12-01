@@ -33,10 +33,10 @@ class _SearchState extends State<Search> {
   }
 
   bool shouldAdd(DocumentSnapshot doc, String query) {
-    if (doc["topics"]!= null) {
-      if (doc["topics"] != 0) {
-        for (int i = 0; i < doc["topics"].length; i++) {
-          if (doc["topics"][i].toString().toLowerCase().contains(query)) {
+    if (doc["topicsList"]!= null) {
+      if (doc["topicsList"] != 0) {
+        for (int i = 0; i < doc["topicsList"].length; i++) {
+          if (doc["topicsList"][i].toString().toLowerCase().contains(query)) {
             if (!_results.contains(doc["username"]) && doc["username"] != null) {
               return true;
             }             
@@ -72,7 +72,6 @@ class _SearchState extends State<Search> {
             lastName: doc['lastName'],
             email: doc['email'],
             bio: doc['bio'],
-            birthday: doc['birthday'],
             website: doc['website'],
           ))
         }
