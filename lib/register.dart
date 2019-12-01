@@ -66,23 +66,44 @@ class _RegisterState extends State<Register> {
     }
   }
 
-  String usernameValidator (String username) {
-    if (username.length == 0) {
-      return "Please enter a username";
+  // String usernameValidator (String username) {
+  //   if (username.length == 0) {
+  //     return "Please enter a username";
+  //   }
+  //   else {
+  //     // final QuerySnapshot query = await Firestore.instance.collection('users').where('username', isEqualTo: username).limit(1).getDocuments();
+  //     Firestore.instance.collection('users').where('username', isEqualTo: username).getDocuments()
+  //     .then((QuerySnapshot snapshot) => () {
+  //       List<DocumentSnapshot> documents = snapshot.documents;
+  //       if (documents.length == 1) {
+  //         return "Username already exists";
+  //       }
+  //       else {
+  //         return "Username valid!";
+  //       }
+  //     });
+  //   }
+  // }
+
+  Future<String> usernameValidator (String username) async {
+    final QuerySnapshot query = await Firestore.instance.collection('users').where('username', isEqualTo: username).limit(1).getDocuments();
+    List <DocumentSnapshot> users = query.documents;
+    if (users.length == 0) {
+      return null;
     }
     else {
-      // final QuerySnapshot query = await Firestore.instance.collection('users').where('username', isEqualTo: username).limit(1).getDocuments();
-      Firestore.instance.collection('users').where('username', isEqualTo: username).getDocuments()
-      .then((QuerySnapshot snapshot) => () {
-        List<DocumentSnapshot> documents = snapshot.documents;
-        if (documents.length == 1) {
-          return "Username already exists";
-        }
-        else {
-          return "Username valid!";
-        }
-      });
+      return "Username already exists";
     }
+    // Firestore.instance.collection('users').where('username', isEqualTo: username).getDocuments()
+    // .then((QuerySnapshot snapshot) => () {
+    //   List<DocumentSnapshot> documents = snapshot.documents;
+    //   if (documents.length == 1) {
+    //     return "Username already exists";
+    //   }
+    //   else {
+    //     return "Username valid!";
+    //   }
+    // });
   }
 
   @override
@@ -116,10 +137,21 @@ class _RegisterState extends State<Register> {
                     else return null;
                   },
                 ),
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Username*'),
-                  controller: usernameInputController,
-                  validator: usernameValidator,
+                FutureBuilder<String>(
+                  future: usernameValidator(usernameInputController.text),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    return TextFormField(
+                      decoration: InputDecoration(labelText: 'Username*'),
+                      controller: usernameInputController,
+                      validator: (future) {
+                        print(future);
+                        if (snapshot.data != null) {
+                          return snapshot.data;
+                        }
+                        else return null;
+                      },
+                    );
+                  }, 
                 ),
                 TextFormField(
                   decoration: InputDecoration(

@@ -1,14 +1,14 @@
 class Post {
-  final String uid;
-  final String username;
-  final String fullName;
-  final String content;
-  final List<String> topics;
-  // final List<String> likes;
+  String uid;
+  String username;
+  String fullName;
+  String content;
+  List<String> topics;
+  // List<String> likes;
   
-  //final String topics;
+  // List<String> topics;
 
-  const Post({this.username, this.fullName, this.content, this.topics, this.uid});
+  Post({this.username, this.fullName, this.content, this.topics, this.uid});
 
 }
 
