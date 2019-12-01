@@ -19,31 +19,35 @@ class AuthService with ChangeNotifier {
   }
 
   static void initUser(String uid) {
-    Firestore.instance.collection("users").document(uid).get().then((document) => {
-      currentUser = User(
-        uid: document['uid'],
-        username: document['username'],
-        firstName: document['firstName'],
-        lastName: document['lastName'],
-        email: document['email'],
-        bio: document['bio'],
-        birthday: document['birthday'].toDate(),
-        website: document['website'],
-
-        followers: document['followers'],
-        following: document['following'],
-        posts: document['posts'],
-        topics: document['topics'],
-
-        followersList: List<String>.from(document['followersList']),
-        followingList: List<String>.from(document['followingList']),
-        postsList: List<String>.from(document['postsList']),
-        topicsList: List<String>.from(document['topicsList']),
-      )
-    });
+    Firestore.instance
+        .collection("users")
+        .document(uid)
+        .get()
+        .then((document) => {
+              currentUser = User(
+                  uid: document['uid'],
+                  username: document['username'],
+                  firstName: document['firstName'],
+                  lastName: document['lastName'],
+                  email: document['email'],
+                  bio: document['bio'],
+                  birthday: document['birthday'].toDate(),
+                  website: document['website'],
+                  followers: document['followers'],
+                  following: document['following'],
+                  posts: document['posts'],
+                  topics: document['topics'],
+                  followersList: List<String>.from(document['followersList']),
+                  followingList: List<String>.from(document['followingList']),
+                  postsList: List<String>.from(document['postsList']),
+                  topicsList: List<String>.from(document['topicsList']),
+                  followingUserTopicList: Map<String, dynamic>.from(
+                      document['followingUserTopicList']))
+            });
   }
 
-  static void updateUser(firstName, lastName, email, bio, birthday, website, topics) {
+  static void updateUser(
+      firstName, lastName, email, bio, birthday, website, topics) {
     currentUser.firstName = firstName;
     currentUser.lastName = lastName;
     currentUser.email = email;
@@ -62,7 +66,8 @@ class AuthService with ChangeNotifier {
 
   Future<FirebaseUser> loginUser({String email, String password}) async {
     try {
-      var result = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      var result = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
       firebaseUser = await _auth.currentUser();
       initUser(firebaseUser.uid);
       notifyListeners();
@@ -73,16 +78,21 @@ class AuthService with ChangeNotifier {
   }
 
   Future<FirebaseUser> registerUser(
-    {String email, String password, 
-    String username, String firstName, String lastName, DatePickerDateOrder birthday}) async {
-      try {
-        var result = _auth.createUserWithEmailAndPassword(email: email, password: email);
-        firebaseUser = await _auth.currentUser();
-        initUser(firebaseUser.uid);
-        notifyListeners();
-        return result;
-      } catch (e) {
-        throw new AuthException(e.code, e.message);
-      }
+      {String email,
+      String password,
+      String username,
+      String firstName,
+      String lastName,
+      DatePickerDateOrder birthday}) async {
+    try {
+      var result =
+          _auth.createUserWithEmailAndPassword(email: email, password: email);
+      firebaseUser = await _auth.currentUser();
+      initUser(firebaseUser.uid);
+      notifyListeners();
+      return result;
+    } catch (e) {
+      throw new AuthException(e.code, e.message);
+    }
   }
 }

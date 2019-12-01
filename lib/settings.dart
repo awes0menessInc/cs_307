@@ -72,28 +72,36 @@ class SettingsState extends State<Settings> {
     _bio = AuthService.currentUser.bio;
     _website = AuthService.currentUser.website;
     _birthday = AuthService.currentUser.birthday;
+    _topics = AuthService.currentUser.topicsList;
   }
 
   Future deleteUser() async {
     Firestore.instance.collection("users").document(_uid).delete();
-    FirebaseAuth.instance.currentUser().then((currentUser) => {
-      currentUser.delete()
-    });
+    FirebaseAuth.instance
+        .currentUser()
+        .then((currentUser) => {currentUser.delete()});
   }
 
   Future deleteMicroblogs() async {
-    await Firestore.instance.collection("microblogs").getDocuments().then((QuerySnapshot snapshot) {
+    await Firestore.instance
+        .collection("posts")
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((f) => {
-        if (f.data["userId"] == _uid) {
-          print(f.documentID),
-          Firestore.instance.collection("microblogs").document(f.documentID).delete()
-        }
-      });
+            if (f.data["uid"] == _uid)
+              {
+                print(f.documentID),
+                Firestore.instance
+                    .collection("posts")
+                    .document(f.documentID)
+                    .delete()
+              }
+          });
     });
   }
 
   void _logout() async {
-    await FirebaseAuth.instance.signOut();    
+    await FirebaseAuth.instance.signOut();
   }
 
   String emailValidator(String value) {
@@ -135,7 +143,7 @@ class SettingsState extends State<Settings> {
             ),
             FlatButton(
               child: new Text("Delete",
-                style: TextStyle(color: Color(0xff990C04))),
+                  style: TextStyle(color: Color(0xff990C04))),
               onPressed: () {
                 deleteUser();
                 deleteMicroblogs();
@@ -156,172 +164,178 @@ class SettingsState extends State<Settings> {
     bioController.text = _bio;
     websiteController.text = _website;
     return Form(
-      key: _editFormKey,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          TextFormField(
-            decoration: InputDecoration(
-              labelText: 'First Name', hintText: "John"),
-            controller: fnameController,
-            onSaved: (value) {
-              AuthService.currentUser.firstName = value;
-            },
-            validator: (value) {
-              if (value.length == 0) {
-                return "Please enter your first name";
-              }
-              return null;
-            },
-          ),
-          TextFormField(
-            decoration: InputDecoration(
-              labelText: 'Last Name', hintText: "Doe"),
-            controller: lnameController,
-            onSaved: (value) {
-              AuthService.currentUser.lastName = value;
-            },
-            validator: (value) {
-              if (value.length == 0) {
-                return "Please enter your last name";
-              }
-              return null;
-            },
-          ),
-          TextFormField(
-            decoration: InputDecoration(
-              labelText: 'Email', hintText: "example@email.com"),
-            controller: emailController,
-            onSaved: (value) {
-              AuthService.currentUser.email = value;
-            },
-            validator: emailValidator
-          ),
-          TextFormField(
-            decoration: InputDecoration(
-              labelText: 'Bio', hintText: "Bio"),
-            controller: bioController,
-            onSaved: (value) {
-              AuthService.currentUser.bio = value;
-            },
-          ),
-          DateTimeField(
-            controller: bdayController,
-            format: DateFormat("yyyy-MM-dd"),
-            decoration: InputDecoration(labelText: 'Birthday'),
-            onShowPicker: (context, currentValue) {
-              return showDatePicker(
-                context: context,
-                firstDate: DateTime(1930),
-                initialDate: currentValue ?? DateTime.now(),
-                lastDate: DateTime(2100)
-              );
-            },
-            onSaved: (value) {
-              AuthService.currentUser.birthday = value;
-            },
-          ),
-          // TextFormField(
-          //   decoration: InputDecoration(
-          //     labelText: 'Birthday', hintText: "10/18/2019"),
-          //   controller: bdayController,
-          //   onSaved: (value) {
-          //     AuthService.currentUser.birthday = value;
-          //   },
-          //   // validator: bdayValidator,
-          // ),
-          TextFormField(
-            decoration: InputDecoration(
-              labelText: 'Website', hintText: "www.example.com"),
-            controller: websiteController,
-            onSaved: (value) {
-              AuthService.currentUser.website = value;
-            },
-          ),
-          Padding(
-            padding: EdgeInsets.all(10.0),
-            child: RaisedButton(
-              child: Text("Save"),
-              onPressed: () {
-                // setState(() {
-                //   _topics.add(topicController.text);
-                // });
-                if (_editFormKey.currentState.validate()) {
-                  _editFormKey.currentState.save();
-                  Firestore.instance.collection("users").document(_uid).updateData({
-                    "firstName": fnameController.text,
-                    "lastName": lnameController.text,
-                    "email": emailController.text,
-                    "bio": bioController.text,
-                    "birthday": AuthService.currentUser.birthday.toUtc().millisecondsSinceEpoch,
-                    "website": websiteController.text,
-                    "uid": _uid,
-                    // "topics": _topics,
-                  });
-                  // AuthService.updateUser(
-                  //   fnameController.text,
-                  //   lnameController.text,
-                  //   emailController.text,
-                  //   bioController.text,
-                  //   bdayController.text,
-                  //   websiteController.text,
-                  //   _topics,
-                  // );
-                  final snackBar = SnackBar(
-                    content: Text('Profile changes saved successfully'),
-                    duration: const Duration(seconds: 3),
-                    action: SnackBarAction(
-                      label: 'Dismiss',
-                      onPressed: () {
-                        Scaffold.of(context).hideCurrentSnackBar();
-                      },
-                    ),
-                  );
-                  Scaffold.of(context).showSnackBar(snackBar);
+        key: _editFormKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            TextFormField(
+              decoration:
+                  InputDecoration(labelText: 'First Name', hintText: "John"),
+              controller: fnameController,
+              onSaved: (value) {
+                AuthService.currentUser.firstName = value;
+              },
+              validator: (value) {
+                if (value.length == 0) {
+                  return "Please enter your first name";
                 }
-              }
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(10.0),
-            child: RaisedButton(
-              child: Text(
-                "Delete Account",
-                style: TextStyle(
-                    color: Color(0xff990C04)
-                )
-              ),
-              onPressed: () {
-                buildDeleteDialog();
+                return null;
               },
             ),
-          ),
-        ],
-      )
-    );
+            TextFormField(
+              decoration:
+                  InputDecoration(labelText: 'Last Name', hintText: "Doe"),
+              controller: lnameController,
+              onSaved: (value) {
+                AuthService.currentUser.lastName = value;
+              },
+              validator: (value) {
+                if (value.length == 0) {
+                  return "Please enter your last name";
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+                decoration: InputDecoration(
+                    labelText: 'Email', hintText: "example@email.com"),
+                controller: emailController,
+                onSaved: (value) {
+                  AuthService.currentUser.email = value;
+                },
+                validator: emailValidator),
+            TextFormField(
+              decoration: InputDecoration(labelText: 'Bio', hintText: "Bio"),
+              controller: bioController,
+              onSaved: (value) {
+                AuthService.currentUser.bio = value;
+              },
+            ),
+            DateTimeField(
+              controller: bdayController,
+              format: DateFormat("yyyy-MM-dd"),
+              decoration: InputDecoration(labelText: 'Birthday'),
+              onShowPicker: (context, currentValue) {
+                return showDatePicker(
+                    context: context,
+                    firstDate: DateTime(1930),
+                    initialDate: currentValue ?? DateTime.now(),
+                    lastDate: DateTime(2100));
+              },
+              onSaved: (value) {
+                AuthService.currentUser.birthday = value;
+              },
+            ),
+            // TextFormField(
+            //   decoration: InputDecoration(
+            //     labelText: 'Birthday', hintText: "10/18/2019"),
+            //   controller: bdayController,
+            //   onSaved: (value) {
+            //     AuthService.currentUser.birthday = value;
+            //   },
+            //   // validator: bdayValidator,
+            // ),
+            TextFormField(
+              decoration: InputDecoration(
+                  labelText: 'Website', hintText: "www.example.com"),
+              controller: websiteController,
+              onSaved: (value) {
+                AuthService.currentUser.website = value;
+              },
+            ),
+            TextFormField(
+              decoration:
+                  InputDecoration(labelText: 'Add a Topic', hintText: "Topic"),
+              controller: topicController,
+              onSaved: (value) {
+                //AuthService.currentUser.topicsList.add(value);
+                _topics.add(value);
+              },
+            ),
+            Padding(
+              padding: EdgeInsets.all(10.0),
+              child: RaisedButton(
+                  child: Text("Save"),
+                  onPressed: () {
+                    // setState(() {
+                    //   _topics.add(topicController.text);
+                    // });
+                    if (_editFormKey.currentState.validate()) {
+                      _editFormKey.currentState.save();
+                      Firestore.instance
+                          .collection("users")
+                          .document(_uid)
+                          .updateData({
+                        "firstName": fnameController.text,
+                        "lastName": lnameController.text,
+                        "email": emailController.text,
+                        "bio": bioController.text,
+                        "birthday": AuthService.currentUser.birthday
+                            .toUtc()
+                            .millisecondsSinceEpoch,
+                        "website": websiteController.text,
+                        "uid": _uid,
+                        "topicsList": FieldValue.arrayUnion(List.from(_topics)),
+                      });
+                      // AuthService.updateUser(
+                      //   fnameController.text,
+                      //   lnameController.text,
+                      //   emailController.text,
+                      //   bioController.text,
+                      //   bdayController.text,
+                      //   websiteController.text,
+                      //   _topics,
+                      // );
+                      final snackBar = SnackBar(
+                        content: Text('Profile changes saved successfully'),
+                        duration: const Duration(seconds: 3),
+                        action: SnackBarAction(
+                          label: 'Dismiss',
+                          onPressed: () {
+                            Scaffold.of(context).hideCurrentSnackBar();
+                          },
+                        ),
+                      );
+                      Scaffold.of(context).showSnackBar(snackBar);
+                    }
+                  }),
+            ),
+            Padding(
+              padding: EdgeInsets.all(10.0),
+              child: RaisedButton(
+                child: Text("Delete Account",
+                    style: TextStyle(color: Color(0xff990C04))),
+                onPressed: () {
+                  buildDeleteDialog();
+                },
+              ),
+            ),
+          ],
+        ));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Edit Profile", style: TextStyle(color: Colors.black)),
-        backgroundColor: Colors.white,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.exit_to_app, color: Colors.black),
-            onPressed: () {
-              _logout();
-              Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => Login()));
+        appBar: AppBar(
+          title: Text("Edit Profile", style: TextStyle(color: Colors.black)),
+          backgroundColor: Colors.white,
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.exit_to_app, color: Colors.black),
+              onPressed: () {
+                _logout();
+                Navigator.pushReplacement(
+                    context, MaterialPageRoute(builder: (context) => Login()));
               },
             )
           ],
         ),
         body: Container(
-          padding: const EdgeInsets.all(20.0),
-          child: SingleChildScrollView(
-            child: buildSettingsForm(),)));
-            // child: Column(children: <Widget>[buildSettingsForm()]))));
+            padding: const EdgeInsets.all(20.0),
+            child: SingleChildScrollView(
+              child: buildSettingsForm(),
+            )));
+    // child: Column(children: <Widget>[buildSettingsForm()]))));
   }
 }

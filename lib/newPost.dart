@@ -5,7 +5,6 @@ import 'package:twistter/auth_service.dart';
 import 'package:twistter/home.dart';
 
 class NewPost extends StatefulWidget {
-
   @override
   _NewPostState createState() => _NewPostState();
 }
@@ -14,7 +13,7 @@ class _NewPostState extends State<NewPost> {
   TextEditingController postEditingController = new TextEditingController();
   var dropdownvalue;
   bool isSelected = false;
-  
+
   String uid;
   String firstName;
   String lastName;
@@ -53,7 +52,9 @@ class _NewPostState extends State<NewPost> {
 
   List<String> selectedTopics = List();
   List<Widget> _buildChoiceList(List<String> topic) {
-  topic.removeWhere((item) => item == ""); //removes any empty strings from the topic list before displaying
+    topic.removeWhere((item) =>
+        item ==
+        ""); //removes any empty strings from the topic list before displaying
     if (topic.length == 0) {
       return null;
     }
@@ -83,35 +84,45 @@ class _NewPostState extends State<NewPost> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Create New Post"),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add_comment),
-            onPressed: () async {
-              Firestore.instance.collection('posts').add({
-                'content': postEditingController.text,
-                'likes': 0,
-                'quotes': 0,
-                'timestamp': new DateTime.now().millisecondsSinceEpoch,
-                'topics': [dropdownvalue], // fix topics list and ui part
-                'uid': uid,
-                'username': username,
-                'firstName': firstName,
-                'lastName': lastName,
-              })
-              .then((value) => Firestore.instance.collection('users').document(uid).updateData({
-                'postsList': FieldValue.arrayUnion([value.documentID]),
-              }))
-              .then((result) => {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Home(uid: uid,)),
-                      (_) => false),
-                      postEditingController.clear()
-              }).catchError((err) => print(err))
-              .catchError((err) => print(err));
+        appBar: AppBar(
+          title: Text("Create New Post"),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.add_comment),
+              onPressed: () async {
+                Firestore.instance
+                    .collection('posts')
+                    .add({
+                      'content': postEditingController.text,
+                      'likes': 0,
+                      'quotes': 0,
+                      'timestamp': new DateTime.now().millisecondsSinceEpoch,
+                      'topics': FieldValue.arrayUnion(List.from(
+                          selectedTopics)), // fix topics list and ui part
+                      'uid': uid,
+                      'username': username,
+                      'firstName': firstName,
+                      'lastName': lastName,
+                    })
+                    .then((value) => Firestore.instance
+                            .collection('users')
+                            .document(uid)
+                            .updateData({
+                          'postsList':
+                              FieldValue.arrayUnion([value.documentID]),
+                        }))
+                    .then((result) => {
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Home(
+                                        uid: uid,
+                                      )),
+                              (_) => false),
+                          postEditingController.clear()
+                        })
+                    .catchError((err) => print(err))
+                    .catchError((err) => print(err));
               },
             )
           ],
@@ -124,24 +135,25 @@ class _NewPostState extends State<NewPost> {
                     backgroundColor: Color.fromRGBO(85, 176, 189, 1.0)),
                 child: SingleChildScrollView(
                     child: Form(
-                        child: Column(children: <Widget>[
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Create New Post',
-                      hintText: "Write something!",
-                    ),
-                    maxLines: 7,
-                    autofocus: true,
-                    showCursor: true,
-                    autocorrect: false,
-                    textAlign: TextAlign.left,
-                    keyboardAppearance: Brightness.dark,
-                    controller: postEditingController,
-                    maxLength: 307,
-                  ),
-                  Wrap(
-                    children: _buildChoiceList(topics),
-                  )
+                  child: Column(
+                    children: <Widget>[
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: 'Create New Post',
+                          hintText: "Write something!",
+                        ),
+                        maxLines: 7,
+                        autofocus: true,
+                        showCursor: true,
+                        autocorrect: false,
+                        textAlign: TextAlign.left,
+                        keyboardAppearance: Brightness.dark,
+                        controller: postEditingController,
+                        maxLength: 307,
+                      ),
+                      Wrap(
+                        children: _buildChoiceList(topics),
+                      )
                     ],
                   ),
                 )))));

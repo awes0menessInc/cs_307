@@ -7,7 +7,7 @@ import 'package:twistter/profile.dart';
 import 'package:twistter/post.dart';
 
 class Timeline extends StatefulWidget {
-  Timeline({Key title}) : super(key: title); 
+  Timeline({Key title}) : super(key: title);
 
   @override
   _TimelineState createState() => _TimelineState();
@@ -23,12 +23,13 @@ class Timeline extends StatefulWidget {
 }
 
 class _TimelineState extends State<Timeline> {
-
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
       theme: new ThemeData(primaryColor: Colors.white),
-      home: new ListPage(title: 'Timeline',),
+      home: new ListPage(
+        title: 'Timeline',
+      ),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -46,10 +47,11 @@ class _ListPageState extends State<ListPage> {
   static const String KEY_LAST_FETCH = "last_fetch";
   static const int MILLISECONDS_IN_HOUR = 3600000;
   static const int REFRESH_THRESHOLD = 3 * MILLISECONDS_IN_HOUR;
-  
+
   bool pressed = false;
   List<Post> posts = [];
   List<String> following;
+  Map<String, dynamic> followingUserTopic;
 
   initState() {
     getUser();
@@ -58,13 +60,18 @@ class _ListPageState extends State<ListPage> {
 
   Future getUser() async {
     await FirebaseAuth.instance.currentUser().then((currentuser) => {
-      Firestore.instance.collection("users").document(currentuser.uid).get()
-      .then((DocumentSnapshot snapshot) => {
-        setState(() {
-          following = List.from(snapshot["followingList"]);
-        })
-      })
-    });
+          Firestore.instance
+              .collection("users")
+              .document(currentuser.uid)
+              .get()
+              .then((DocumentSnapshot snapshot) => {
+                    setState(() {
+                      following = List.from(snapshot["followingList"]);
+                      followingUserTopic = Map<String, dynamic>.from(
+                          snapshot["followingUserTopicList"]);
+                    })
+                  })
+        });
   }
 
   void showTags(BuildContext context, Post post) {
@@ -120,14 +127,43 @@ class _ListPageState extends State<ListPage> {
     List<Post> postsList = [];
     List<dynamic> tags = [];
     snap.forEach((f) {
-      if (following.contains(f["uid"])) {
-        postsList.add( Post(
-          content: f['content'],
-          username: f['username'],
-          fullName: f['firstName'].toString() + " " + f['lastName'].toString(),
-          topics: List.from(f['topics']),
-          uid: f['uid']
-        ));
+      //   if (following.contains(f["uid"])) {
+      //     postsList.add(Post(
+      //         content: f['content'],
+      //         username: f['username'],
+      //         fullName:
+      //             f['firstName'].toString() + " " + f['lastName'].toString(),
+      //         topics: List.from(f['topics']),
+      //         uid: f['uid']));
+      //   }
+      // });
+      if (followingUserTopic != null &&
+          followingUserTopic.containsKey(f["uid"])) {
+        List<dynamic> topicList;
+        for (var entry in followingUserTopic.entries) {
+          if (entry.key == f["uid"]) {
+            Map<dynamic, dynamic> temp = entry.value;
+            Map<dynamic, dynamic> temp2 = temp["NotFollowing"];
+            topicList = temp2.keys.toList();
+            break;
+          }
+        }
+        List<String> topic = topicList.cast<String>().toList();
+        List<String> docTopic = List.from(f['topics']);
+        for (String top in docTopic) {
+          if (topic.contains(top)) {
+            break;
+          } else {
+            postsList.add(Post(
+                content: f['content'],
+                username: f['username'],
+                fullName:
+                    f['firstName'].toString() + " " + f['lastName'].toString(),
+                topics: List.from(f['topics']),
+                uid: f['uid']));
+            break;
+          }
+        }
       }
     });
     return postsList;
@@ -137,12 +173,11 @@ class _ListPageState extends State<ListPage> {
     posts = getPosts(snap);
     return Container(
         child: new ListView.builder(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemBuilder: (content, index) => _makeCard(context, posts[index]),
-          itemCount: posts.length,
-        )
-      );
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      itemBuilder: (content, index) => _makeCard(context, posts[index]),
+      itemCount: posts.length,
+    ));
   }
 
   Widget _makeListTile(BuildContext context, Post post) {
@@ -158,25 +193,23 @@ class _ListPageState extends State<ListPage> {
       title: Container(
           padding: EdgeInsets.all(0),
           child: InkWell(
-            onTap: () {
-              print("tap!");
+              onTap: () {
+                print("tap!");
                 var route = new MaterialPageRoute(
                   builder: (BuildContext context) =>
                       new ProfilePage(userPage: post.uid),
                 );
                 Navigator.of(context).push(route);
-            },
-            child: Text(
-              post.fullName,
-              style: TextStyle(
-                color: Color.fromRGBO(7, 113, 136, 1.0),
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-                fontFamily: 'Poppins',
-              ),
-            )
-          )
-        ),
+              },
+              child: Text(
+                post.fullName,
+                style: TextStyle(
+                  color: Color.fromRGBO(7, 113, 136, 1.0),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                  fontFamily: 'Poppins',
+                ),
+              ))),
       subtitle: Text(
         //_blogtext,
         post.content,
@@ -236,28 +269,26 @@ class _ListPageState extends State<ListPage> {
     return Scaffold(
         // backgroundColor: Color.fromRGBO(85, 176, 189, 1.0),
         body: Stack(
-          children: <Widget>[
-            StreamBuilder<QuerySnapshot>(
-                stream: Firestore.instance
-                    .collection('posts')
-                    .orderBy('timestamp', descending: true)
-                    .snapshots(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasError) return new Text('Error');
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.waiting:
-                      return Container(
-                        alignment: Alignment.bottomCenter,
-                        child: LinearProgressIndicator()
-                      );
-                    default:
-                      return _makeBody(context, snapshot.data.documents);
-                  } //switch
-                } //asyncsnapshot
-                )
-        ],
-      )
-    );
+      children: <Widget>[
+        StreamBuilder<QuerySnapshot>(
+            stream: Firestore.instance
+                .collection('posts')
+                .orderBy('timestamp', descending: true)
+                .snapshots(),
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasError) return new Text('Error');
+              switch (snapshot.connectionState) {
+                case ConnectionState.waiting:
+                  return Container(
+                      alignment: Alignment.bottomCenter,
+                      child: LinearProgressIndicator());
+                default:
+                  return _makeBody(context, snapshot.data.documents);
+              } //switch
+            } //asyncsnapshot
+            )
+      ],
+    ));
   }
 }

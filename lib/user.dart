@@ -17,7 +17,8 @@ class User {
   List<String> followersList;
   List<String> followingList;
   List<String> postsList;
-  List<String> topicsList; 
+  List<String> topicsList;
+  Map<String, dynamic> followingUserTopicList;
 
   User({
     this.uid,
@@ -28,16 +29,14 @@ class User {
     this.bio,
     this.website,
     this.birthday,
-
     this.followers,
     this.following,
     this.posts,
     this.topics,
-
     this.followersList,
     this.followingList,
     this.postsList,
     this.topicsList,
-    }
-  );
+    this.followingUserTopicList,
+  });
 }
