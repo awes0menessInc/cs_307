@@ -14,18 +14,65 @@ class _NewPostState extends State<NewPost> {
   TextEditingController postEditingController = new TextEditingController();
   var dropdownvalue;
   bool isSelected = false;
+<<<<<<< HEAD
+  // TextEditingController postEditingController;
+  ProfilePageState pps = new ProfilePageState();
+  FirebaseUser currentUser;
+  String _firstName = "";
+  String _lastName = "";
+  List<String> _topic;
+  // String _dropdownvalue = "";
+  // int _value = 1;
+  TextEditingController postEditingController = new TextEditingController();
+=======
   
   String uid;
   String firstName;
   String lastName;
   String username;
   List<String> topics;
+>>>>>>> a57845ab338c6b3c4a2205626a1e91656bca17da
 
   initState() {
     super.initState();
     getUser();
   }
 
+<<<<<<< HEAD
+  Future _getUser() async {
+    await FirebaseAuth.instance.currentUser().then((currentuser) => {
+          Firestore.instance
+              .collection("users")
+              .document(currentuser.uid)
+              .get()
+              .then((DocumentSnapshot snapshot) => {
+                    setState(() {
+                      _firstName = snapshot["firstName"];
+                      _lastName = snapshot["lastName"];
+                      _topic = List.from(snapshot["topics"]);
+                      // _dropdownvalue = _topic[0];
+                    })
+                  })
+        });
+  }
+  
+  // void _getCurrentUser() {
+  //   FirebaseAuth.instance.currentUser().then((currentuser) => {
+  //     Firestore.instance.collection("users").document(currentuser.uid).get()
+  //     .then((DocumentSnapshot snapshot) => {
+  //       setState(() {
+  //         _firstName = snapshot["firstName"];
+  //         _lastName = snapshot["lastName"];
+  //         _topic = List.from(snapshot["topics"]);
+  //         _dropdownvalue = _topic[0];
+  //       })
+  //     })
+  //   });
+  // }
+
+  // void _getUser() {
+  //   _firstName = current_user.firstName;
+=======
   // Future _getUser() async {
   //   await FirebaseAuth.instance.currentUser().then((currentuser) => {
   //         Firestore.instance
@@ -41,6 +88,7 @@ class _NewPostState extends State<NewPost> {
   //                   })
   //                 })
   //       });
+>>>>>>> a57845ab338c6b3c4a2205626a1e91656bca17da
   // }
 
   void getUser() {
@@ -53,6 +101,10 @@ class _NewPostState extends State<NewPost> {
 
   List<String> selectedTopics = List();
   List<Widget> _buildChoiceList(List<String> topic) {
+  topic.removeWhere((item) => item == ""); //removes any empty strings from the topic list before displaying
+    if (topic.length == 0) {
+      return null;
+    }
     List<Widget> choices = List();
     topic.forEach((item) {
       choices.add(Container(
@@ -135,7 +187,6 @@ class _NewPostState extends State<NewPost> {
                     controller: postEditingController,
                     maxLength: 307,
                   ),
-                  
                   Wrap(
                     children: _buildChoiceList(topics),
                   )
