@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:twistter/auth_service.dart';
+import 'package:timeago/timeago.dart' as timeago;
 import 'package:twistter/profile.dart';
 import 'package:twistter/post.dart';
 
@@ -48,14 +48,31 @@ class _ListPageState extends State<ListPage> {
   static const int MILLISECONDS_IN_HOUR = 3600000;
   static const int REFRESH_THRESHOLD = 3 * MILLISECONDS_IN_HOUR;
 
-  bool pressed = false;
   List<Post> posts = [];
   List<String> following;
   Map<String, dynamic> followingUserTopic;
 
+  TextEditingController controller = new TextEditingController();
+  FocusNode _focusNode;
+  String filter;
+
+  Color _iconColor = Color.fromRGBO(5, 62, 66, 1.0);
+  Icon _icon = Icon(Icons.favorite_border, size: 20);
+
   initState() {
     getUser();
+    controller.addListener(() {
+      setState(() {
+        filter = controller.text;
+      });
+    });
     super.initState();
+    _focusNode = FocusNode();
+  }
+
+  dispose() {
+    super.dispose();
+    _focusNode.dispose();
   }
 
   Future getUser() async {
@@ -160,6 +177,7 @@ class _ListPageState extends State<ListPage> {
                 fullName:
                     f['firstName'].toString() + " " + f['lastName'].toString(),
                 topics: List.from(f['topics']),
+                timestamp: f['timestamp'],
                 uid: f['uid']));
             break;
           }
@@ -171,6 +189,10 @@ class _ListPageState extends State<ListPage> {
 
   Widget _makeBody(BuildContext context, List<DocumentSnapshot> snap) {
     posts = getPosts(snap);
+    if (filter == null || filter == "") {
+    } else {
+      posts = posts.where((post) => post.topics.contains(filter)).toList();
+    }
     return Container(
         child: new ListView.builder(
       scrollDirection: Axis.vertical,
@@ -215,6 +237,8 @@ class _ListPageState extends State<ListPage> {
         post.content,
         style: TextStyle(fontSize: 11),
       ),
+      trailing: Text(timeago
+          .format(new DateTime.fromMillisecondsSinceEpoch(post.timestamp))),
     );
   }
 
@@ -238,7 +262,7 @@ class _ListPageState extends State<ListPage> {
                     FlatButton(
                       child: Text("View Tags",
                           style: TextStyle(
-                            fontSize: 10,
+                            fontSize: 12,
                             color: Color.fromRGBO(5, 62, 66, 1.0),
                           )),
                       onPressed: () => showTags(context, post),
@@ -253,9 +277,11 @@ class _ListPageState extends State<ListPage> {
                     SizedBox(
                         width: 40,
                         child: IconButton(
-                          icon: Icon(Icons.favorite_border, size: 20),
-                          color: Color.fromRGBO(5, 62, 66, 1.0),
-                          onPressed: () => debugPrint('like'),
+                          icon: _icon,
+                          color: _iconColor,
+                          onPressed: () {
+                            setState(() {});
+                          },
                         )),
                   ],
                 ))),
@@ -267,28 +293,48 @@ class _ListPageState extends State<ListPage> {
   Widget build(BuildContext context) {
     //Firestore.instance
     return Scaffold(
+        resizeToAvoidBottomPadding: false,
         // backgroundColor: Color.fromRGBO(85, 176, 189, 1.0),
         body: Stack(
-      children: <Widget>[
-        StreamBuilder<QuerySnapshot>(
-            stream: Firestore.instance
-                .collection('posts')
-                .orderBy('timestamp', descending: true)
-                .snapshots(),
-            builder:
-                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (snapshot.hasError) return new Text('Error');
-              switch (snapshot.connectionState) {
-                case ConnectionState.waiting:
-                  return Container(
-                      alignment: Alignment.bottomCenter,
-                      child: LinearProgressIndicator());
-                default:
-                  return _makeBody(context, snapshot.data.documents);
-              } //switch
-            } //asyncsnapshot
+          children: <Widget>[
+            new Padding(
+              padding: new EdgeInsets.only(top: 20.0),
+            ),
+            new Container(
+              padding: new EdgeInsets.symmetric(horizontal: 10),
+              child: new TextField(
+                focusNode: _focusNode,
+                autofocus: false,
+                textInputAction: TextInputAction.done,
+                decoration: new InputDecoration(labelText: "Filter by Topics"),
+                onEditingComplete: () {
+                  _focusNode.unfocus();
+                },
+                controller: controller,
+              ),
+            ),
+            new Container(
+              padding: new EdgeInsets.only(top: 40),
+              child: StreamBuilder<QuerySnapshot>(
+                  stream: Firestore.instance
+                      .collection('posts')
+                      .orderBy('timestamp', descending: true)
+                      .snapshots(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.hasError) return new Text('Error');
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return Container(
+                            alignment: Alignment.bottomCenter,
+                            child: LinearProgressIndicator());
+                      default:
+                        return _makeBody(context, snapshot.data.documents);
+                    } //switch
+                  } //asyncsnapshot
+                  ),
             )
-      ],
-    ));
+          ],
+        ));
   }
 }

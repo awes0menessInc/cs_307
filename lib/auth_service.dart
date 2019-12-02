@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:twistter/user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -14,34 +15,50 @@ class AuthService with ChangeNotifier {
   //   return _auth.currentUser();
   // }
 
-  // static User getUserInfo() {
-  //   return currentUser;
-  // }
+  @override
+  initState() {
+    _getUID().then((uid) => initUser(uid));
+  }
+
+  static Future<String> _getUID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.get("user");
+  }
+
+  static User getUserInfo() {
+    return currentUser;
+  }
 
   static void initUser(String uid) {
-    if (FirebaseAuth.instance.currentUser() != null) {
-    Firestore.instance.collection("users").document(uid).get()
-      .then((document) => {
-        currentUser = User(
-          uid: document['uid'],
-          username: document['username'],
-          firstName: document['firstName'],
-          lastName: document['lastName'],
-          email: document['email'],
-          bio: document['bio'],
-          birthday: document['birthday'].toDate(),
-          website: document['website'],
-          followers: document['followers'],
-          following: document['following'],
-          posts: document['posts'],
-          topics: document['topics'],
-          followersList: List<String>.from(document['followersList']),
-          followingList: List<String>.from(document['followingList']),
-          postsList: List<String>.from(document['postsList']),
-          topicsList: List<String>.from(document['topicsList']),
-          followingUserTopicList: Map<String, dynamic>.from(document['followingUserTopicList']))
-      });
+    if (uid == null || uid == "") {
+      _getUID().then((x) => uid = x);
     }
+
+    Firestore.instance
+        .collection("users")
+        .document(uid)
+        .get()
+        .then((document) => {
+              currentUser = User(
+                  uid: document['uid'],
+                  username: document['username'],
+                  firstName: document['firstName'],
+                  lastName: document['lastName'],
+                  email: document['email'],
+                  bio: document['bio'],
+                  birthday: document['birthday'].toDate(),
+                  website: document['website'],
+                  followers: document['followers'],
+                  following: document['following'],
+                  posts: document['posts'],
+                  topics: document['topics'],
+                  followersList: List<String>.from(document['followersList']),
+                  followingList: List<String>.from(document['followingList']),
+                  postsList: List<String>.from(document['postsList']),
+                  topicsList: List<String>.from(document['topicsList']),
+                  followingUserTopicList: Map<String, dynamic>.from(
+                      document['followingUserTopicList']))
+            });
   }
 
   static void updateUser(
