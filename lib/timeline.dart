@@ -2,10 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:twistter/auth_service.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:twistter/profile.dart';
 import 'package:twistter/post.dart';
-import 'repost.dart';
+import 'package:twistter/repost.dart';
+import 'package:twistter/metrics.dart';
 
 class Timeline extends StatefulWidget {
   Timeline({Key title}) : super(key: title);
@@ -58,7 +60,9 @@ class _ListPageState extends State<ListPage> {
   String filter;
 
   Color _iconColor = Color.fromRGBO(5, 62, 66, 1.0);
+  Color _iconColorPressed = Colors.red;
   Icon _icon = Icon(Icons.favorite_border, size: 20);
+  Icon _iconPressed = Icon(Icons.favorite, size: 20);
 
   initState() {
     getUser();
@@ -180,6 +184,7 @@ class _ListPageState extends State<ListPage> {
                 topics: List.from(f['topics']),
                 timestamp: f['timestamp'],
                 likes: List.from(f['likes']),
+                postID: f['postID'],
                 uid: f['uid']));
             break;
           }
@@ -285,10 +290,17 @@ class _ListPageState extends State<ListPage> {
                     SizedBox(
                         width: 40,
                         child: IconButton(
-                          icon: _icon,
-                          color: _iconColor,
+                          icon: post.likes.contains(AuthService.currentUser.uid)
+                              ? _iconPressed
+                              : _icon,
+                          color:
+                              post.likes.contains(AuthService.currentUser.uid)
+                                  ? _iconColorPressed
+                                  : _iconColor,
                           onPressed: () {
-                            setState(() {});
+                            setState(() {
+                              like(post, AuthService.currentUser.uid);
+                            });
                           },
                         )),
                   ],
