@@ -24,6 +24,8 @@ class _RegisterState extends State<Register> {
   TextEditingController confirmPwdInputController;
   TextEditingController bdayController;
 
+  DateTime birthday;
+
   @override
   initState() {
     firstNameInputController = new TextEditingController();
@@ -190,7 +192,8 @@ class _RegisterState extends State<Register> {
                           lastDate: DateTime(2100));
                     },
                     onSaved: (value) {
-                      AuthService.currentUser.birthday = value;
+                      // AuthService.currentUser.birthday = value;
+                      birthday = value;
                     },
                   ),
                   RaisedButton(
@@ -231,7 +234,7 @@ class _RegisterState extends State<Register> {
                                     "lastName": lastNameInputController.text,
                                     "username": usernameInputController.text,
                                     "email": emailInputController.text,
-                                    "birthday": DateTime.now(),
+                                    "birthday": birthday,
                                     "bio": "",
                                     "website": "",
                                     "followers": 0,
@@ -250,20 +253,21 @@ class _RegisterState extends State<Register> {
                                       }
                                     },
                                   }).then((result) => {
-                                            Navigator.pushAndRemoveUntil(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) => Home(
-                                                          uid: currentUser.uid,
-                                                        )),
-                                                (_) => false),
-                                            firstNameInputController.clear(),
-                                            lastNameInputController.clear(),
-                                            usernameInputController.clear(),
-                                            emailInputController.clear(),
-                                            pwdInputController.clear(),
-                                            confirmPwdInputController.clear()
-                                          }))
+                                      Navigator.pushAndRemoveUntil(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => Home(
+                                                    uid: currentUser.uid,
+                                                  )),
+                                          (_) => false),
+                                      firstNameInputController.clear(),
+                                      lastNameInputController.clear(),
+                                      usernameInputController.clear(),
+                                      emailInputController.clear(),
+                                      pwdInputController.clear(),
+                                      confirmPwdInputController.clear(),
+                                      bdayController.clear()
+                                    }))
                               .catchError((err) => print(err))
                               .catchError((err) => print(err));
                         } else {
