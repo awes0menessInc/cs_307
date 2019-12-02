@@ -39,30 +39,30 @@ class SettingsState extends State<Settings> {
     super.initState();
   }
 
-  // Future getUser() async {
-  //    await FirebaseAuth.instance.currentUser().then((currentuser) => {
-  //     Firestore.instance.collection("users")
-  //     .document(currentuser.uid).get()
-  //     .then((DocumentSnapshot snapshot) => {
-  //       setState((){
-  //         _firstName = snapshot["firstName"];
-  //         _lastName = snapshot["lastName"];
-  //         _email = snapshot["email"];
-  //         _uid = snapshot["uid"];
-  //         _topics = List.from(snapshot["topics"]);
-  //         if (snapshot.data.containsKey("uid")) {
-  //           _bio = snapshot["bio"];
-  //         }
-  //         if (snapshot.data.containsKey("website")) {
-  //           _website = snapshot["website"];
-  //         }
-  //         if (snapshot.data.containsKey("birthday")) {
-  //           _birthday = snapshot["birthday"];
-  //         }
-  //       })
-  //     })
-  //   });
-  // }
+  Future _getUser() async {
+     await FirebaseAuth.instance.currentUser().then((currentuser) => {
+      Firestore.instance.collection("users")
+      .document(currentuser.uid).get()
+      .then((DocumentSnapshot snapshot) => {
+        setState((){
+          _firstName = snapshot["firstName"];
+          _lastName = snapshot["lastName"];
+          _email = snapshot["email"];
+          _uid = snapshot["uid"];
+          _topics = List.from(snapshot["topics"]);
+          if (snapshot.data.containsKey("uid")) {
+            _bio = snapshot["bio"];
+          }
+          if (snapshot.data.containsKey("website")) {
+            _website = snapshot["website"];
+          }
+          if (snapshot.data.containsKey("birthday")) {
+            _birthday = snapshot["birthday"];
+          }
+        })
+      })
+    });
+  }
 
   void getUser() {
     _uid = AuthService.currentUser.uid;
@@ -101,6 +101,7 @@ class SettingsState extends State<Settings> {
   }
 
   void _logout() async {
+    AuthService.currentUser = null;
     await FirebaseAuth.instance.signOut();
   }
 

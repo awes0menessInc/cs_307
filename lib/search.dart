@@ -19,7 +19,7 @@ class _SearchState extends State<Search> {
   @override
   initState() {
     super.initState();
-    getUser();
+    // getUser();
   }
 
   void getUser() {
