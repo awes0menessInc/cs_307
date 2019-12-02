@@ -236,7 +236,7 @@ class _RegisterState extends State<Register> {
                                     "lastName": lastNameInputController.text,
                                     "username": usernameInputController.text,
                                     "email": emailInputController.text,
-                                    "birthday": birthday.toUtc().millisecondsSinceEpoch,
+                                    "birthday": birthday.toUtc(),
                                     "bio": "",
                                     "website": "",
                                     "followers": 0,
