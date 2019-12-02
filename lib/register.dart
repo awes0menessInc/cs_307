@@ -193,6 +193,7 @@ class _RegisterState extends State<Register> {
                     },
                     onSaved: (value) {
                       // AuthService.currentUser.birthday = value;
+                      print("birthday: "+ value.toString());
                       birthday = value;
                     },
                   ),
@@ -204,6 +205,7 @@ class _RegisterState extends State<Register> {
                       if (_registerFormKey.currentState.validate()) {
                         if (pwdInputController.text ==
                             confirmPwdInputController.text) {
+                              _registerFormKey.currentState.save();
                           FirebaseAuth.instance
                               .createUserWithEmailAndPassword(
                                   email: emailInputController.text,
@@ -234,7 +236,7 @@ class _RegisterState extends State<Register> {
                                     "lastName": lastNameInputController.text,
                                     "username": usernameInputController.text,
                                     "email": emailInputController.text,
-                                    "birthday": birthday,
+                                    "birthday": birthday.toUtc(),
                                     "bio": "",
                                     "website": "",
                                     "followers": 0,

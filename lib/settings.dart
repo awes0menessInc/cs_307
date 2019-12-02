@@ -271,9 +271,7 @@ class SettingsState extends State<Settings> {
                         "lastName": lnameController.text,
                         "email": emailController.text,
                         "bio": bioController.text,
-                        "birthday": AuthService.currentUser.birthday
-                            .toUtc()
-                            .millisecondsSinceEpoch,
+                        "birthday": _birthday.toUtc(),
                         "website": websiteController.text,
                         "uid": _uid,
                         "topicsList": FieldValue.arrayUnion(List.from(_topics)),

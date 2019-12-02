@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:twistter/auth_service.dart';
+import 'package:twistter/login.dart';
 
 import 'package:twistter/newPost.dart';
 import 'package:twistter/timeline.dart';
@@ -31,6 +33,27 @@ class _HomeState extends State<Home> {
     prefs.setString("user", uid);
   }
 
+  Future buildErrorDialog(BuildContext context, message) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text(message),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Close'),
+              onPressed: () {
+                // pwdInputController.clear();
+                Navigator.of(context).pop();
+              }
+            )
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -50,6 +73,23 @@ class _HomeState extends State<Home> {
                     fontSize: 27),
               ),
               backgroundColor: Color.fromRGBO(85, 176, 189, 1.0),
+              actions: <Widget> [
+                IconButton(
+              icon: Icon(Icons.exit_to_app, color: Colors.black),
+              onPressed: () {
+                try {
+                  Provider.of<AuthService>(context).logout();
+                } on Exception catch (error) {
+                  return buildErrorDialog(context, error.toString());
+                }
+                // _logout();
+
+
+                Navigator.pushReplacement(
+                    context, MaterialPageRoute(builder: (context) => Login()));
+              },
+            )
+              ]
             ),
             floatingActionButton: FloatingActionButton(
               child: Icon(Icons.add_comment),
