@@ -25,23 +25,6 @@ class _NewPostState extends State<NewPost> {
     getUser();
   }
 
-  // Future _getUser() async {
-  //   await FirebaseAuth.instance.currentUser().then((currentuser) => {
-  //         Firestore.instance
-  //             .collection("users")
-  //             .document(currentuser.uid)
-  //             .get()
-  //             .then((DocumentSnapshot snapshot) => {
-  //                   setState(() {
-  //                     firstName = snapshot["firstName"];
-  //                     lastName = snapshot["lastName"];
-  //                     topics = List.from(snapshot["topics"]);
-  //                     _dropdownvalue = topics[0];
-  //                   })
-  //                 })
-  //       });
-  // }
-
   void getUser() {
     uid = AuthService.currentUser.uid;
     firstName = AuthService.currentUser.firstName;
@@ -70,10 +53,6 @@ class _NewPostState extends State<NewPost> {
               selectedTopics.contains(item)
                   ? selectedTopics.remove(item)
                   : selectedTopics.add(item);
-              // widget.onSelectionChanged(selectedTopics); // +added
-              // for (String items in selectedTopics) {
-              //   print(items);
-              // }
             });
           },
         ),
@@ -90,39 +69,59 @@ class _NewPostState extends State<NewPost> {
             IconButton(
               icon: Icon(Icons.add_comment),
               onPressed: () async {
-                Firestore.instance
-                    .collection('posts')
-                    .add({
-                      'content': postEditingController.text,
-                      'likes': 0,
-                      'quotes': 0,
-                      'timestamp': new DateTime.now().millisecondsSinceEpoch,
-                      'topics': FieldValue.arrayUnion(List.from(
-                          selectedTopics)), // fix topics list and ui part
-                      'uid': uid,
-                      'username': username,
-                      'firstName': firstName,
-                      'lastName': lastName,
-                    })
-                    .then((value) => Firestore.instance
-                            .collection('users')
-                            .document(uid)
-                            .updateData({
-                          'postsList':
-                              FieldValue.arrayUnion([value.documentID]),
-                        }))
-                    .then((result) => {
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Home(
-                                        uid: uid,
-                                      )),
-                              (_) => false),
-                          postEditingController.clear()
-                        })
-                    .catchError((err) => print(err))
-                    .catchError((err) => print(err));
+                if (selectedTopics != null && selectedTopics.isNotEmpty) {
+                  Firestore.instance
+                      .collection('posts')
+                      .add({
+                        'content': postEditingController.text,
+                        'likes': [""],
+                        'quotes': 0,
+                        'timestamp': new DateTime.now().millisecondsSinceEpoch,
+                        'topics': FieldValue.arrayUnion(List.from(
+                            selectedTopics)), // fix topics list and ui part
+                        'uid': uid,
+                        'username': username,
+                        'firstName': firstName,
+                        'lastName': lastName,
+                      })
+                      .then((value) => Firestore.instance
+                              .collection('users')
+                              .document(uid)
+                              .updateData({
+                            'postsList':
+                                FieldValue.arrayUnion([value.documentID]),
+                          }))
+                      .then((result) => {
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Home(
+                                          uid: uid,
+                                        )),
+                                (_) => false),
+                            postEditingController.clear()
+                          })
+                      .catchError((err) => print(err))
+                      .catchError((err) => print(err));
+                } else {
+                  return showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("Unable to post"),
+                          content:
+                              Text('Please select a topic before you post'),
+                          actions: <Widget>[
+                            FlatButton(
+                              child: Text("Close"),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            )
+                          ],
+                        );
+                      });
+                }
               },
             )
           ],
