@@ -54,6 +54,7 @@ class _ListPageState extends State<ListPage> {
   List<Post> posts = [];
   List<String> following;
   Map<String, dynamic> followingUserTopic;
+  List<String> topics = new List();
 
   TextEditingController controller = new TextEditingController();
   FocusNode _focusNode;
@@ -96,54 +97,135 @@ class _ListPageState extends State<ListPage> {
         });
   }
 
-  void showTags(BuildContext context, Post post) {
-    AlertDialog viewTags = AlertDialog(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(32.0))),
-      title: Text('Post Tags',
-          textAlign: TextAlign.center, style: TextStyle(fontFamily: 'Poppins')),
-      content: Container(
-        height: 50,
-        child: ListView(
-            padding: EdgeInsets.all(4),
-            children: post.topics
-                .map((data) => Padding(
-                    padding: EdgeInsets.all(4),
-                    child: Text(
-                      data = "#" + data,
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 14,
-                      ),
-                    )))
-                .toList()),
-      ),
-      actions: <Widget>[
-        Container(
-          padding: EdgeInsets.only(right: 75),
-          child:
-              ButtonBar(alignment: MainAxisAlignment.center, children: <Widget>[
-            SizedBox(
-              width: 100,
-              child: new RaisedButton(
-                color: Color.fromRGBO(85, 176, 189, 1.0),
-                onPressed: () {
-                  Navigator.of(context, rootNavigator: true).pop('dialog');
-                },
-                child: Text('Close', style: TextStyle(color: Colors.white)),
-              ),
-            ),
-          ]),
+  // void showTags(BuildContext context, Post post) {
+  //   AlertDialog viewTags = AlertDialog(
+  //     shape: RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.all(Radius.circular(32.0))),
+  //     title: Text('Post Tags',
+  //         textAlign: TextAlign.center, style: TextStyle(fontFamily: 'Poppins')),
+  //     content: Container(
+  //       height: 50,
+  //       child: ListView(
+  //           padding: EdgeInsets.all(4),
+  //           children: post.topics
+  //               .map((data) => Padding(
+  //                   padding: EdgeInsets.all(4),
+  //                   child: Text(
+  //                     data = "#" + data,
+  //                     style: TextStyle(
+  //                       fontFamily: 'Poppins',
+  //                       fontSize: 14,
+  //                     ),
+  //                   )))
+  //               .toList()),
+  //     ),
+  //     actions: <Widget>[
+  //       Container(
+  //         padding: EdgeInsets.only(right: 75),
+  //         child:
+  //             ButtonBar(alignment: MainAxisAlignment.center, children: <Widget>[
+  //           SizedBox(
+  //             width: 100,
+  //             child: new RaisedButton(
+  //               color: Color.fromRGBO(85, 176, 189, 1.0),
+  //               onPressed: () {
+  //                 Navigator.of(context, rootNavigator: true).pop('dialog');
+  //               },
+  //               child: Text('Close', style: TextStyle(color: Colors.white)),
+  //             ),
+  //           ),
+  //         ]),
+  //       ),
+  //     ],
+  //   );
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return viewTags;
+  //     },
+  //   );
+  // }
+
+  // List<String> selectedTopics = List();
+  // List<Widget> _buildChoiceList(List<String> topics, Post post, BuildContext context) {
+  //   print(post.topics.toString());
+  //   if (post.topics.length == 0) {
+  //     return null;
+  //   }
+  //   List<Widget> choices = List();
+  //   post.topics.forEach((item) {
+  //     choices.add(
+  //       Container(
+  //       padding: const EdgeInsets.all(2.0),
+  //       child: ChoiceChip(
+  //         label: Text(item),
+  //         selected: selectedTopics.contains(item),
+  //         onSelected: (selected) {
+  //           setState(() {
+  //             selectedTopics.contains(item)
+  //                 ? selectedTopics.remove(item)
+  //                 : selectedTopics.add(item);
+  //           });
+  //         },
+  //       )));
+  //   });
+  //   return choices;
+  // }
+
+  List<String> selectedTopics = List();
+  List<Widget> _buildChoiceList(Post post, BuildContext context) {
+    print(post.topics.toString());
+    post.topics.removeWhere((item) =>
+        item ==
+        ""); //removes any empty strings from the topic list before displaying
+    if (post.topics.length == 0) {
+      return null;
+    }
+    List<Widget> choices = List();
+    post.topics.forEach((item) {
+      choices.add(Container(
+        padding: const EdgeInsets.all(2.0),
+        child: ChoiceChip(
+          label: Text(item),
+          disabledColor: Color(0xff999999),
+          backgroundColor: Color(0xff55b0bd),
+          selected: selectedTopics.contains(item),
+          onSelected: (selected) {
+            setState(() {
+              selectedTopics.contains(item)
+                  ? selectedTopics.remove(item)
+                  : selectedTopics.add(item);
+            });
+          },
         ),
-      ],
-    );
+      ));
+    });
+    return choices;
+  }
+
+  void showTags(BuildContext context, Post post) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return viewTags;
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Post Tags"),
+          content: Wrap(
+            children: _buildChoiceList(post, context),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
       },
     );
   }
+
+
 
   List<Post> getPosts(List<DocumentSnapshot> snap) {
     List<Post> postsList = [];
