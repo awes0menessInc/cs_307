@@ -5,10 +5,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:twistter/profile.dart';
 import 'package:twistter/post.dart';
+import 'repost.dart';
 
 class Timeline extends StatefulWidget {
   Timeline({Key title}) : super(key: title);
-
+  
   @override
   _TimelineState createState() => _TimelineState();
 
@@ -197,7 +198,7 @@ class _ListPageState extends State<ListPage> {
         child: new ListView.builder(
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
-      itemBuilder: (content, index) => _makeCard(context, posts[index]),
+      itemBuilder: (content, index) => _makeCard(context, posts[index], index),
       itemCount: posts.length,
     ));
   }
@@ -242,7 +243,7 @@ class _ListPageState extends State<ListPage> {
     );
   }
 
-  Widget _makeCard(BuildContext context, Post post) {
+  Widget _makeCard(BuildContext context, Post post, int index) {
     return Card(
         elevation: 8,
         margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
@@ -272,7 +273,11 @@ class _ListPageState extends State<ListPage> {
                         child: IconButton(
                           icon: Icon(Icons.add_comment, size: 19),
                           color: Color.fromRGBO(5, 62, 66, 1.0),
-                          onPressed: () => debugPrint("reblog"),
+                          onPressed: () {
+                              Navigator.push(
+                                  context, MaterialPageRoute(builder: (context) => RePost(post: posts[index])),
+                              );
+                          }
                         )),
                     SizedBox(
                         width: 40,
