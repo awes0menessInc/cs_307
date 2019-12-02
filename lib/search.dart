@@ -133,6 +133,14 @@ class _SearchState extends State<Search> {
   
   Widget buildListTile(BuildContext context, User user) {
     return ListTile(
+      onTap: () {
+        print("tap!");
+        var route = new MaterialPageRoute(
+          builder: (BuildContext context) =>
+              new OtherUserProfilePage(userPage: user.uid),
+        );
+        Navigator.of(context).push(route);
+      },
       contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
       leading: Container(
           padding: EdgeInsets.only(right: 5.0),
@@ -144,14 +152,6 @@ class _SearchState extends State<Search> {
       title: Container(
           padding: EdgeInsets.all(0),
           child: InkWell(
-            onTap: () {
-              print("tap!");
-                var route = new MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                      new OtherUserProfilePage(userPage: user.uid),
-                );
-                Navigator.of(context).push(route);
-            },
             child: Text(
               user.firstName + " " + user.lastName,
               style: TextStyle(
