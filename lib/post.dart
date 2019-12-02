@@ -5,7 +5,7 @@ class Post {
   String content;
   List<String> topics;
   int timestamp;
-  bool liked;
+  List<String> likes;
 
   // List<String> likes;
 
@@ -17,7 +17,8 @@ class Post {
       this.content,
       this.topics,
       this.uid,
-      this.timestamp});
+      this.timestamp,
+      this.likes});
 }
 
 class PostList {

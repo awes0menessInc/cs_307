@@ -9,7 +9,7 @@ import 'repost.dart';
 
 class Timeline extends StatefulWidget {
   Timeline({Key title}) : super(key: title);
-  
+
   @override
   _TimelineState createState() => _TimelineState();
 
@@ -179,6 +179,7 @@ class _ListPageState extends State<ListPage> {
                     f['firstName'].toString() + " " + f['lastName'].toString(),
                 topics: List.from(f['topics']),
                 timestamp: f['timestamp'],
+                likes: List.from(f['likes']),
                 uid: f['uid']));
             break;
           }
@@ -271,14 +272,16 @@ class _ListPageState extends State<ListPage> {
                     SizedBox(
                         width: 25,
                         child: IconButton(
-                          icon: Icon(Icons.add_comment, size: 19),
-                          color: Color.fromRGBO(5, 62, 66, 1.0),
-                          onPressed: () {
+                            icon: Icon(Icons.add_comment, size: 19),
+                            color: Color.fromRGBO(5, 62, 66, 1.0),
+                            onPressed: () {
                               Navigator.push(
-                                  context, MaterialPageRoute(builder: (context) => RePost(post: posts[index])),
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        RePost(post: posts[index])),
                               );
-                          }
-                        )),
+                            })),
                     SizedBox(
                         width: 40,
                         child: IconButton(

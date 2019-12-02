@@ -253,21 +253,21 @@ class _RegisterState extends State<Register> {
                                       }
                                     },
                                   }).then((result) => {
-                                      Navigator.pushAndRemoveUntil(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => Home(
-                                                    uid: currentUser.uid,
-                                                  )),
-                                          (_) => false),
-                                      firstNameInputController.clear(),
-                                      lastNameInputController.clear(),
-                                      usernameInputController.clear(),
-                                      emailInputController.clear(),
-                                      pwdInputController.clear(),
-                                      confirmPwdInputController.clear(),
-                                      bdayController.clear()
-                                    }))
+                                            Navigator.pushAndRemoveUntil(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) => Home(
+                                                          uid: currentUser.uid,
+                                                        )),
+                                                (_) => false),
+                                            firstNameInputController.clear(),
+                                            lastNameInputController.clear(),
+                                            usernameInputController.clear(),
+                                            emailInputController.clear(),
+                                            pwdInputController.clear(),
+                                            confirmPwdInputController.clear(),
+                                            bdayController.clear()
+                                          }))
                               .catchError((err) => print(err))
                               .catchError((err) => print(err));
                         } else {
