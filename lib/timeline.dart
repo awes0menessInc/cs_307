@@ -280,9 +280,7 @@ class _ListPageState extends State<ListPage> {
                           icon: _icon,
                           color: _iconColor,
                           onPressed: () {
-                            setState(() {
-                              //TODO
-                            });
+                            setState(() {});
                           },
                         )),
                   ],

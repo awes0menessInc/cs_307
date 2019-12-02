@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:twistter/user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -14,11 +15,25 @@ class AuthService with ChangeNotifier {
   //   return _auth.currentUser();
   // }
 
+  @override
+  initState() {
+    _getUID().then((uid) => initUser(uid));
+  }
+
+  static Future<String> _getUID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.get("user");
+  }
+
   static User getUserInfo() {
     return currentUser;
   }
 
   static void initUser(String uid) {
+    if (uid == null || uid == "") {
+      _getUID().then((x) => uid = x);
+    }
+
     Firestore.instance
         .collection("users")
         .document(uid)

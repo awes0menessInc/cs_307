@@ -6,10 +6,16 @@ import 'package:twistter/auth_service.dart';
 import 'package:twistter/post.dart';
 import 'package:twistter/timeline.dart';
 
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
+import 'package:path/path.dart';
+import 'dart:async';
+
 class ProfilePage extends StatefulWidget {
   String userPage;
   ProfilePage({Key key, this.userPage}) : super(key: key);
-  
+
   @override
   ProfilePageState createState() => ProfilePageState();
 }
@@ -33,6 +39,8 @@ class ProfilePageState extends State<ProfilePage> {
   bool pressed = false;
   bool isAccountOwner = true; // TODO: Connect to a function on the back end
 
+  File _image;
+
   @override
   initState() {
     getUserInfo();
@@ -42,7 +50,7 @@ class ProfilePageState extends State<ProfilePage> {
   // void getUserInfo() async {
   //   final FirebaseUser user = await FirebaseAuth.instance.currentUser();
   //   var userQuery = Firestore.instance.collection('users').where('uid', isEqualTo: user.uid).limit(1);
-  //   userQuery.getDocuments().then((data) { 
+  //   userQuery.getDocuments().then((data) {
   //     if (data.documents.length > 0) {
   //       setState(() {
   //         firstName = data.documents[0].data['firstName'];
@@ -78,50 +86,94 @@ class ProfilePageState extends State<ProfilePage> {
     // postsList = AuthService.currentUser.postsList;
   }
 
+  Future getImage() async {
+    var image = await ImagePicker.pickImage(
+        source: ImageSource.gallery, maxHeight: 200, maxWidth: 200);
+
+    setState(() {
+      _image = image;
+      print('Image Path $_image');
+    });
+  }
+
+  Future uploadPic() async {
+    print("Uploading...");
+    String fileName = basename('$uid.jpg');
+    StorageReference firebaseStorageRef =
+        FirebaseStorage.instance.ref().child(fileName);
+    StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
+    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    print("File Uploaded");
+  }
+
   Widget _buildProfileImage() {
-    return Center(
-      child: Container(
-        width: 140.0,
-        height: 140.0,
-        child: new Container(
-          decoration: new BoxDecoration(
-            color: Color(0xff55b0bd),
-            borderRadius: BorderRadius.circular(80.0),
-          ),
-          child: Center(
-            child: Text('${firstName[0]}' + '${lastName[0]}',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 50.0)),
-            // TODO: Add functionality to display profile picture if the user has uploaded one
-            // decoration: BoxDecoration(
-            //   // image: DecorationImage(
-            //   //   image: AssetImage('lib/assets/images/profile.jpg'),
-            //     // fit: BoxFit.cover,
-            //   ),
-            //   borderRadius: BorderRadius.circular(80.0),
-            //   border: Border.all(
-            //     color: Colors.white,
-            //     width: 2.0,
-            //   ),
-            // ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Align(
+          alignment: Alignment.center,
+          child: Container(
+            padding: EdgeInsets.only(left: 47),
+            child: CircleAvatar(
+              radius: 75,
+              backgroundColor: Color(0xff476cfb),
+              child: ClipOval(
+                child: new SizedBox(
+                  width: 140.0,
+                  height: 140.0,
+                  child: (_image != null)
+                      ? Image.file(
+                          _image,
+                          fit: BoxFit.fill,
+                        )
+                      : Container(
+                          decoration: new BoxDecoration(
+                            color: Color(0xff55b0bd),
+                            borderRadius: BorderRadius.circular(80.0),
+                          ),
+                          child: Center(
+                            child: Text('${firstName[0]}' + '${lastName[0]}',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 50.0)),
+                          ),
+                        ),
+                ),
+              ),
+            ),
           ),
         ),
-      ),
+        Padding(
+          padding: EdgeInsets.only(top: 80.0),
+          child: IconButton(
+            icon: Icon(
+              Icons.photo_camera,
+              size: 30.0,
+            ),
+            onPressed: () {
+              getImage();
+              uploadPic();
+            },
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildFullName(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10.0),
-      child: Text('$firstName $lastName | @' + username,
-        style: TextStyle(
-          fontFamily: 'Montserrat',
-          color: Colors.black,
-          fontSize: 20.0,
-          fontWeight: FontWeight.w500,
-        ),
-      )
-    );
+        margin: EdgeInsets.symmetric(vertical: 10.0),
+        child: Text(
+          '$firstName $lastName | @' + username,
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            color: Colors.black,
+            fontSize: 20.0,
+            fontWeight: FontWeight.w500,
+          ),
+        ));
   }
 
   Widget _buildStatItem(String label, String count) {
@@ -155,12 +207,10 @@ class ProfilePageState extends State<ProfilePage> {
   String formatStat(int stat) {
     String newStat;
     if ((stat >= 1000) && (stat < 1000000)) {
-      newStat = (stat/1000).toStringAsFixed(1) + "K";
-    }
-    else if (stat >= 1000000) {
-      newStat = (stat/1000000).toStringAsFixed(1) + "M";
-    }
-    else {
+      newStat = (stat / 1000).toStringAsFixed(1) + "K";
+    } else if (stat >= 1000000) {
+      newStat = (stat / 1000000).toStringAsFixed(1) + "M";
+    } else {
       newStat = stat.toString();
     }
     return newStat;
@@ -213,7 +263,7 @@ class ProfilePageState extends State<ProfilePage> {
         style: bioTextStyle,
       ),
     );
-    }
+  }
 
   Widget _buildSeparator(Size screenSize) {
     return Container(
@@ -225,8 +275,11 @@ class ProfilePageState extends State<ProfilePage> {
   }
 
   Color getColor(bool pressed) {
-    if (pressed) { return Color(0xffd1d1d1); } 
-    else { return Color(0xff077188); }
+    if (pressed) {
+      return Color(0xffd1d1d1);
+    } else {
+      return Color(0xff077188);
+    }
   }
 
   Text getText(bool pressed) {
@@ -239,30 +292,26 @@ class ProfilePageState extends State<ProfilePage> {
 
   Widget _buildButtons(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      child: Column(
-        children: <Widget>[
-          Row(children: <Widget>[
-            Visibility(
-              visible: !isAccountOwner,
-              child: Expanded(
-                child: RaisedButton(
-                  color: getColor(pressed),
-                  onPressed: () {
-                    setState(() {
-                      pressed = !pressed;
-                    });
-                  },
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0)
-                  ),
-                  child: getText(pressed)
-                )
-              )
-            )
-          ]),
-        ],
-      ));
+        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        child: Column(
+          children: <Widget>[
+            Row(children: <Widget>[
+              Visibility(
+                  visible: !isAccountOwner,
+                  child: Expanded(
+                      child: RaisedButton(
+                          color: getColor(pressed),
+                          onPressed: () {
+                            setState(() {
+                              pressed = !pressed;
+                            });
+                          },
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0)),
+                          child: getText(pressed))))
+            ]),
+          ],
+        ));
   }
 
   Text _noPostsText() {
@@ -295,12 +344,12 @@ class ProfilePageState extends State<ProfilePage> {
     List<Post> posts = [];
     snap.forEach((post) {
       posts.add(Post(
-        content: post['content'],
-        username: post['username'],
-        fullName: post['firstName'].toString() + " " + post['lastName'].toString(),
-        topics: List.from(post['topics']),
-        uid: post['uid']
-      ));
+          content: post['content'],
+          username: post['username'],
+          fullName:
+              post['firstName'].toString() + " " + post['lastName'].toString(),
+          topics: List.from(post['topics']),
+          uid: post['uid']));
     });
     return posts;
   }
@@ -349,13 +398,12 @@ class ProfilePageState extends State<ProfilePage> {
   Widget makeBody(BuildContext context, List<DocumentSnapshot> snap) {
     posts = getPosts(snap);
     return Container(
-      child: ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemBuilder: (content, index) => makeCard(context, posts[index]),
-        itemCount: posts.length,
-      )
-    );
+        child: ListView.builder(
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      itemBuilder: (content, index) => makeCard(context, posts[index]),
+      itemCount: posts.length,
+    ));
   }
 
   Widget _makeCard(BuildContext context) {
@@ -443,66 +491,66 @@ class ProfilePageState extends State<ProfilePage> {
 
   Widget buildUserline(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          StreamBuilder<QuerySnapshot>(
-            stream: Firestore.instance.collection('posts')
-                      .orderBy('timestamp', descending: true)
-                      .where('uid', isEqualTo: uid).snapshots(),
-            builder: (BuildContext context,
-            AsyncSnapshot<QuerySnapshot> snapshot) {
+        body: Stack(
+      children: <Widget>[
+        StreamBuilder<QuerySnapshot>(
+            stream: Firestore.instance
+                .collection('posts')
+                .orderBy('timestamp', descending: true)
+                .where('uid', isEqualTo: uid)
+                .snapshots(),
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasError) return Text('Error');
               switch (snapshot.connectionState) {
                 case ConnectionState.waiting:
                   return Container(
-                    alignment: Alignment.bottomCenter,
-                    child: LinearProgressIndicator()
-                  );
+                      alignment: Alignment.bottomCenter,
+                      child: LinearProgressIndicator());
                 default:
                   print("build userline");
                   return makeBody(context, snapshot.data.documents);
               }
-            }
-          )
-        ],
-      )
-    );
+            })
+      ],
+    ));
   }
 
   void showTags(BuildContext context, Post post) {
     AlertDialog viewTags = AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(32.0))),
-      title: Text('Post Tags', textAlign: TextAlign.center, style: TextStyle(fontFamily: 'Poppins')),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(32.0))),
+      title: Text('Post Tags',
+          textAlign: TextAlign.center, style: TextStyle(fontFamily: 'Poppins')),
       content: Container(
         height: 50,
         child: ListView(
-          padding: EdgeInsets.all(4),
-          children: post.topics.map((data) => Padding(
             padding: EdgeInsets.all(4),
-            child: Text(
-              data = "#" + data,
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 14,
-              ),
-            )
-          )).toList()),
+            children: post.topics
+                .map((data) => Padding(
+                    padding: EdgeInsets.all(4),
+                    child: Text(
+                      data = "#" + data,
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 14,
+                      ),
+                    )))
+                .toList()),
       ),
       actions: <Widget>[
         Container(
           padding: EdgeInsets.only(right: 75),
-          child: ButtonBar(
-            alignment: MainAxisAlignment.center,
-            children: <Widget>[
-              SizedBox(
-                width: 100,
-                child: new RaisedButton(
+          child:
+              ButtonBar(alignment: MainAxisAlignment.center, children: <Widget>[
+            SizedBox(
+              width: 100,
+              child: new RaisedButton(
                   color: Color.fromRGBO(85, 176, 189, 1.0),
                   child: Text('Close', style: TextStyle(color: Colors.white)),
                   onPressed: () {
                     Navigator.of(context, rootNavigator: true).pop('dialog');
-                  }
-              ),
+                  }),
             ),
           ]),
         ),
@@ -520,32 +568,31 @@ class ProfilePageState extends State<ProfilePage> {
     return ListTile(
       contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
       leading: Container(
-        padding: EdgeInsets.only(right: 5.0),
-        child: Icon(
-          Icons.account_circle,
-          size: 45.0,
-          color: Color.fromRGBO(5, 62, 66, 1.0),
-        )),
+          padding: EdgeInsets.only(right: 5.0),
+          child: Icon(
+            Icons.account_circle,
+            size: 45.0,
+            color: Color.fromRGBO(5, 62, 66, 1.0),
+          )),
       title: Container(
-        padding: EdgeInsets.all(0),
-        child: InkWell(
-          onTap: () {
-            print("tap!");
-            var route = MaterialPageRoute(
-              builder: (BuildContext context) => ProfilePage(userPage: post.uid));
-            Navigator.of(context).push(route);
-          },
-          child: Text(
-            post.fullName,
-            style: TextStyle(
-              color: Color.fromRGBO(7, 113, 136, 1.0),
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-              fontFamily: 'Poppins',
-            ),
-          )
-        )
-      ),
+          padding: EdgeInsets.all(0),
+          child: InkWell(
+              onTap: () {
+                print("tap!");
+                var route = MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        ProfilePage(userPage: post.uid));
+                Navigator.of(context).push(route);
+              },
+              child: Text(
+                post.fullName,
+                style: TextStyle(
+                  color: Color.fromRGBO(7, 113, 136, 1.0),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                  fontFamily: 'Poppins',
+                ),
+              ))),
       subtitle: Text(
         post.content,
         style: TextStyle(fontSize: 11),
