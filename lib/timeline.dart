@@ -61,7 +61,8 @@ class _ListPageState extends State<ListPage> {
   String filter;
 
   Color _iconColor = Color.fromRGBO(5, 62, 66, 1.0);
-  Color _iconColorPressed = Colors.red;
+  //R: 214 G: 59 B: 47
+  Color _iconColorPressed = Color.fromRGBO(214, 59, 47, 1.0);
   Icon _icon = Icon(Icons.favorite_border, size: 20);
   Icon _iconPressed = Icon(Icons.favorite, size: 20);
 
@@ -329,7 +330,7 @@ class _ListPageState extends State<ListPage> {
       subtitle: ParsedText(
   text: post.content,
   style: TextStyle(
-    fontSize: 11,
+    fontSize: 12,
     color: Colors.black,
   ),
   parse: <MatchText>[

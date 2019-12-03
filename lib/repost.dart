@@ -102,13 +102,8 @@ class _NewRepost extends State<RePost> {
                             .updateData({"postID": value.documentID});
                       })
                       .then((result) => {
-                            Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Home(
-                                          uid: uid,
-                                        )),
-                                (_) => false),
+                              Navigator.pop(context),
+
                             postEditingController.clear()
                           })
                       .catchError((err) => print(err))
