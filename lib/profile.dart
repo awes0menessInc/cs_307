@@ -31,7 +31,7 @@ class ProfilePageState extends State<ProfilePage> {
   int followers;
   int following;
   int _posts = 199;
-  int _topics = 333;
+  // int _topics = 333;
 
   // List<String> postsList;
   List<Post> posts = [];
@@ -81,7 +81,8 @@ class ProfilePageState extends State<ProfilePage> {
     followers = AuthService.currentUser.followers;
     following = AuthService.currentUser.following;
     _posts = AuthService.currentUser.posts;
-    _topics = AuthService.currentUser.topics;
+    // topics = List.from(AuthService.currentUser.topicsList);
+    // print(topics);
 
     // postsList = AuthService.currentUser.postsList;
   }
@@ -115,8 +116,8 @@ class ProfilePageState extends State<ProfilePage> {
           child: Container(
             padding: EdgeInsets.only(left: 47),
             child: CircleAvatar(
+              backgroundColor: Colors.white,
               radius: 75,
-              backgroundColor: Color(0xff476cfb),
               child: ClipOval(
                 child: new SizedBox(
                   width: 140.0,
@@ -229,7 +230,7 @@ class ProfilePageState extends State<ProfilePage> {
           _buildStatItem("Followers", formatStat(followers)),
           _buildStatItem("Following", formatStat(following)),
           _buildStatItem("Posts", _posts.toString()),
-          _buildStatItem("Topics", _topics.toString()),
+          // _buildStatItem("Topics", _topics.toString()),
         ],
       ),
     );
@@ -254,15 +255,20 @@ class ProfilePageState extends State<ProfilePage> {
       color: Colors.black,
       fontSize: 16.0,
     );
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      padding: EdgeInsets.all(8.0),
-      child: Text(
-        bio,
-        textAlign: TextAlign.center,
-        style: bioTextStyle,
-      ),
-    );
+    if(bio != null && bio != "") {
+      return Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        padding: EdgeInsets.all(8.0),
+        child: Text(
+          bio,
+          textAlign: TextAlign.center,
+          style: bioTextStyle,
+        ),
+      );
+    }
+    else {
+      return Container(height: 0);
+    }
   }
 
   Widget _buildSeparator(Size screenSize) {
@@ -270,7 +276,7 @@ class ProfilePageState extends State<ProfilePage> {
       width: screenSize.width / 1.2,
       height: 2.0,
       color: Colors.black54,
-      margin: EdgeInsets.only(top: 4.0),
+      // margin: EdgeInsets.only(top: 4.0),
     );
   }
 
@@ -616,6 +622,7 @@ class ProfilePageState extends State<ProfilePage> {
                   SizedBox(height: 10.0),
                   _buildFullName(context),
                   _buildStatContainer(),
+                  // SizedBox(height: 10.0),
                   _buildBio(context),
                   // _buildDemoButton(),
                   _buildButtons(context),

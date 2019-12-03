@@ -52,7 +52,7 @@ class _ListPageState extends State<ListPage> {
   List<Post> posts = [];
   List<String> following;
   Map<String, dynamic> followingUserTopic;
-  List<String> topics = new List();
+  List<String> topics;
 
   TextEditingController controller = new TextEditingController();
   FocusNode _focusNode;
@@ -168,31 +168,36 @@ class _ListPageState extends State<ListPage> {
   //   return choices;
   // }
 
-  List<String> selectedTopics = List();
+  List<String> selectedTopics = new List();
   List<Widget> _buildChoiceList(Post post, BuildContext context) {
-    print(post.topics.toString());
-    post.topics.removeWhere((item) =>
+    topics = List.from(post.topics);
+    print(topics);
+    topics.removeWhere((item) =>
         item ==
         ""); //removes any empty strings from the topic list before displaying
-    if (post.topics.length == 0) {
+    if (topics.length == 0) {
       return null;
     }
     List<Widget> choices = List();
-    post.topics.forEach((item) {
+    topics.forEach((item) {
       choices.add(Container(
         padding: const EdgeInsets.all(2.0),
-        child: ChoiceChip(
-          label: Text(item),
-          disabledColor: Color(0xff999999),
-          backgroundColor: Color(0xff55b0bd),
-          selected: selectedTopics.contains(item),
-          onSelected: (selected) {
-            setState(() {
-              selectedTopics.contains(item)
-                  ? selectedTopics.remove(item)
-                  : selectedTopics.add(item);
-            });
-          },
+        child: Chip(
+        // child: ChoiceChip (
+          label: Text(item,
+            style: TextStyle(color: Colors.black)
+          ),
+          // disabledColor: Color(0xff999999),
+          // backgroundColor: Color(0xff55b0bd),
+          // selected: selectedTopics.contains(item),
+          // selected: true,
+          // onSelected: (selected) {
+          //   setState(() {
+          //     selectedTopics.contains(item)
+          //         ? selectedTopics.remove(item)
+          //         : selectedTopics.add(item);
+          //   });
+          // },
         ),
       ));
     });
@@ -399,7 +404,7 @@ class _ListPageState extends State<ListPage> {
                 decoration: new InputDecoration(labelText: "Filter by Topics"),
                 onEditingComplete: () {
                   _focusNode.unfocus();
-                },
+                }, //TODO: match styling to other search bar
                 controller: controller,
               ),
             ),

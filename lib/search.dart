@@ -88,9 +88,17 @@ class _SearchState extends State<Search> {
 
   Widget _buildBar(BuildContext context) {
     return new AppBar(
+      backgroundColor: Colors.white,
       centerTitle: true,
       title: TextFormField(
-        decoration: InputDecoration(hintText: 'Search'),
+        decoration: InputDecoration(hintText: 'Search',
+              enabledBorder: UnderlineInputBorder(      
+                      borderSide: BorderSide(color: Color(0xff053E42)),   
+                      ),  
+              focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xff053E42)),
+                   ),  
+             ),
         controller: searchInputController,
         keyboardType: TextInputType.text,
         autofocus: true,

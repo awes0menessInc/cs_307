@@ -26,14 +26,14 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
   String firstName;
   String username;
   String lastName;
-  // String email;
+  String email;
   String bio;
   String userPage;
+  List<String> topics;
 
   int followers;
   int following;
-  int _posts = 199;
-  int _topics = 333;
+  int _posts;
 
   // List<String> postsList;
   List<Post> posts = [];
@@ -65,7 +65,7 @@ void getUserInfo() async {
           followers = data.documents[0].data['followers'];
           following = data.documents[0].data['following'];
           _posts = data.documents[0].data['posts'];
-          _topics = data.documents[0].data['topics'];
+          topics = List.from(data.documents[0].data['topicsList']);
         });
       }
     });
@@ -100,8 +100,8 @@ void getUserInfo() async {
           child: Container(
             padding: EdgeInsets.only(left: 47),
             child: CircleAvatar(
+              backgroundColor: Colors.white,
               radius: 75,
-              backgroundColor: Color(0xff476cfb),
               child: ClipOval(
                 child: new SizedBox(
                   width: 140.0,
@@ -161,6 +161,47 @@ void getUserInfo() async {
         ));
   }
 
+  List<String> selectedTopics = List();
+  List<Widget> _buildChoiceList(List<String> topic) {
+    if (topic != null && topic.length != 0) {
+      topic.removeWhere((item) => item == "" || item == "RT"); //removes any empty strings from the topic list before displaying
+      if (topic.length == 0) {
+        return null;
+      }
+      // topic.removeWhere((item) => item == "RT");
+      List<Widget> choices = List();
+      topic.forEach((item) {
+        choices.add(Container(
+          padding: const EdgeInsets.all(2.0),
+          child: ChoiceChip(
+            label: Text(item,
+            style: TextStyle(color: Colors.black),),
+            selectedShadowColor: Color(0xff55B0BD),
+            selectedColor: Color(0xff55B0BD),
+            selected: selectedTopics.contains(item),
+            onSelected: (selected) {
+              setState(() {
+                selectedTopics.contains(item)
+                    ? selectedTopics.remove(item)
+                    : selectedTopics.add(item);
+              });
+              for(item in selectedTopics) {
+                Firestore.instance
+                  .collection("users")
+                  .document(AuthService.currentUser.uid)
+                  .updateData({
+                // "followingUserTopicList": 
+              });
+              }
+            },
+          ),
+        ));
+      });
+      return choices;
+    }
+    else {return null;}
+  }
+
   Widget _buildStatItem(String label, String count) {
     TextStyle _statLabelTextStyle = TextStyle(
       fontFamily: 'Montserrat',
@@ -214,7 +255,7 @@ void getUserInfo() async {
           _buildStatItem("Followers", formatStat(followers)),
           _buildStatItem("Following", formatStat(following)),
           _buildStatItem("Posts", _posts.toString()),
-          _buildStatItem("Topics", _topics.toString()),
+          // _buildStatItem("Topics", _topics.toString()),
         ],
       ),
     );
@@ -448,6 +489,34 @@ void getUserInfo() async {
     ));
   }
 
+  Widget _buildTopicsText() {
+    if (_buildChoiceList(topics) == null) {
+      return Container(height: 0);
+    }
+    else {
+      return Text(
+        firstName + "'s topics:",
+        textAlign: TextAlign.right,
+        style: TextStyle(
+        ),
+      );
+    }
+  }
+
+  Widget _buildTopicsContainer() {
+    if (_buildChoiceList(topics) == null) {
+      return Container(height: 0);
+    }
+    else {
+      return Container(
+        padding: EdgeInsets.symmetric(vertical: 10),
+        child: Wrap(
+          children: _buildChoiceList(topics),
+        ),
+      );
+    }
+  }
+
   void showTags(BuildContext context, Post post) {
     AlertDialog viewTags = AlertDialog(
       shape: RoundedRectangleBorder(
@@ -548,6 +617,9 @@ void getUserInfo() async {
                   SizedBox(height: 10.0),
                   _buildFullName(context),
                   _buildStatContainer(),
+                  SizedBox(height: 10.0),
+                  _buildTopicsText(),
+                  _buildTopicsContainer(),
                   _buildBio(context),
                   // _buildDemoButton(),
                   _buildButtons(context),
