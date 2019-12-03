@@ -83,7 +83,6 @@ class ProfilePageState extends State<ProfilePage> {
     _posts = AuthService.currentUser.posts;
     // topics = List.from(AuthService.currentUser.topicsList);
     // print(topics);
-
     // postsList = AuthService.currentUser.postsList;
   }
 

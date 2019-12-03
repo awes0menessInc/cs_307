@@ -6,10 +6,8 @@ class Post {
   List<String> topics;
   int timestamp;
   List<String> likes;
-
-  // List<String> likes;
-
-  // List<String> topics;
+  String postID;
+  double score = 0.0;
 
   Post(
       {this.username,
@@ -18,7 +16,9 @@ class Post {
       this.topics,
       this.uid,
       this.timestamp,
-      this.likes});
+      this.likes,
+      this.postID,
+      this.score});
 }
 
 class PostList {

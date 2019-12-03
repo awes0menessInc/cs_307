@@ -40,28 +40,30 @@ class SettingsState extends State<Settings> {
   }
 
   Future _getUser() async {
-     await FirebaseAuth.instance.currentUser().then((currentuser) => {
-      Firestore.instance.collection("users")
-      .document(currentuser.uid).get()
-      .then((DocumentSnapshot snapshot) => {
-        setState((){
-          _firstName = snapshot["firstName"];
-          _lastName = snapshot["lastName"];
-          _email = snapshot["email"];
-          _uid = snapshot["uid"];
-          _topics = List.from(snapshot["topics"]);
-          if (snapshot.data.containsKey("uid")) {
-            _bio = snapshot["bio"];
-          }
-          if (snapshot.data.containsKey("website")) {
-            _website = snapshot["website"];
-          }
-          if (snapshot.data.containsKey("birthday")) {
-            _birthday = snapshot["birthday"];
-          }
-        })
-      })
-    });
+    await FirebaseAuth.instance.currentUser().then((currentuser) => {
+          Firestore.instance
+              .collection("users")
+              .document(currentuser.uid)
+              .get()
+              .then((DocumentSnapshot snapshot) => {
+                    setState(() {
+                      _firstName = snapshot["firstName"];
+                      _lastName = snapshot["lastName"];
+                      _email = snapshot["email"];
+                      _uid = snapshot["uid"];
+                      _topics = List.from(snapshot["topics"]);
+                      if (snapshot.data.containsKey("uid")) {
+                        _bio = snapshot["bio"];
+                      }
+                      if (snapshot.data.containsKey("website")) {
+                        _website = snapshot["website"];
+                      }
+                      if (snapshot.data.containsKey("birthday")) {
+                        _birthday = snapshot["birthday"];
+                      }
+                    })
+                  })
+        });
   }
 
   void getUser() {
@@ -250,7 +252,9 @@ class SettingsState extends State<Settings> {
               controller: topicController,
               onSaved: (value) {
                 //AuthService.currentUser.topicsList.add(value);
-                _topics.add(value);
+                if (value.toString() != null && value.toString().isNotEmpty) {
+                  _topics.add(value);
+                }
               },
             ),
             Padding(
@@ -274,7 +278,7 @@ class SettingsState extends State<Settings> {
                         "birthday": _birthday.toUtc(),
                         "website": websiteController.text,
                         "uid": _uid,
-                        "topicsList": FieldValue.arrayUnion(List.from(_topics)),
+                        "topicsList": List.from(_topics),
                       });
                       // AuthService.updateUser(
                       //   fnameController.text,

@@ -83,13 +83,19 @@ class _NewPostState extends State<NewPost> {
                         'firstName': firstName,
                         'lastName': lastName,
                       })
-                      .then((value) => Firestore.instance
-                              .collection('users')
-                              .document(uid)
-                              .updateData({
-                            'postsList':
-                                FieldValue.arrayUnion([value.documentID]),
-                          }))
+                      .then((value) {
+                        Firestore.instance
+                            .collection('users')
+                            .document(uid)
+                            .updateData({
+                          'postsList':
+                              FieldValue.arrayUnion([value.documentID]),
+                        });
+                        Firestore.instance
+                            .collection('posts')
+                            .document(value.documentID)
+                            .updateData({"postID": value.documentID});
+                      })
                       .then((result) => {
                             Navigator.pushAndRemoveUntil(
                                 context,

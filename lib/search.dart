@@ -24,27 +24,27 @@ class _SearchState extends State<Search> {
 
   void getUser() {
     FirebaseAuth.instance.currentUser().then((currentUser) => {
-      if (currentUser == null) {
-        Navigator.pushReplacementNamed(context, '/login')
-      } else {
-        this.currentUser = currentUser
-      }
-    });
+          if (currentUser == null)
+            {Navigator.pushReplacementNamed(context, '/login')}
+          else
+            {this.currentUser = currentUser}
+        });
   }
 
   bool shouldAdd(DocumentSnapshot doc, String query) {
-    if (doc["topicsList"]!= null) {
+    if (doc["topicsList"] != null) {
       if (doc["topicsList"] != 0) {
         for (int i = 0; i < doc["topicsList"].length; i++) {
           if (doc["topicsList"][i].toString().toLowerCase().contains(query)) {
-            if (!_results.contains(doc["username"]) && doc["username"] != null) {
+            if (!_results.contains(doc["username"]) &&
+                doc["username"] != null) {
               return true;
-            }             
+            }
           }
         }
       }
     }
-    
+
     if (doc["username"].toString().toLowerCase().contains(query)) {
       return true;
     }
@@ -60,29 +60,33 @@ class _SearchState extends State<Search> {
     return false;
   }
 
-  void searchUsers(String query) async{
+  void searchUsers(String query) async {
     _results.clear();
-    await Firestore.instance.collection("users").getDocuments().then((QuerySnapshot snapshot) {
+    await Firestore.instance
+        .collection("users")
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((doc) => {
-        if (shouldAdd(doc, query)) {
-          _results.add(new User(
-            uid: doc['uid'],
-            username: doc['username'],
-            firstName: doc['firstName'],
-            lastName: doc['lastName'],
-            email: doc['email'],
-            bio: doc['bio'],
-            website: doc['website'],
-          ))
-        }
-      });
+            if (shouldAdd(doc, query))
+              {
+                _results.add(new User(
+                  uid: doc['uid'],
+                  username: doc['username'],
+                  firstName: doc['firstName'],
+                  lastName: doc['lastName'],
+                  email: doc['email'],
+                  bio: doc['bio'],
+                  website: doc['website'],
+                ))
+              }
+          });
     });
   }
 
   void fieldChanged(String str) {
     _results.clear();
     if (str.length >= 2) {
-      searchUsers(str);
+      searchUsers(str.toLowerCase());
     }
   }
 
@@ -105,7 +109,7 @@ class _SearchState extends State<Search> {
         onChanged: fieldChanged,
       ),
       actions: <Widget>[
-        IconButton (
+        IconButton(
           icon: Icon(Icons.search),
           onPressed: () {
             FocusScope.of(context).requestFocus(FocusNode());
@@ -126,19 +130,18 @@ class _SearchState extends State<Search> {
 
   Widget buildCard(BuildContext context, User user) {
     return Card(
-      elevation: 8,
-      margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          SizedBox(
-            child: buildListTile(context, user),
-          ),
-        ],
-      )
-    );
+        elevation: 8,
+        margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            SizedBox(
+              child: buildListTile(context, user),
+            ),
+          ],
+        ));
   }
-  
+
   Widget buildListTile(BuildContext context, User user) {
     return ListTile(
       onTap: () {
@@ -160,26 +163,23 @@ class _SearchState extends State<Search> {
       title: Container(
           padding: EdgeInsets.all(0),
           child: InkWell(
-            child: Text(
-              user.firstName + " " + user.lastName,
-              style: TextStyle(
-                color: Color.fromRGBO(7, 113, 136, 1.0),
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-                fontFamily: 'Poppins',
-              ),
-            )
-          )
-        ),
+              child: Text(
+            user.firstName + " " + user.lastName,
+            style: TextStyle(
+              color: Color.fromRGBO(7, 113, 136, 1.0),
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+              fontFamily: 'Poppins',
+            ),
+          ))),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildBar(context),
-      body: Container(
-        child: buildResults()
-      ),
+      body: Container(child: buildResults()),
     );
   }
 }

@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:twistter/auth_service.dart';
 import 'package:twistter/post.dart';
 import 'package:twistter/profile.dart';
-import 'package:twistter/timeline.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -18,25 +16,29 @@ class OtherUserProfilePage extends StatefulWidget {
   OtherUserProfilePage({Key key, this.userPage}) : super(key: key);
 
   @override
-  OtherUserProfilePageState createState() => OtherUserProfilePageState(userPage);
+  OtherUserProfilePageState createState() =>
+      OtherUserProfilePageState(userPage);
 }
 
 class OtherUserProfilePageState extends State<OtherUserProfilePage> {
-  String uid;
-  String firstName;
-  String username;
-  String lastName;
+  String uid = "";
+  String firstName = "N";
+  String username = "";
+  String lastName = "A";
   String email;
-  String bio;
+  String bio = "";
   String userPage;
-  List<String> topics;
+  // List<String> _topics;
 
   int followers;
   int following;
   int _posts;
+  int _topics;
 
   // List<String> postsList;
   List<Post> posts = [];
+  List<String> _topicsList = [];
+  List<String> followersList = [];
 
   bool pressed = false;
   bool isAccountOwner = false; // TODO: Connect to a function on the back end
@@ -51,9 +53,11 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
     super.initState();
   }
 
-
-void getUserInfo() async {
-    var userQuery = Firestore.instance.collection('users').where('uid', isEqualTo: userPage).limit(1);
+  void getUserInfo() async {
+    var userQuery = Firestore.instance
+        .collection('users')
+        .where('uid', isEqualTo: userPage)
+        .limit(1);
     userQuery.getDocuments().then((data) {
       if (data.documents.length > 0) {
         setState(() {
@@ -62,10 +66,18 @@ void getUserInfo() async {
           lastName = data.documents[0].data['lastName'];
           username = data.documents[0].data['username'];
           bio = data.documents[0].data['bio'];
-          followers = data.documents[0].data['followers'];
-          following = data.documents[0].data['following'];
-          _posts = data.documents[0].data['posts'];
-          topics = List.from(data.documents[0].data['topicsList']);
+          List<String> postsList =
+              List<String>.from(data.documents[0].data['postsList']);
+          List<String> topList = List<String>.from(data.documents[0].data['topicsList']);
+          _posts = postsList.length;
+          _topics = topList.length;
+          followersList =
+              List<String>.from(data.documents[0].data['followersList']);
+          List<String> followList =
+              List<String>.from(data.documents[0].data['followingList']);
+          _topicsList = List<String>.from(data.documents[0].data['topicsList']);
+          followers = followersList.length;
+          following = followList.length;
         });
       }
     });
@@ -309,7 +321,7 @@ void getUserInfo() async {
   }
 
   Text getText(bool pressed) {
-    if (pressed) {
+    if (pressed || followersList.contains(AuthService.currentUser.uid)) {
       return Text('Following', style: TextStyle(color: Colors.black));
     } else {
       return Text('Follow', style: TextStyle(color: Colors.white));
@@ -329,6 +341,79 @@ void getUserInfo() async {
                           color: getColor(pressed),
                           onPressed: () {
                             setState(() {
+                              if (pressed &&
+                                  followersList
+                                      .contains(AuthService.currentUser.uid)) {
+                                if (followersList
+                                    .contains(AuthService.currentUser.uid)) {
+                                  followersList
+                                      .remove(AuthService.currentUser.uid);
+                                  Firestore.instance
+                                      .collection("users")
+                                      .document(uid)
+                                      .updateData({
+                                    "followersList": List.from(followersList)
+                                  });
+                                }
+                                if (AuthService
+                                    .currentUser.followingUserTopicList
+                                    .containsKey(uid)) {
+                                  Map<String, dynamic> temp = AuthService
+                                      .currentUser.followingUserTopicList;
+                                  temp.remove(uid);
+                                  List<String> temp3 =
+                                      AuthService.currentUser.followingList;
+                                  temp3.remove(uid.toString());
+                                  Firestore.instance
+                                      .collection("users")
+                                      .document(AuthService.currentUser.uid)
+                                      .updateData({
+                                    "followingUserTopicList":
+                                        Map<String, dynamic>.from(temp),
+                                    "followingList": List.from(temp3)
+                                  });
+                                }
+                              } else {
+                                followersList.add(AuthService.currentUser.uid);
+                                Firestore.instance
+                                    .collection("users")
+                                    .document(uid)
+                                    .updateData({
+                                  "followersList": List.from(followersList)
+                                });
+                                Map<String, dynamic> followingUserTopicList =
+                                    AuthService
+                                        .currentUser.followingUserTopicList;
+                                Map<String, int> topicLike = {};
+                                for (String top in _topicsList) {
+                                  topicLike[top] = 0;
+                                }
+                                Map<String, dynamic> followingTopic = {
+                                  "Following": topicLike,
+                                  "NotFollowing": {'a': 0}
+                                };
+                                Map<String, dynamic> addKey = {
+                                  uid: Map<String, dynamic>.from(followingTopic)
+                                };
+                                Map<String, dynamic> temp = AuthService
+                                    .currentUser.followingUserTopicList;
+                                temp.addAll(addKey);
+                                List<String> temp2 =
+                                    AuthService.currentUser.followingList;
+                                if (temp2.contains(uid)) {
+                                  temp2 = temp2;
+                                } else {
+                                  temp2.add(uid.toString());
+                                }
+                                Firestore.instance
+                                    .collection("users")
+                                    .document(AuthService.currentUser.uid)
+                                    .updateData({
+                                  "followingUserTopicList":
+                                      Map<String, dynamic>.from(temp),
+                                  "followingList": List.from(temp2),
+                                });
+                              }
                               pressed = !pressed;
                             });
                           },
@@ -368,15 +453,18 @@ void getUserInfo() async {
 
   List<Post> getPosts(List<DocumentSnapshot> snap) {
     List<Post> posts = [];
-    snap.forEach((post) {
-      posts.add(Post(
-          content: post['content'],
-          username: post['username'],
-          fullName:
-              post['firstName'].toString() + " " + post['lastName'].toString(),
-          topics: List.from(post['topics']),
-          uid: post['uid']));
-    });
+    if (snap != null && snap.isNotEmpty) {
+      snap.forEach((post) {
+        posts.add(Post(
+            content: post['content'],
+            username: post['username'],
+            fullName: post['firstName'].toString() +
+                " " +
+                post['lastName'].toString(),
+            topics: List.from(post['topics']),
+            uid: post['uid']));
+      });
+    }
     return posts;
   }
 
@@ -490,7 +578,7 @@ void getUserInfo() async {
   }
 
   Widget _buildTopicsText() {
-    if (_buildChoiceList(topics) == null) {
+    if (_buildChoiceList(_topicsList) == null) {
       return Container(height: 0);
     }
     else {
@@ -504,14 +592,14 @@ void getUserInfo() async {
   }
 
   Widget _buildTopicsContainer() {
-    if (_buildChoiceList(topics) == null) {
+    if (_buildChoiceList(_topicsList) == null) {
       return Container(height: 0);
     }
     else {
       return Container(
         padding: EdgeInsets.symmetric(vertical: 10),
         child: Wrap(
-          children: _buildChoiceList(topics),
+          children: _buildChoiceList(_topicsList),
         ),
       );
     }
@@ -601,6 +689,20 @@ void getUserInfo() async {
     );
   }
 
+  Widget buildBackButton(BuildContext context, Size screensize) {
+    return SizedBox(
+      child: Align(
+        alignment: Alignment.topLeft,
+        child: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      height: screensize.height / 20
+    );
+  }
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
@@ -612,7 +714,7 @@ void getUserInfo() async {
             child: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  SizedBox(height: screenSize.height / 20),
+                  buildBackButton(context, screenSize),
                   _buildProfileImage(),
                   SizedBox(height: 10.0),
                   _buildFullName(context),
