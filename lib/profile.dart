@@ -78,10 +78,10 @@ class ProfilePageState extends State<ProfilePage> {
     username = AuthService.currentUser.username;
     bio = AuthService.currentUser.bio;
 
-    followers = AuthService.currentUser.followers;
-    following = AuthService.currentUser.following;
-    _posts = AuthService.currentUser.posts;
-    _topics = AuthService.currentUser.topics;
+    followers = AuthService.currentUser.followersList.length - 1;
+    following = AuthService.currentUser.followingList.length - 1;
+    _posts = AuthService.currentUser.postsList.length - 1;
+    _topics = AuthService.currentUser.topicsList.length;
 
     // postsList = AuthService.currentUser.postsList;
   }
