@@ -20,6 +20,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   String uid;
+  Text sortText = new Text("Time");
   _HomeState(this.uid);
   @override
   void initState() {
@@ -74,21 +75,35 @@ class _HomeState extends State<Home> {
               ),
               backgroundColor: Color.fromRGBO(85, 176, 189, 1.0),
               actions: <Widget> [
+                FlatButton(
+                  child: sortText,
+                  onPressed: () {
+                    setState(() {
+                      if (sortText.data == "Time") {
+                        sortText = new Text("Relevance");
+                      } else {
+                        sortText = new Text("Time");
+                      }
+                      //TODO: somehow connect to sort
+                    });
+                    
+                  },
+                ),
                 IconButton(
-              icon: Icon(Icons.exit_to_app, color: Colors.black),
-              onPressed: () {
-                try {
-                  Provider.of<AuthService>(context).logout();
-                } on Exception catch (error) {
-                  return buildErrorDialog(context, error.toString());
-                }
-                // _logout();
+                  icon: Icon(Icons.exit_to_app, color: Colors.black),
+                  onPressed: () {
+                    try {
+                      Provider.of<AuthService>(context).logout();
+                    } on Exception catch (error) {
+                      return buildErrorDialog(context, error.toString());
+                    }
+                    // _logout();
 
 
-                Navigator.pushReplacement(
-                    context, MaterialPageRoute(builder: (context) => Login()));
-              },
-            )
+                    Navigator.pushReplacement(
+                        context, MaterialPageRoute(builder: (context) => Login()));
+                  },
+                )
               ]
             ),
             floatingActionButton: FloatingActionButton(
