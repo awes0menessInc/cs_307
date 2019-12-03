@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:twistter/post.dart';
 import 'package:twistter/auth_service.dart';
 
-bool sortFlag;
+bool sortFlag = false;
 
 void like(post, userID) async {
   if (post.likes.contains(userID)) {
