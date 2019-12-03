@@ -76,37 +76,43 @@ class _NewRepost extends State<RePost> {
               icon: Icon(Icons.add_comment),
               onPressed: () async {
                 Firestore.instance
-                    .collection('posts')
-                    .add({
-                      'content': newContent + " " + postEditingController.text,
-                      'likes': 0,
-                      'quotes': 0,
-                      'timestamp': new DateTime.now().millisecondsSinceEpoch,
-                      'topics': topics,
-                      'uid': uid,
-                      'username': username,
-                      'firstName': firstName,
-                      'lastName': lastName,
-                    })
-                    .then((value) => Firestore.instance
+                      .collection('posts')
+                      .add({
+                        'content': newContent + " " + postEditingController.text,
+                        'likes': [""],
+                        'quotes': 0,
+                        'timestamp': new DateTime.now().millisecondsSinceEpoch,
+                        'topics': topics,
+                        'uid': uid,
+                        'username': username,
+                        'firstName': firstName,
+                        'lastName': lastName,
+                      })
+                      .then((value) {
+                        Firestore.instance
                             .collection('users')
                             .document(uid)
                             .updateData({
                           'postsList':
                               FieldValue.arrayUnion([value.documentID]),
-                        }))
-                    .then((result) => {
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Home(
-                                        uid: uid,
-                                      )),
-                              (_) => false),
-                          postEditingController.clear()
-                        })
-                    .catchError((err) => print(err))
-                    .catchError((err) => print(err));
+                        });
+                        Firestore.instance
+                            .collection('posts')
+                            .document(value.documentID)
+                            .updateData({"postID": value.documentID});
+                      })
+                      .then((result) => {
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Home(
+                                          uid: uid,
+                                        )),
+                                (_) => false),
+                            postEditingController.clear()
+                          })
+                      .catchError((err) => print(err))
+                      .catchError((err) => print(err));
               },
             )
           ],

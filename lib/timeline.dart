@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:flutter_parsed_text/flutter_parsed_text.dart';
 import 'package:twistter/auth_service.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:twistter/profile.dart';
@@ -321,13 +321,34 @@ class _ListPageState extends State<ListPage> {
                   fontFamily: 'Poppins',
                 ),
               ))),
-      subtitle: Text(
-        //_blogtext,
-        post.content,
-        style: TextStyle(fontSize: 11),
+      // subtitle: Text(
+      //   //_blogtext,
+      //   post.content,
+      //   style: TextStyle(fontSize: 11),
+      // ),
+      subtitle: ParsedText(
+  text: post.content,
+  style: TextStyle(
+    fontSize: 11,
+    color: Colors.black,
+  ),
+  parse: <MatchText>[
+    MatchText(
+      pattern: r"([@#][\w_-]+:)",
+      style: TextStyle(
+        color: Color.fromRGBO(7, 113, 136, 1.0),
+        fontSize: 12,
+        fontWeight: FontWeight.bold,
       ),
+      onTap: (url) {
+        
+      },
+    ),
+  ],
+),
       trailing: Text(timeago
-          .format(new DateTime.fromMillisecondsSinceEpoch(post.timestamp))),
+          .format(new DateTime.fromMillisecondsSinceEpoch(post.timestamp)),
+          style: TextStyle(fontSize: 11)),
     );
   }
 
