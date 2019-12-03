@@ -1,11 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:flutter_parsed_text/flutter_parsed_text.dart';
+import 'package:twistter/auth_service.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:twistter/profile.dart';
 import 'package:twistter/post.dart';
-import 'repost.dart';
+import 'package:twistter/repost.dart';
+import 'package:twistter/metrics.dart';
 
 class Timeline extends StatefulWidget {
   Timeline({Key title}) : super(key: title);
@@ -52,13 +54,16 @@ class _ListPageState extends State<ListPage> {
   List<Post> posts = [];
   List<String> following;
   Map<String, dynamic> followingUserTopic;
+  List<String> topics = new List();
 
   TextEditingController controller = new TextEditingController();
   FocusNode _focusNode;
   String filter;
 
   Color _iconColor = Color.fromRGBO(5, 62, 66, 1.0);
+  Color _iconColorPressed = Colors.red;
   Icon _icon = Icon(Icons.favorite_border, size: 20);
+  Icon _iconPressed = Icon(Icons.favorite, size: 20);
 
   initState() {
     getUser();
@@ -92,54 +97,135 @@ class _ListPageState extends State<ListPage> {
         });
   }
 
-  void showTags(BuildContext context, Post post) {
-    AlertDialog viewTags = AlertDialog(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(32.0))),
-      title: Text('Post Tags',
-          textAlign: TextAlign.center, style: TextStyle(fontFamily: 'Poppins')),
-      content: Container(
-        height: 50,
-        child: ListView(
-            padding: EdgeInsets.all(4),
-            children: post.topics
-                .map((data) => Padding(
-                    padding: EdgeInsets.all(4),
-                    child: Text(
-                      data = "#" + data,
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 14,
-                      ),
-                    )))
-                .toList()),
-      ),
-      actions: <Widget>[
-        Container(
-          padding: EdgeInsets.only(right: 75),
-          child:
-              ButtonBar(alignment: MainAxisAlignment.center, children: <Widget>[
-            SizedBox(
-              width: 100,
-              child: new RaisedButton(
-                color: Color.fromRGBO(85, 176, 189, 1.0),
-                onPressed: () {
-                  Navigator.of(context, rootNavigator: true).pop('dialog');
-                },
-                child: Text('Close', style: TextStyle(color: Colors.white)),
-              ),
-            ),
-          ]),
+  // void showTags(BuildContext context, Post post) {
+  //   AlertDialog viewTags = AlertDialog(
+  //     shape: RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.all(Radius.circular(32.0))),
+  //     title: Text('Post Tags',
+  //         textAlign: TextAlign.center, style: TextStyle(fontFamily: 'Poppins')),
+  //     content: Container(
+  //       height: 50,
+  //       child: ListView(
+  //           padding: EdgeInsets.all(4),
+  //           children: post.topics
+  //               .map((data) => Padding(
+  //                   padding: EdgeInsets.all(4),
+  //                   child: Text(
+  //                     data = "#" + data,
+  //                     style: TextStyle(
+  //                       fontFamily: 'Poppins',
+  //                       fontSize: 14,
+  //                     ),
+  //                   )))
+  //               .toList()),
+  //     ),
+  //     actions: <Widget>[
+  //       Container(
+  //         padding: EdgeInsets.only(right: 75),
+  //         child:
+  //             ButtonBar(alignment: MainAxisAlignment.center, children: <Widget>[
+  //           SizedBox(
+  //             width: 100,
+  //             child: new RaisedButton(
+  //               color: Color.fromRGBO(85, 176, 189, 1.0),
+  //               onPressed: () {
+  //                 Navigator.of(context, rootNavigator: true).pop('dialog');
+  //               },
+  //               child: Text('Close', style: TextStyle(color: Colors.white)),
+  //             ),
+  //           ),
+  //         ]),
+  //       ),
+  //     ],
+  //   );
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return viewTags;
+  //     },
+  //   );
+  // }
+
+  // List<String> selectedTopics = List();
+  // List<Widget> _buildChoiceList(List<String> topics, Post post, BuildContext context) {
+  //   print(post.topics.toString());
+  //   if (post.topics.length == 0) {
+  //     return null;
+  //   }
+  //   List<Widget> choices = List();
+  //   post.topics.forEach((item) {
+  //     choices.add(
+  //       Container(
+  //       padding: const EdgeInsets.all(2.0),
+  //       child: ChoiceChip(
+  //         label: Text(item),
+  //         selected: selectedTopics.contains(item),
+  //         onSelected: (selected) {
+  //           setState(() {
+  //             selectedTopics.contains(item)
+  //                 ? selectedTopics.remove(item)
+  //                 : selectedTopics.add(item);
+  //           });
+  //         },
+  //       )));
+  //   });
+  //   return choices;
+  // }
+
+  List<String> selectedTopics = List();
+  List<Widget> _buildChoiceList(Post post, BuildContext context) {
+    print(post.topics.toString());
+    post.topics.removeWhere((item) =>
+        item ==
+        ""); //removes any empty strings from the topic list before displaying
+    if (post.topics.length == 0) {
+      return null;
+    }
+    List<Widget> choices = List();
+    post.topics.forEach((item) {
+      choices.add(Container(
+        padding: const EdgeInsets.all(2.0),
+        child: ChoiceChip(
+          label: Text(item),
+          disabledColor: Color(0xff999999),
+          backgroundColor: Color(0xff55b0bd),
+          selected: selectedTopics.contains(item),
+          onSelected: (selected) {
+            setState(() {
+              selectedTopics.contains(item)
+                  ? selectedTopics.remove(item)
+                  : selectedTopics.add(item);
+            });
+          },
         ),
-      ],
-    );
+      ));
+    });
+    return choices;
+  }
+
+  void showTags(BuildContext context, Post post) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return viewTags;
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Post Tags"),
+          content: Wrap(
+            children: _buildChoiceList(post, context),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
       },
     );
   }
+
+
 
   List<Post> getPosts(List<DocumentSnapshot> snap) {
     List<Post> postsList = [];
@@ -180,6 +266,7 @@ class _ListPageState extends State<ListPage> {
                 topics: List.from(f['topics']),
                 timestamp: f['timestamp'],
                 likes: List.from(f['likes']),
+                postID: f['postID'],
                 uid: f['uid']));
             break;
           }
@@ -234,13 +321,34 @@ class _ListPageState extends State<ListPage> {
                   fontFamily: 'Poppins',
                 ),
               ))),
-      subtitle: Text(
-        //_blogtext,
-        post.content,
-        style: TextStyle(fontSize: 11),
+      // subtitle: Text(
+      //   //_blogtext,
+      //   post.content,
+      //   style: TextStyle(fontSize: 11),
+      // ),
+      subtitle: ParsedText(
+  text: post.content,
+  style: TextStyle(
+    fontSize: 11,
+    color: Colors.black,
+  ),
+  parse: <MatchText>[
+    MatchText(
+      pattern: r"([@#][\w_-]+:)",
+      style: TextStyle(
+        color: Color.fromRGBO(7, 113, 136, 1.0),
+        fontSize: 12,
+        fontWeight: FontWeight.bold,
       ),
+      onTap: (url) {
+        
+      },
+    ),
+  ],
+),
       trailing: Text(timeago
-          .format(new DateTime.fromMillisecondsSinceEpoch(post.timestamp))),
+          .format(new DateTime.fromMillisecondsSinceEpoch(post.timestamp)),
+          style: TextStyle(fontSize: 11)),
     );
   }
 
@@ -285,10 +393,17 @@ class _ListPageState extends State<ListPage> {
                     SizedBox(
                         width: 40,
                         child: IconButton(
-                          icon: _icon,
-                          color: _iconColor,
+                          icon: post.likes.contains(AuthService.currentUser.uid)
+                              ? _iconPressed
+                              : _icon,
+                          color:
+                              post.likes.contains(AuthService.currentUser.uid)
+                                  ? _iconColorPressed
+                                  : _iconColor,
                           onPressed: () {
-                            setState(() {});
+                            setState(() {
+                              like(post, AuthService.currentUser.uid);
+                            });
                           },
                         )),
                   ],
