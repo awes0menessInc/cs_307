@@ -11,10 +11,6 @@ class AuthService with ChangeNotifier {
   FirebaseUser firebaseUser;
   static User currentUser;
 
-  // Future<FirebaseUser> getUser() {
-  //   return _auth.currentUser();
-  // }
-
   @override
   initState() {
     _getUID().then((uid) => initUser(uid));

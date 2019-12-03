@@ -9,6 +9,7 @@ import 'package:twistter/timeline.dart';
 import 'package:twistter/profile.dart';
 import 'package:twistter/settings.dart';
 import 'package:twistter/search.dart';
+import 'package:twistter/metrics.dart';
 
 class Home extends StatefulWidget {
   Home({Key title, this.uid}) : super(key: title);
@@ -32,6 +33,7 @@ class _HomeState extends State<Home> {
   _setUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("user", uid);
+    prefs.setBool("sort", false);
   }
 
   Future buildErrorDialog(BuildContext context, message) {
@@ -43,12 +45,10 @@ class _HomeState extends State<Home> {
           content: Text(message),
           actions: <Widget>[
             FlatButton(
-              child: Text('Close'),
-              onPressed: () {
-                // pwdInputController.clear();
-                Navigator.of(context).pop();
-              }
-            )
+                child: Text('Close'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                })
           ],
         );
       },
@@ -63,49 +63,45 @@ class _HomeState extends State<Home> {
           data: ThemeData(brightness: Brightness.light),
           child: Scaffold(
             appBar: AppBar(
-              centerTitle: true,
-              title: Text(
-                "twistter",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontFamily: 'Amaranth',
-                    fontWeight: FontWeight.bold,
-                    fontStyle: FontStyle.italic,
-                    fontSize: 27),
-              ),
-              backgroundColor: Color.fromRGBO(85, 176, 189, 1.0),
-              actions: <Widget> [
-                FlatButton(
-                  child: sortText,
-                  onPressed: () {
-                    setState(() {
-                      if (sortText.data == "Time") {
-                        sortText = new Text("Relevance");
-                      } else {
-                        sortText = new Text("Time");
-                      }
-                      //TODO: somehow connect to sort
-                    });
-                    
-                  },
+                centerTitle: true,
+                title: Text(
+                  "twistter",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'Amaranth',
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.italic,
+                      fontSize: 27),
                 ),
-                IconButton(
-                  icon: Icon(Icons.exit_to_app, color: Colors.black),
-                  onPressed: () {
-                    try {
-                      Provider.of<AuthService>(context).logout();
-                    } on Exception catch (error) {
-                      return buildErrorDialog(context, error.toString());
-                    }
-                    // _logout();
-
-
-                    Navigator.pushReplacement(
-                        context, MaterialPageRoute(builder: (context) => Login()));
-                  },
-                )
-              ]
-            ),
+                backgroundColor: Color.fromRGBO(85, 176, 189, 1.0),
+                actions: <Widget>[
+                  FlatButton(
+                    child: sortText,
+                    onPressed: () {
+                      setState(() {
+                        if (sortText.data == "Time") {
+                          setSort(true);
+                          sortText = new Text("Relevance");
+                        } else {
+                          setSort(false);
+                          sortText = new Text("Time");
+                        }
+                      });
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.exit_to_app, color: Colors.black),
+                    onPressed: () {
+                      try {
+                        Provider.of<AuthService>(context).logout();
+                      } on Exception catch (error) {
+                        return buildErrorDialog(context, error.toString());
+                      }
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) => Login()));
+                    },
+                  )
+                ]),
             floatingActionButton: FloatingActionButton(
               child: Icon(Icons.add_comment),
               backgroundColor: Color(0xff55b0bd),

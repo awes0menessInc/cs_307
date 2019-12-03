@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_parsed_text/flutter_parsed_text.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:twistter/auth_service.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:twistter/profile.dart';
@@ -14,15 +15,6 @@ class Timeline extends StatefulWidget {
 
   @override
   _TimelineState createState() => _TimelineState();
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return new MaterialApp(
-  //     theme: new ThemeData(primaryColor: Colors.white),
-  //     home: new ListPage(title: 'Timeline'),
-  //     debugShowCheckedModeBanner: false,
-  //   );
-  // }
 }
 
 class _TimelineState extends State<Timeline> {
@@ -98,81 +90,6 @@ class _ListPageState extends State<ListPage> {
         });
   }
 
-  // void showTags(BuildContext context, Post post) {
-  //   AlertDialog viewTags = AlertDialog(
-  //     shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.all(Radius.circular(32.0))),
-  //     title: Text('Post Tags',
-  //         textAlign: TextAlign.center, style: TextStyle(fontFamily: 'Poppins')),
-  //     content: Container(
-  //       height: 50,
-  //       child: ListView(
-  //           padding: EdgeInsets.all(4),
-  //           children: post.topics
-  //               .map((data) => Padding(
-  //                   padding: EdgeInsets.all(4),
-  //                   child: Text(
-  //                     data = "#" + data,
-  //                     style: TextStyle(
-  //                       fontFamily: 'Poppins',
-  //                       fontSize: 14,
-  //                     ),
-  //                   )))
-  //               .toList()),
-  //     ),
-  //     actions: <Widget>[
-  //       Container(
-  //         padding: EdgeInsets.only(right: 75),
-  //         child:
-  //             ButtonBar(alignment: MainAxisAlignment.center, children: <Widget>[
-  //           SizedBox(
-  //             width: 100,
-  //             child: new RaisedButton(
-  //               color: Color.fromRGBO(85, 176, 189, 1.0),
-  //               onPressed: () {
-  //                 Navigator.of(context, rootNavigator: true).pop('dialog');
-  //               },
-  //               child: Text('Close', style: TextStyle(color: Colors.white)),
-  //             ),
-  //           ),
-  //         ]),
-  //       ),
-  //     ],
-  //   );
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return viewTags;
-  //     },
-  //   );
-  // }
-
-  // List<String> selectedTopics = List();
-  // List<Widget> _buildChoiceList(List<String> topics, Post post, BuildContext context) {
-  //   print(post.topics.toString());
-  //   if (post.topics.length == 0) {
-  //     return null;
-  //   }
-  //   List<Widget> choices = List();
-  //   post.topics.forEach((item) {
-  //     choices.add(
-  //       Container(
-  //       padding: const EdgeInsets.all(2.0),
-  //       child: ChoiceChip(
-  //         label: Text(item),
-  //         selected: selectedTopics.contains(item),
-  //         onSelected: (selected) {
-  //           setState(() {
-  //             selectedTopics.contains(item)
-  //                 ? selectedTopics.remove(item)
-  //                 : selectedTopics.add(item);
-  //           });
-  //         },
-  //       )));
-  //   });
-  //   return choices;
-  // }
-
   List<String> selectedTopics = List();
   List<Widget> _buildChoiceList(Post post, BuildContext context) {
     print(post.topics.toString());
@@ -226,22 +143,10 @@ class _ListPageState extends State<ListPage> {
     );
   }
 
-
-
   List<Post> getPosts(List<DocumentSnapshot> snap) {
     List<Post> postsList = [];
     List<dynamic> tags = [];
     snap.forEach((f) {
-      //   if (following.contains(f["uid"])) {
-      //     postsList.add(Post(
-      //         content: f['content'],
-      //         username: f['username'],
-      //         fullName:
-      //             f['firstName'].toString() + " " + f['lastName'].toString(),
-      //         topics: List.from(f['topics']),
-      //         uid: f['uid']));
-      //   }
-      // });
       if (followingUserTopic != null &&
           followingUserTopic.containsKey(f["uid"])) {
         List<dynamic> topicList;
@@ -268,6 +173,7 @@ class _ListPageState extends State<ListPage> {
                 timestamp: f['timestamp'],
                 likes: List.from(f['likes']),
                 postID: f['postID'],
+                score: 0,
                 uid: f['uid']));
             break;
           }
@@ -281,8 +187,18 @@ class _ListPageState extends State<ListPage> {
     posts = getPosts(snap);
     if (filter == null || filter == "") {
     } else {
-      posts = posts.where((post) => post.topics.contains(filter)).toList();
+      posts = posts.where((post) {
+        bool flag = false;
+        for (String topic in post.topics) {
+          // better filter using substring.
+          flag = flag || topic.toLowerCase().contains(filter.toLowerCase());
+        }
+        return flag;
+      }).toList();
     }
+
+    posts = sortPosts(posts);
+
     return Container(
         child: new ListView.builder(
       scrollDirection: Axis.vertical,
@@ -328,27 +244,26 @@ class _ListPageState extends State<ListPage> {
       //   style: TextStyle(fontSize: 11),
       // ),
       subtitle: ParsedText(
-  text: post.content,
-  style: TextStyle(
-    fontSize: 12,
-    color: Colors.black,
-  ),
-  parse: <MatchText>[
-    MatchText(
-      pattern: r"([@#][\w_-]+:)",
-      style: TextStyle(
-        color: Color.fromRGBO(7, 113, 136, 1.0),
-        fontSize: 12,
-        fontWeight: FontWeight.bold,
+        text: post.content,
+        style: TextStyle(
+          fontSize: 12,
+          color: Colors.black,
+        ),
+        parse: <MatchText>[
+          MatchText(
+            pattern: r"([@#][\w_-]+:)",
+            style: TextStyle(
+              color: Color.fromRGBO(7, 113, 136, 1.0),
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            ),
+            onTap: (url) {},
+          ),
+        ],
       ),
-      onTap: (url) {
-        
-      },
-    ),
-  ],
-),
-      trailing: Text(timeago
-          .format(new DateTime.fromMillisecondsSinceEpoch(post.timestamp)),
+      trailing: Text(
+          timeago
+              .format(new DateTime.fromMillisecondsSinceEpoch(post.timestamp)),
           style: TextStyle(fontSize: 11)),
     );
   }
