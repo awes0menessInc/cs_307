@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:twistter/auth_service.dart';
 import 'package:twistter/post.dart';
 import 'package:twistter/profile.dart';
-import 'package:twistter/timeline.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -23,23 +21,23 @@ class OtherUserProfilePage extends StatefulWidget {
 }
 
 class OtherUserProfilePageState extends State<OtherUserProfilePage> {
-  String uid;
-  String firstName;
-  String username;
-  String lastName;
+  String uid = "";
+  String firstName = "N";
+  String username = "";
+  String lastName = "A";
   // String email;
-  String bio;
+  String bio = "";
   String userPage;
 
-  int followers;
-  int following;
+  int followers = 0;
+  int following = 0;
   int _posts = 199;
   int _topics = 333;
 
   // List<String> postsList;
   List<Post> posts = [];
   List<String> _topicsList = [];
-  List<String> followersList;
+  List<String> followersList = [];
 
   bool pressed = false;
   bool isAccountOwner = false; // TODO: Connect to a function on the back end
@@ -622,6 +620,20 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
     );
   }
 
+  Widget buildBackButton(BuildContext context, Size screensize) {
+    return SizedBox(
+      child: Align(
+        alignment: Alignment.topLeft,
+        child: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      height: screensize.height / 20
+    );
+  }
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
@@ -633,7 +645,7 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
             child: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  SizedBox(height: screenSize.height / 20),
+                  buildBackButton(context, screenSize),
                   _buildProfileImage(),
                   SizedBox(height: 10.0),
                   _buildFullName(context),
