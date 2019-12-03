@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:twistter/post.dart';
 import 'package:twistter/auth_service.dart';
 
-bool s;
+bool sortFlag;
 
 void like(post, userID) async {
   if (post.likes.contains(userID)) {
@@ -44,13 +44,13 @@ void like(post, userID) async {
 }
 
 void setSort(bool sort) async {
-  s = sort;
+  sortFlag = sort;
   SharedPreferences prefs = await SharedPreferences.getInstance();
   prefs.setBool("sort", sort);
 }
 
 List<Post> sortPosts(List<Post> posts) {
-  if (!s) return posts;
+  if (!sortFlag) return posts;
 
   Map<String, int> userScore = {}, topicScore = {};
   int time = new DateTime.now().millisecondsSinceEpoch;
