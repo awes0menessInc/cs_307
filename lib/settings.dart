@@ -23,7 +23,7 @@ class SettingsState extends State<Settings> {
   String _website;
   String _uid;
   List<String> _topics;
-  bool isSwitched = true;
+  bool _emailIsPrivate;
 
   TextEditingController fnameController = new TextEditingController();
   TextEditingController lnameController = new TextEditingController();
@@ -42,29 +42,31 @@ class SettingsState extends State<Settings> {
 
   Future _getUser() async {
     await FirebaseAuth.instance.currentUser().then((currentuser) => {
-          Firestore.instance
-              .collection("users")
-              .document(currentuser.uid)
-              .get()
-              .then((DocumentSnapshot snapshot) => {
-                    setState(() {
-                      _firstName = snapshot["firstName"];
-                      _lastName = snapshot["lastName"];
-                      _email = snapshot["email"];
-                      _uid = snapshot["uid"];
-                      _topics = List.from(snapshot["topics"]);
-                      if (snapshot.data.containsKey("uid")) {
-                        _bio = snapshot["bio"];
-                      }
-                      if (snapshot.data.containsKey("website")) {
-                        _website = snapshot["website"];
-                      }
-                      if (snapshot.data.containsKey("birthday")) {
-                        _birthday = snapshot["birthday"];
-                      }
-                    })
-                  })
-        });
+    Firestore.instance
+    .collection("users")
+    .document(currentuser.uid)
+    .get()
+    .then((DocumentSnapshot snapshot) => {
+          setState(() {
+            _firstName = snapshot["firstName"];
+            _lastName = snapshot["lastName"];
+            _email = snapshot["email"];
+            _uid = snapshot["uid"];
+            _emailIsPrivate = snapshot["emailIsPrivate"];
+            _topics = List.from(snapshot["topics"]);
+            if (snapshot.data.containsKey("uid")) {
+              _bio = snapshot["bio"];
+            }
+            if (snapshot.data.containsKey("website")) {
+              _website = snapshot["website"];
+            }
+            if (snapshot.data.containsKey("birthday")) {
+              _birthday = snapshot["birthday"];
+            }
+          })
+        })
+      }
+    );
   }
 
   void getUser() {
@@ -76,6 +78,7 @@ class SettingsState extends State<Settings> {
     _website = AuthService.currentUser.website;
     _birthday = AuthService.currentUser.birthday;
     _topics = AuthService.currentUser.topicsList;
+    // _emailIsPrivate = AuthService.currentUser.emailIsPrivate;
   }
 
   Future deleteUser() async {
@@ -172,9 +175,9 @@ class SettingsState extends State<Settings> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Container(
-              child: Row(
-              children: <Widget> [
+            // Container(
+            //   child: Row(
+            //   children: <Widget> [
                 TextFormField(
                 decoration:
                   InputDecoration(labelText: 'First Name', hintText: "John"),
@@ -188,17 +191,18 @@ class SettingsState extends State<Settings> {
                 }
                 return null;
               },
+            // ),
+            // Switch(
+            //   value: isSwitched,
+            //   onChanged: (value) {
+            //     setState(() {
+            //       isSwitched = value;
+            //     });
+            //   },
+            //   activeTrackColor: Colors.lightGreenAccent, 
+            //   activeColor: Colors.green,
+            // )])
             ),
-            Switch(
-              value: isSwitched,
-              onChanged: (value) {
-                setState(() {
-                  isSwitched = value;
-                });
-              },
-              activeTrackColor: Colors.lightGreenAccent, 
-              activeColor: Colors.green,
-            )])),
             TextFormField(
               decoration:
                   InputDecoration(labelText: 'Last Name', hintText: "Doe"),

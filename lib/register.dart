@@ -239,6 +239,7 @@ class _RegisterState extends State<Register> {
                                     "birthday": birthday.toUtc(),
                                     "bio": "",
                                     "website": "",
+                                    // "emailIsPrivate": true,
                                     "followers": 0,
                                     "following": 0,
                                     "posts": 0,
