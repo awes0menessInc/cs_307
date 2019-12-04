@@ -23,6 +23,7 @@ class SettingsState extends State<Settings> {
   String _website;
   String _uid;
   List<String> _topics;
+  bool isSwitched = true;
 
   TextEditingController fnameController = new TextEditingController();
   TextEditingController lnameController = new TextEditingController();
@@ -171,11 +172,14 @@ class SettingsState extends State<Settings> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            TextFormField(
-              decoration:
+            Container(
+              child: Row(
+              children: <Widget> [
+                TextFormField(
+                decoration:
                   InputDecoration(labelText: 'First Name', hintText: "John"),
-              controller: fnameController,
-              onSaved: (value) {
+                controller: fnameController,
+                onSaved: (value) {
                 AuthService.currentUser.firstName = value;
               },
               validator: (value) {
@@ -185,6 +189,16 @@ class SettingsState extends State<Settings> {
                 return null;
               },
             ),
+            Switch(
+              value: isSwitched,
+              onChanged: (value) {
+                setState(() {
+                  isSwitched = value;
+                });
+              },
+              activeTrackColor: Colors.lightGreenAccent, 
+              activeColor: Colors.green,
+            )])),
             TextFormField(
               decoration:
                   InputDecoration(labelText: 'Last Name', hintText: "Doe"),

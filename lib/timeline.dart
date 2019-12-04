@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_parsed_text/flutter_parsed_text.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:twistter/auth_service.dart';
+import 'package:twistter/otherUserProfile.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:twistter/profile.dart';
 import 'package:twistter/post.dart';
@@ -230,7 +231,7 @@ class _ListPageState extends State<ListPage> {
                 print("tap!");
                 var route = new MaterialPageRoute(
                   builder: (BuildContext context) =>
-                      new ProfilePage(userPage: post.uid),
+                      new OtherUserProfilePage(userPage: post.uid),
                 );
                 Navigator.of(context).push(route);
               },
