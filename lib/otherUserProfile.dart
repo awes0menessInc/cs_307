@@ -68,16 +68,17 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
           bio = data.documents[0].data['bio'];
           List<String> postsList =
               List<String>.from(data.documents[0].data['postsList']);
-          List<String> topList = List<String>.from(data.documents[0].data['topicsList']);
-          _posts = postsList.length;
+          List<String> topList =
+              List<String>.from(data.documents[0].data['topicsList']);
+          _posts = postsList.length - 1;
           _topics = topList.length;
           followersList =
               List<String>.from(data.documents[0].data['followersList']);
           List<String> followList =
               List<String>.from(data.documents[0].data['followingList']);
           _topicsList = List<String>.from(data.documents[0].data['topicsList']);
-          followers = followersList.length;
-          following = followList.length;
+          followers = followersList.length - 1;
+          following = followList.length - 1;
         });
       }
     });
@@ -177,7 +178,10 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
   List<String> notSelectedTopics = List();
   List<Widget> _buildChoiceList(List<String> topic) {
     if (topic != null && topic.length != 0) {
-      topic.removeWhere((item) => item == "" || item == "RT"); //removes any empty strings from the topic list before displaying
+      topic.removeWhere((item) =>
+          item == "" ||
+          item ==
+              "RT"); //removes any empty strings from the topic list before displaying
       if (topic.length == 0) {
         return null;
       }
@@ -188,8 +192,10 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
         choices.add(Container(
           padding: const EdgeInsets.all(2.0),
           child: ChoiceChip(
-            label: Text(item,
-            style: TextStyle(color: Colors.black),),
+            label: Text(
+              item,
+              style: TextStyle(color: Colors.black),
+            ),
             selectedShadowColor: Color(0xff55B0BD),
             selectedColor: Color(0xff55B0BD),
             selected: selectedTopics.contains(item),
@@ -202,6 +208,7 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
                   ? notSelectedTopics.remove(item)
                   : notSelectedTopics.add(item);
               });
+<<<<<<< HEAD
               Map<String, dynamic> followingUserTopicsList = AuthService.currentUser.followingUserTopicList;
               Map<String, int> followingTopics = {};
               Map<String, int> notFollowingTopics = {};
@@ -223,13 +230,24 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
                   .updateData({
                     "followingUserTopicList": Map<String, dynamic>.from(followingUserTopicsList)
               });
+=======
+              for (item in selectedTopics) {
+                Firestore.instance
+                    .collection("users")
+                    .document(AuthService.currentUser.uid)
+                    .updateData({
+                  // "followingUserTopicList":
+                });
+              }
+>>>>>>> a64a448a4baae28c1dc8094ef99c8de5c1cd0c95
             },
           ),
         ));
       });
       return choices;
+    } else {
+      return null;
     }
-    else {return null;}
   }
 
   Widget _buildStatItem(String label, String count) {
@@ -598,13 +616,11 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
   Widget _buildTopicsText() {
     if (_buildChoiceList(_topicsList) == null) {
       return Container(height: 0);
-    }
-    else {
+    } else {
       return Text(
         firstName + "'s topics:",
         textAlign: TextAlign.right,
-        style: TextStyle(
-        ),
+        style: TextStyle(),
       );
     }
   }
@@ -612,8 +628,7 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
   Widget _buildTopicsContainer() {
     if (_buildChoiceList(_topicsList) == null) {
       return Container(height: 0);
-    }
-    else {
+    } else {
       return Container(
         padding: EdgeInsets.symmetric(vertical: 10),
         child: Wrap(
@@ -709,18 +724,18 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
 
   Widget buildBackButton(BuildContext context, Size screensize) {
     return SizedBox(
-      child: Align(
-        alignment: Alignment.topLeft,
-        child: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+        child: Align(
+          alignment: Alignment.topLeft,
+          child: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
         ),
-      ),
-      height: screensize.height / 20
-    );
+        height: screensize.height / 20);
   }
+
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;

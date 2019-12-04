@@ -5,23 +5,26 @@ class Post {
   String content;
   List<String> topics;
   int timestamp;
+  bool liked;
+  double score;
+
   List<String> likes;
-  String postID;
-  double score = 0.0;
 
-  Post(
-      {this.username,
-      this.fullName,
-      this.content,
-      this.topics,
-      this.uid,
-      this.timestamp,
-      this.likes,
-      this.postID,
-      this.score});
-}
+  Post({
+    this.username,
+    this.fullName,
+    this.content,
+    this.topics,
+    this.uid,
+    this.timestamp
+  });
 
-class PostList {
-  List<Post> postList;
-  PostList({this.postList});
+  Post.test() {
+    this.username = "test123";
+    this.fullName = "Test User";
+    this.content = "test tweet";
+    this.topics = ["Test1"];
+    this.uid = "TEST123";
+    this.timestamp = DateTime.now().millisecondsSinceEpoch;
+  }
 }

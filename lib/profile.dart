@@ -35,6 +35,9 @@ class ProfilePageState extends State<ProfilePage> {
 
   // List<String> postsList;
   List<Post> posts = [];
+  int followersNum;
+  int followingNum;
+  int postNum;
 
   bool pressed = false;
   bool isAccountOwner = true; // TODO: Connect to a function on the back end
@@ -81,8 +84,13 @@ class ProfilePageState extends State<ProfilePage> {
     followers = AuthService.currentUser.followers;
     following = AuthService.currentUser.following;
     _posts = AuthService.currentUser.posts;
+    followersNum = AuthService.currentUser.followersList.length - 1;
+    followingNum = AuthService.currentUser.followingList.length - 1;
+    postNum = AuthService.currentUser.postsList.length - 1;
+
     // topics = List.from(AuthService.currentUser.topicsList);
     // print(topics);
+
     // postsList = AuthService.currentUser.postsList;
   }
 
@@ -226,9 +234,9 @@ class ProfilePageState extends State<ProfilePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          _buildStatItem("Followers", formatStat(followers)),
-          _buildStatItem("Following", formatStat(following)),
-          _buildStatItem("Posts", _posts.toString()),
+          _buildStatItem("Followers", formatStat(followersNum)),
+          _buildStatItem("Following", formatStat(followingNum)),
+          _buildStatItem("Posts", postNum.toString()),
           // _buildStatItem("Topics", _topics.toString()),
         ],
       ),
@@ -254,7 +262,7 @@ class ProfilePageState extends State<ProfilePage> {
       color: Colors.black,
       fontSize: 16.0,
     );
-    if(bio != null && bio != "") {
+    if (bio != null && bio != "") {
       return Container(
         color: Theme.of(context).scaffoldBackgroundColor,
         padding: EdgeInsets.all(8.0),
@@ -264,8 +272,7 @@ class ProfilePageState extends State<ProfilePage> {
           style: bioTextStyle,
         ),
       );
-    }
-    else {
+    } else {
       return Container(height: 0);
     }
   }
