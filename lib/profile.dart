@@ -88,7 +88,7 @@ class ProfilePageState extends State<ProfilePage> {
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(
-        source: ImageSource.gallery, maxHeight: 200, maxWidth: 200);
+        source: ImageSource.gallery, maxHeight: 400, maxWidth: 400);
 
     setState(() {
       _image = image;
