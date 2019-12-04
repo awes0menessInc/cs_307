@@ -85,13 +85,13 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
           following = followList.length - 1;
           Map<String, dynamic> completeList =
               AuthService.currentUser.followingUserTopicList;
-          if (completeList.containsKey(uid)) {
-            Map<String, dynamic> fol = completeList[uid];
-            Map<String, dynamic> f = fol["Following"];
-            topicsSelected = List<String>.from(f.keys);
-          } else {
-            topicsSelected = [];
-          }
+          // if (completeList.containsKey(uid)) {
+          //   Map<String, dynamic> fol = completeList[uid];
+          //   Map<String, dynamic> f = fol["Following"];
+          //   topicsSelected = List<String>.from(f.keys);
+          // } else {
+          //   topicsSelected = [];
+          // }
         });
       }
     });
@@ -187,22 +187,23 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
         ));
   }
 
-  Widget _buildEmail(){
-    if(emailIsPrivate == false) {
-    return Container(
-        margin: EdgeInsets.symmetric(vertical: 10.0),
-        child: Text(
-          email,
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            color: Colors.black,
-            fontSize: 15.0,
-            fontWeight: FontWeight.w400,
-            fontStyle: FontStyle.italic,
-          ),
-        ));
+  Widget _buildEmail() {
+    if (emailIsPrivate == false) {
+      return Container(
+          margin: EdgeInsets.symmetric(vertical: 10.0),
+          child: Text(
+            email,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              color: Colors.black,
+              fontSize: 15.0,
+              fontWeight: FontWeight.w400,
+              fontStyle: FontStyle.italic,
+            ),
+          ));
+    } else {
+      return Container(height: 0);
     }
-    else {return Container(height:0);}
   }
 
   List<String> selectedTopics = List();
@@ -252,9 +253,12 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
       Map<String, dynamic> followingUserTopicsList =
           AuthService.currentUser.followingUserTopicList;
       if (followingUserTopicsList.containsKey(uid)) {
-        Map<String, dynamic> follow = followingUserTopicsList[uid];
-        Map<String, int> followingTopics = follow["Following"];
-        Map<String, int> notFollowingTopics = follow["NotFollowing"];
+        Map<String, dynamic> follow =
+            Map<String, dynamic>.from(followingUserTopicsList[uid]);
+        Map<String, int> followingTopics =
+            Map<String, int>.from(follow["Following"]);
+        Map<String, int> notFollowingTopics =
+            Map<String, int>.from(follow["NotFollowing"]);
         for (String item in selectedTopics) {
           followingTopics[item] = 0;
           notFollowingTopics.remove(item);
@@ -265,8 +269,8 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
           followingTopics.remove(item);
         }
         Map<String, dynamic> notFollowingUserTopicsList = {
-          "Following": followingTopics,
-          "NotFollowing": notFollowingTopics
+          "Following": Map<String, int>.from(followingTopics),
+          "NotFollowing": Map<String, int>.from(notFollowingTopics)
         };
         Map<String, dynamic> temp = {
           uid: Map<String, dynamic>.from(notFollowingUserTopicsList)
@@ -376,16 +380,17 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
     );
     if (bio != null && bio != "") {
       return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      padding: EdgeInsets.all(8.0),
-      child: Text(
-        bio,
-        textAlign: TextAlign.center,
-        style: bioTextStyle,
-      ),
-    );
+        color: Theme.of(context).scaffoldBackgroundColor,
+        padding: EdgeInsets.all(8.0),
+        child: Text(
+          bio,
+          textAlign: TextAlign.center,
+          style: bioTextStyle,
+        ),
+      );
+    } else {
+      return Container(height: 0);
     }
-    else {return Container(height: 0);}
   }
 
   Widget _buildSeparator(Size screenSize) {
