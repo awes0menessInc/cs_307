@@ -23,7 +23,6 @@ class SettingsState extends State<Settings> {
   String _website;
   String _uid;
   List<String> _topics;
-  bool _emailIsPrivate;
 
   TextEditingController fnameController = new TextEditingController();
   TextEditingController lnameController = new TextEditingController();
@@ -33,6 +32,7 @@ class SettingsState extends State<Settings> {
   TextEditingController emailController = new TextEditingController();
   TextEditingController topicController = new TextEditingController();
   final GlobalKey<FormState> _editFormKey = GlobalKey<FormState>();
+  bool _emailIsPrivate;
 
   @override
   initState() {
@@ -40,45 +40,48 @@ class SettingsState extends State<Settings> {
     super.initState();
   }
 
-  Future _getUser() async {
-    await FirebaseAuth.instance.currentUser().then((currentuser) => {
-    Firestore.instance
-    .collection("users")
-    .document(currentuser.uid)
-    .get()
-    .then((DocumentSnapshot snapshot) => {
-          setState(() {
-            _firstName = snapshot["firstName"];
-            _lastName = snapshot["lastName"];
-            _email = snapshot["email"];
-            _uid = snapshot["uid"];
-            _emailIsPrivate = snapshot["emailIsPrivate"];
-            _topics = List.from(snapshot["topics"]);
-            if (snapshot.data.containsKey("uid")) {
-              _bio = snapshot["bio"];
-            }
-            if (snapshot.data.containsKey("website")) {
-              _website = snapshot["website"];
-            }
-            if (snapshot.data.containsKey("birthday")) {
-              _birthday = snapshot["birthday"];
-            }
-          })
-        })
-      }
-    );
-  }
+  // Future _getUser() async {
+  //   await FirebaseAuth.instance.currentUser().then((currentuser) => {
+  //   Firestore.instance
+  //   .collection("users")
+  //   .document(currentuser.uid)
+  //   .get()
+  //   .then((DocumentSnapshot snapshot) => {
+  //         setState(() {
+  //           _firstName = snapshot["firstName"];
+  //           _lastName = snapshot["lastName"];
+  //           _email = snapshot["email"];
+  //           _uid = snapshot["uid"];
+  //           _emailIsPrivate = snapshot["emailIsPrivate"];
+  //           print(_emailIsPrivate);
+  //           _topics = List.from(snapshot["topics"]);
+  //           if (snapshot.data.containsKey("uid")) {
+  //             _bio = snapshot["bio"];
+  //           }
+  //           if (snapshot.data.containsKey("website")) {
+  //             _website = snapshot["website"];
+  //           }
+  //           if (snapshot.data.containsKey("birthday")) {
+  //             _birthday = snapshot["birthday"];
+  //           }
+  //         })
+  //       })
+  //     }
+  //   );
+  // }
 
   void getUser() {
     _uid = AuthService.currentUser.uid;
     _firstName = AuthService.currentUser.firstName;
+    print('from the database: ' + _firstName);
     _lastName = AuthService.currentUser.lastName;
     _email = AuthService.currentUser.email;
     _bio = AuthService.currentUser.bio;
     _website = AuthService.currentUser.website;
     _birthday = AuthService.currentUser.birthday;
     _topics = AuthService.currentUser.topicsList;
-    // _emailIsPrivate = AuthService.currentUser.emailIsPrivate;
+    _emailIsPrivate = AuthService.currentUser.emailIsPrivate;
+    print('from the database: ' + _emailIsPrivate.toString());
   }
 
   Future deleteUser() async {
@@ -175,9 +178,6 @@ class SettingsState extends State<Settings> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            // Container(
-            //   child: Row(
-            //   children: <Widget> [
                 TextFormField(
                 decoration:
                   InputDecoration(labelText: 'First Name', hintText: "John"),
@@ -191,17 +191,6 @@ class SettingsState extends State<Settings> {
                 }
                 return null;
               },
-            // ),
-            // Switch(
-            //   value: isSwitched,
-            //   onChanged: (value) {
-            //     setState(() {
-            //       isSwitched = value;
-            //     });
-            //   },
-            //   activeTrackColor: Colors.lightGreenAccent, 
-            //   activeColor: Colors.green,
-            // )])
             ),
             TextFormField(
               decoration:
@@ -275,6 +264,27 @@ class SettingsState extends State<Settings> {
                 }
               },
             ),
+             Container(
+              padding: EdgeInsets.symmetric(vertical: 10),
+              child: Row(
+                children: <Widget> [
+                  Text('Hide email from other users',
+                    style: TextStyle(fontSize: 16)),
+                  Expanded(
+                    child: Container(
+                    alignment: Alignment.centerRight,
+                    child: Switch(
+                    value: _emailIsPrivate,
+                    onChanged: (value) {
+                      AuthService.currentUser.emailIsPrivate = value;
+                      setState(() {
+                        _emailIsPrivate = value;
+                        print(_emailIsPrivate.toString());
+                      });
+                    },
+                    activeTrackColor: Color(0xff55B0BD), 
+                    activeColor: Color(0xff077188),
+             ))),])),
             Padding(
               padding: EdgeInsets.all(10.0),
               child: RaisedButton(
@@ -297,6 +307,7 @@ class SettingsState extends State<Settings> {
                         "website": websiteController.text,
                         "uid": _uid,
                         "topicsList": List.from(_topics),
+                        "emailIsPrivate": _emailIsPrivate,
                       });
                       // AuthService.updateUser(
                       //   fnameController.text,
@@ -311,6 +322,7 @@ class SettingsState extends State<Settings> {
                         content: Text('Profile changes saved successfully'),
                         duration: const Duration(seconds: 3),
                         action: SnackBarAction(
+                          textColor: Color(0xff55B0BD),
                           label: 'Dismiss',
                           onPressed: () {
                             Scaffold.of(context).hideCurrentSnackBar();

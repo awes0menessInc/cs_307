@@ -23,7 +23,7 @@ class ProfilePageState extends State<ProfilePage> {
   String firstName;
   String username;
   String lastName;
-  // String email;
+  String email;
   String bio;
 
   int followers;
@@ -75,7 +75,8 @@ class ProfilePageState extends State<ProfilePage> {
     uid = AuthService.currentUser.uid;
     firstName = AuthService.currentUser.firstName;
     lastName = AuthService.currentUser.lastName;
-    // email = AuthService.currentUser.email;
+    email = AuthService.currentUser.email;
+    print("email: " + email);
     username = AuthService.currentUser.username;
     bio = AuthService.currentUser.bio;
 
@@ -182,6 +183,22 @@ class ProfilePageState extends State<ProfilePage> {
         ));
   }
 
+  Widget _buildEmail(){
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10.0),
+      child: Text(
+        email,
+        style: TextStyle(
+          fontFamily: 'Montserrat',
+          color: Colors.black,
+          fontSize: 15.0,
+          fontWeight: FontWeight.w400,
+          fontStyle: FontStyle.italic,
+        ),
+      )
+    );
+  }
+
   Widget _buildStatItem(String label, String count) {
     TextStyle _statLabelTextStyle = TextStyle(
       fontFamily: 'Montserrat',
@@ -271,18 +288,18 @@ class ProfilePageState extends State<ProfilePage> {
     );
     if (bio != null && bio != "") {
       return Container(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        padding: EdgeInsets.all(8.0),
-        child: Text(
-          bio,
-          textAlign: TextAlign.center,
-          style: bioTextStyle,
-        ),
-      );
-    } else {
-      return Container(height: 0);
+      color: Theme.of(context).scaffoldBackgroundColor,
+      padding: EdgeInsets.all(8.0),
+      child: Text(
+        bio,
+        textAlign: TextAlign.center,
+        style: bioTextStyle,
+      ),
+    );
     }
+    else {return Container(height: 0);}
   }
+
 
   Widget _buildSeparator(Size screenSize) {
     return Container(
@@ -634,6 +651,7 @@ class ProfilePageState extends State<ProfilePage> {
                   _buildProfileImage(),
                   SizedBox(height: 10.0),
                   _buildFullName(context),
+                  _buildEmail(),
                   _buildStatContainer(context),
                   _buildBio(context),
                   // _buildDemoButton(),

@@ -22,7 +22,7 @@ class _TimelineState extends State<Timeline> {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      theme: new ThemeData(primaryColor: Colors.white),
+      theme: new ThemeData(primaryColor: Color(0xff053E42)),
       home: new ListPage(
         title: 'Timeline',
       ),
