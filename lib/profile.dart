@@ -436,73 +436,72 @@ class ProfilePageState extends State<ProfilePage> {
     // );
   }
 
-  Widget makeCard(BuildContext context, Post post) {
-    return Card(
-      elevation: 8.0,
-      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),),
-      margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Colors.white,
-        ),
-        child: makeListTile(context, post),
-      ),
-    );
-  }
-
   // Widget makeCard(BuildContext context, Post post) {
   //   return Card(
-  //     elevation: 8,
-  //     margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
-  //     child: Column(
-  //       mainAxisSize: MainAxisSize.min,
-  //       children: <Widget>[
-  //         SizedBox(
-  //           child: makeListTile(context, post),
-  //         ),
-  //         SizedBox(
-  //           height: 50,
-  //           child: ButtonBar(
-  //             // padding: EdgeInsets.only(top: 0),
-  //             children: <Widget>[
-  //               // FlatButton(
-  //               //   child: Text("View Tags",
-  //               //     style: TextStyle(
-  //               //       fontSize: 10,
-  //               //       color: Color.fromRGBO(5, 62, 66, 1.0),
-  //               //     )),
-  //               //   onPressed: () => showTags(context, post),
-  //               // ),
-  //               SizedBox(
-  //                 width: 25,
-  //                 child: IconButton(
-  //                   icon: Icon(Icons.assignment, size: 19),
-  //                   color: Color.fromRGBO(5, 62, 66, 1.0),
-  //                   onPressed: () => showTags(context, post),
-  //                 )
-  //               ),
-  //               SizedBox(
-  //                 width: 25,
-  //                 child: IconButton(
-  //                   icon: Icon(Icons.add_comment, size: 19),
-  //                   color: Color.fromRGBO(5, 62, 66, 1.0),
-  //                   onPressed: () => debugPrint("reblog"),
-  //                 )
-  //               ),
-  //               SizedBox(
-  //                 width: 40,
-  //                 child: IconButton(
-  //                   icon: Icon(Icons.favorite_border, size: 20),
-  //                   color: Color.fromRGBO(5, 62, 66, 1.0),
-  //                   onPressed: () => debugPrint('like'),
-  //                 )
-  //               ),
-  //             ],
-  //           )),
-  //         ],
-  //       ));
+  //     elevation: 8.0,
+  //     margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+  //     child: Container(
+  //       decoration: BoxDecoration(
+  //         borderRadius: BorderRadius.circular(10),
+  //         color: Colors.white,
+  //       ),
+  //       child: makeListTile(context, post),
+  //     ),
+  //   );
   // }
+
+  Widget makeCard(BuildContext context, Post post) {
+    return Card(
+      elevation: 8,
+      margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          SizedBox(
+            child: makeListTile(context, post),
+          ),
+          SizedBox(
+            height: 50,
+            child: ButtonBar(
+              // padding: EdgeInsets.only(top: 0),
+              children: <Widget>[
+                // FlatButton(
+                //   child: Text("View Tags",
+                //     style: TextStyle(
+                //       fontSize: 10,
+                //       color: Color.fromRGBO(5, 62, 66, 1.0),
+                //     )),
+                //   onPressed: () => showTags(context, post),
+                // ),
+                SizedBox(
+                  width: 25,
+                  child: IconButton(
+                    icon: Icon(Icons.assignment, size: 19),
+                    color: Color.fromRGBO(5, 62, 66, 1.0),
+                    onPressed: () => showTags(context, post),
+                  )
+                ),
+                SizedBox(
+                  width: 25,
+                  child: IconButton(
+                    icon: Icon(Icons.add_comment, size: 19),
+                    color: Color.fromRGBO(5, 62, 66, 1.0),
+                    onPressed: () => debugPrint("reblog"),
+                  )
+                ),
+                SizedBox(
+                  width: 40,
+                  child: IconButton(
+                    icon: Icon(Icons.favorite_border, size: 20),
+                    color: Color.fromRGBO(5, 62, 66, 1.0),
+                    onPressed: () => debugPrint('like'),
+                  )
+                ),
+              ],
+            )),
+          ],
+        ));
+  }
 
   Widget buildUserline(BuildContext context) {
     return Stack(
