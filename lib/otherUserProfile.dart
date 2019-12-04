@@ -70,14 +70,14 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
               List<String>.from(data.documents[0].data['postsList']);
           List<String> topList =
               List<String>.from(data.documents[0].data['topicsList']);
-          _posts = postsList.length - 1;
+          _posts = postsList.length;
           _topics = topList.length;
           followersList =
               List<String>.from(data.documents[0].data['followersList']);
           List<String> followList =
               List<String>.from(data.documents[0].data['followingList']);
           _topicsList = List<String>.from(data.documents[0].data['topicsList']);
-          followers = followersList.length - 1;
+          followers = followersList.length;
           following = followList.length - 1;
         });
       }
@@ -266,7 +266,7 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
     return newStat;
   }
 
-  Widget _buildStatContainer() {
+  Widget _buildStatContainer(context) {
     return Container(
       height: 60.0,
       margin: EdgeInsets.only(top: 8.0),
@@ -276,8 +276,18 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          _buildStatItem("Followers", formatStat(followers)),
-          _buildStatItem("Following", formatStat(following)),
+          InkWell(
+            child: _buildStatItem("Followers", followers.toString()),
+            onTap: () {
+              Navigator.pushNamed(context, "/followers");
+            },
+          ),
+          InkWell(
+            child: _buildStatItem("Following", following.toString()),
+            onTap: () {
+              Navigator.pushNamed(context, "/following");
+            },
+          ),
           _buildStatItem("Posts", _posts.toString()),
           // _buildStatItem("Topics", _topics.toString()),
         ],
@@ -727,7 +737,7 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
                   _buildProfileImage(),
                   SizedBox(height: 10.0),
                   _buildFullName(context),
-                  _buildStatContainer(),
+                  _buildStatContainer(context),
                   SizedBox(height: 10.0),
                   _buildTopicsText(),
                   _buildTopicsContainer(),

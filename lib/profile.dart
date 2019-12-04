@@ -82,9 +82,9 @@ class ProfilePageState extends State<ProfilePage> {
     followers = AuthService.currentUser.followers;
     following = AuthService.currentUser.following;
     _posts = AuthService.currentUser.posts;
-    followersNum = AuthService.currentUser.followersList.length - 1;
+    followersNum = AuthService.currentUser.followersList.length;
     followingNum = AuthService.currentUser.followingList.length - 1;
-    postNum = AuthService.currentUser.postsList.length - 1;
+    postNum = AuthService.currentUser.postsList.length;
 
     // topics = List.from(AuthService.currentUser.topicsList);
     // print(topics);
@@ -233,18 +233,18 @@ class ProfilePageState extends State<ProfilePage> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           InkWell(
-            child: _buildStatItem("Followers", formatStat(followersNum)),
+            child: _buildStatItem("Followers", followersNum.toString()),
             onTap: () {
               Navigator.pushNamed(context, "/followers");
             },
           ),
           InkWell(
-            child: _buildStatItem("Following", formatStat(followingNum)),
+            child: _buildStatItem("Following", followingNum.toString()),
             onTap: () {
               Navigator.pushNamed(context, "/following");
             },
           ),
-          _buildStatItem("Posts", _posts.toString()),
+          _buildStatItem("Posts", postNum.toString()),
         ],
       ),
     );
