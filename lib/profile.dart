@@ -10,6 +10,8 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'dart:async';
 
+import 'package:twistter/repost.dart';
+
 class ProfilePage extends StatefulWidget {
   String userPage;
   ProfilePage({Key key, this.userPage}) : super(key: key);
@@ -32,6 +34,7 @@ class ProfilePageState extends State<ProfilePage> {
   // int _topics = 333;
 
   // List<String> postsList;
+  List<String> topics;
   List<Post> posts = [];
   int followersNum;
   int followingNum;
@@ -390,40 +393,13 @@ class ProfilePageState extends State<ProfilePage> {
     return posts;
   }
 
-  Widget _makeListTile(BuildContext context) {
-    return ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-      leading: Container(
-        padding: EdgeInsets.only(right: 5.0),
-        child: Icon(Icons.account_circle,
-            size: 45.0, color: Color.fromRGBO(5, 62, 66, 1.0)),
-      ),
-      title: Text(
-        "BoilerMaker",
-        style: TextStyle(
-            color: Color.fromRGBO(7, 113, 136, 1.0),
-            fontWeight: FontWeight.bold,
-            fontSize: 12),
-      ),
-      subtitle: Text(
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-          style: TextStyle(fontSize: 11)),
-      trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Icon(Icons.favorite, size: 20.0),
-            Icon(Icons.add_comment, size: 20.0)
-          ]),
-    );
-  }
-
   Widget makeBody(BuildContext context, List<DocumentSnapshot> snap) {
     posts = getPosts(snap);
-
     List<Widget> cards = List();
+    int index = 0;
     posts.forEach((post) {
-      cards.add(makeCard(context, post));
+      cards.add(makeCard(context, post, index));
+      index++;
     });
     return Column(children: cards);
     // return Container(
@@ -450,7 +426,7 @@ class ProfilePageState extends State<ProfilePage> {
   //   );
   // }
 
-  Widget makeCard(BuildContext context, Post post) {
+  Widget makeCard(BuildContext context, Post post, int index) {
     return Card(
       elevation: 8,
       margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
@@ -463,16 +439,7 @@ class ProfilePageState extends State<ProfilePage> {
           SizedBox(
             height: 50,
             child: ButtonBar(
-              // padding: EdgeInsets.only(top: 0),
               children: <Widget>[
-                // FlatButton(
-                //   child: Text("View Tags",
-                //     style: TextStyle(
-                //       fontSize: 10,
-                //       color: Color.fromRGBO(5, 62, 66, 1.0),
-                //     )),
-                //   onPressed: () => showTags(context, post),
-                // ),
                 SizedBox(
                   width: 25,
                   child: IconButton(
@@ -486,7 +453,13 @@ class ProfilePageState extends State<ProfilePage> {
                   child: IconButton(
                     icon: Icon(Icons.add_comment, size: 19),
                     color: Color.fromRGBO(5, 62, 66, 1.0),
-                    onPressed: () => debugPrint("reblog"),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RePost(post: posts[index])),
+                      );
+                    },
                   )
                 ),
                 SizedBox(
@@ -530,51 +503,59 @@ class ProfilePageState extends State<ProfilePage> {
   }
 
   void showTags(BuildContext context, Post post) {
-    AlertDialog viewTags = AlertDialog(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(32.0))),
-      title: Text('Post Tags',
-          textAlign: TextAlign.center, style: TextStyle(fontFamily: 'Poppins')),
-      content: Container(
-        height: 50,
-        child: ListView(
-            padding: EdgeInsets.all(4),
-            children: post.topics
-                .map((data) => Padding(
-                    padding: EdgeInsets.all(4),
-                    child: Text(
-                      data = "#" + data,
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 14,
-                      ),
-                    )))
-                .toList()),
-      ),
-      actions: <Widget>[
-        Container(
-          padding: EdgeInsets.only(right: 75),
-          child:
-              ButtonBar(alignment: MainAxisAlignment.center, children: <Widget>[
-            SizedBox(
-              width: 100,
-              child: new RaisedButton(
-                  color: Color.fromRGBO(85, 176, 189, 1.0),
-                  child: Text('Close', style: TextStyle(color: Colors.white)),
-                  onPressed: () {
-                    Navigator.of(context, rootNavigator: true).pop('dialog');
-                  }),
-            ),
-          ]),
-        ),
-      ],
-    );
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return viewTags;
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Post Tags"),
+          content: Wrap(
+            children: _buildChoiceList(post, context),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
       },
     );
+  }
+
+  List<String> selectedTopics = List();
+  List<Widget> _buildChoiceList(Post post, BuildContext context) {
+    topics = List.from(post.topics);
+    print(topics);
+    topics.removeWhere((item) =>
+        item ==
+        ""); //removes any empty strings from the topic list before displaying
+    if (topics.length == 0) {
+      return null;
+    }
+    List<Widget> choices = List();
+    topics.forEach((item) {
+      choices.add(Container(
+        padding: const EdgeInsets.all(2.0),
+        child: Chip(
+          // child: ChoiceChip (
+          label: Text(item, style: TextStyle(color: Colors.black)),
+          // disabledColor: Color(0xff999999),
+          // backgroundColor: Color(0xff55b0bd),
+          // selected: selectedTopics.contains(item),
+          // selected: true,
+          // onSelected: (selected) {
+          //   setState(() {
+          //     selectedTopics.contains(item)
+          //         ? selectedTopics.remove(item)
+          //         : selectedTopics.add(item);
+          //   });
+          // },
+        ),
+      ));
+    });
+    return choices;
   }
 
   Widget makeListTile(BuildContext context, Post post) {

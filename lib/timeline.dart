@@ -136,7 +136,7 @@ class _ListPageState extends State<ListPage> {
           ),
           actions: <Widget>[
             FlatButton(
-              child: Text("Cancel"),
+              child: Text("OK"),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -296,9 +296,7 @@ class _ListPageState extends State<ListPage> {
             //ButtonBar
             SizedBox(
                 height: 50,
-                child: ButtonTheme.bar(
-                    //padding: EdgeInsets.only(top: 0),
-                    child: ButtonBar(
+                child: ButtonBar(
                   children: <Widget>[
                     FlatButton(
                       child: Text("View Tags",
@@ -338,7 +336,7 @@ class _ListPageState extends State<ListPage> {
                           },
                         )),
                   ],
-                ))),
+                )),
           ],
         ));
   }
