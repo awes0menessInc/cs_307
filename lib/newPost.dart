@@ -36,7 +36,8 @@ class _NewPostState extends State<NewPost> {
   List<String> selectedTopics = List();
   List<Widget> _buildChoiceList(List<String> topic) {
     topic.removeWhere((item) =>
-        item ==""); //removes any empty strings from the topic list before displaying
+        item ==
+        ""); //removes any empty strings from the topic list before displaying
     if (topic.length == 0) {
       return null;
     }
@@ -75,7 +76,7 @@ class _NewPostState extends State<NewPost> {
                         'content': postEditingController.text,
                         'likes': [],
                         'quotes': 0,
-                        'timestamp': DateTime.now(),
+                        'timestamp': DateTime.now().millisecondsSinceEpoch,
                         'topics': FieldValue.arrayUnion(List.from(
                             selectedTopics)), // fix topics list and ui part
                         'uid': uid,

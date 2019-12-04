@@ -106,10 +106,8 @@ class _ListPageState extends State<ListPage> {
       choices.add(Container(
         padding: const EdgeInsets.all(2.0),
         child: Chip(
-        // child: ChoiceChip (
-          label: Text(item,
-            style: TextStyle(color: Colors.black)
-          ),
+          // child: ChoiceChip (
+          label: Text(item, style: TextStyle(color: Colors.black)),
           // disabledColor: Color(0xff999999),
           // backgroundColor: Color(0xff55b0bd),
           // selected: selectedTopics.contains(item),
@@ -176,6 +174,9 @@ class _ListPageState extends State<ListPage> {
                     f['firstName'].toString() + " " + f['lastName'].toString(),
                 topics: List.from(f['topics']),
                 timestamp: f['timestamp'],
+                likes: List.from(f['likes']),
+                postID: f['postID'],
+                score: 0,
                 uid: f['uid']));
             break;
           }
@@ -266,7 +267,10 @@ class _ListPageState extends State<ListPage> {
       // trailing: Text(timeago
       //     .format(new DateTime.fromMillisecondsSinceEpoch(post.timestamp))
       //   ),
-      trailing: Text(timeago.format(DateTime(post.timestamp))),
+      trailing: Text(
+          timeago
+              .format(new DateTime.fromMillisecondsSinceEpoch(post.timestamp)),
+          style: TextStyle(fontSize: 11)),
     );
   }
 
