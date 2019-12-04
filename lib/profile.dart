@@ -44,6 +44,7 @@ class ProfilePageState extends State<ProfilePage> {
 
   bool pressed = false;
   bool isAccountOwner = true; // TODO: Connect to a function on the back end
+  bool emailPrivate;
 
   File _image;
 
@@ -91,6 +92,7 @@ class ProfilePageState extends State<ProfilePage> {
     followersNum = AuthService.currentUser.followersList.length;
     followingNum = AuthService.currentUser.followingList.length - 1;
     postNum = AuthService.currentUser.postsList.length;
+    emailPrivate = AuthService.currentUser.emailIsPrivate;
 
     // topics = List.from(AuthService.currentUser.topicsList);
 
@@ -188,6 +190,10 @@ class ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildEmail() {
+    if (emailPrivate) {
+      return Container(height: 0);
+    }
+    else {
     return Container(
         margin: EdgeInsets.symmetric(vertical: 10.0),
         child: Text(
@@ -200,6 +206,7 @@ class ProfilePageState extends State<ProfilePage> {
             fontStyle: FontStyle.italic,
           ),
         ));
+    }
   }
 
   Widget _buildStatItem(String label, String count) {

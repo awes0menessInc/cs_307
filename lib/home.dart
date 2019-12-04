@@ -98,7 +98,7 @@ class _HomeState extends State<Home> {
                             if (sortButton.icon.codePoint == 57746) {
                               setSort(true);
                               // sortText = new Text("Relevance");
-                              sortButton = Icon(Icons.show_chart);
+                              sortButton = Icon(Icons.trending_up);
                             } else {
                               setSort(false);
                               // sortText = new Text("Time");

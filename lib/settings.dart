@@ -234,15 +234,6 @@ class SettingsState extends State<Settings> {
                 AuthService.currentUser.birthday = value;
               },
             ),
-            // TextFormField(
-            //   decoration: InputDecoration(
-            //     labelText: 'Birthday', hintText: "10/18/2019"),
-            //   controller: bdayController,
-            //   onSaved: (value) {
-            //     AuthService.currentUser.birthday = value;
-            //   },
-            //   // validator: bdayValidator,
-            // ),
             TextFormField(
               decoration:
                   InputDecoration(labelText: 'Website', hintText: _website),
