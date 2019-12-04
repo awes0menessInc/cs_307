@@ -175,6 +175,7 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
   }
 
   List<String> selectedTopics = List();
+  List<String> notSelectedTopics = List();
   List<Widget> _buildChoiceList(List<String> topic) {
     if (topic != null && topic.length != 0) {
       topic.removeWhere((item) =>
@@ -186,6 +187,7 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
       }
       // topic.removeWhere((item) => item == "RT");
       List<Widget> choices = List();
+      Map<String, dynamic> followingTopics = new Map();
       topic.forEach((item) {
         choices.add(Container(
           padding: const EdgeInsets.all(2.0),
@@ -200,9 +202,35 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
             onSelected: (selected) {
               setState(() {
                 selectedTopics.contains(item)
-                    ? selectedTopics.remove(item)
-                    : selectedTopics.add(item);
+                  ? selectedTopics.remove(item)
+                  : selectedTopics.add(item);
+                notSelectedTopics.contains(item)
+                  ? notSelectedTopics.remove(item)
+                  : notSelectedTopics.add(item);
               });
+<<<<<<< HEAD
+              Map<String, dynamic> followingUserTopicsList = AuthService.currentUser.followingUserTopicList;
+              Map<String, int> followingTopics = {};
+              Map<String, int> notFollowingTopics = {};
+              for(String item in selectedTopics) {
+                followingTopics[item] = 0;
+                //notFollowingTopics.remove(item);
+              }
+              
+              for(String item in notSelectedTopics) {
+                notFollowingTopics[item] = 0;
+                //followingTopics.remove(item);
+              }
+              Map<String, dynamic> notFollowingUserTopicsList = {"Following": followingTopics, "NotFollowing": notFollowingTopics};
+              Map<String, dynamic> temp = {uid: Map<String, dynamic>.from(notFollowingUserTopicsList)};
+              followingUserTopicsList.addAll(temp);
+               Firestore.instance
+                  .collection("users")
+                  .document(AuthService.currentUser.uid)
+                  .updateData({
+                    "followingUserTopicList": Map<String, dynamic>.from(followingUserTopicsList)
+              });
+=======
               for (item in selectedTopics) {
                 Firestore.instance
                     .collection("users")
@@ -211,6 +239,7 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
                   // "followingUserTopicList":
                 });
               }
+>>>>>>> a64a448a4baae28c1dc8094ef99c8de5c1cd0c95
             },
           ),
         ));

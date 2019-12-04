@@ -110,7 +110,7 @@ class _SearchState extends State<Search> {
       ),
       actions: <Widget>[
         IconButton(
-          icon: Icon(Icons.search),
+          icon: Icon(Icons.search, color: Colors.black),
           onPressed: () {
             FocusScope.of(context).requestFocus(FocusNode());
           },
