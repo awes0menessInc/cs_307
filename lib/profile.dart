@@ -10,6 +10,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 import 'package:path/path.dart';
 import 'dart:async';
+import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:twistter/repost.dart';
 
@@ -396,6 +397,7 @@ class ProfilePageState extends State<ProfilePage> {
         uid: post['uid'],
         likes: List.from(post['likes']),
         postID: post['postID'],
+        timestamp: post['timestamp']
       ));
     });
     return posts;
@@ -409,7 +411,19 @@ class ProfilePageState extends State<ProfilePage> {
       cards.add(makeCard(context, post, index));
       index++;
     });
-    return Column(children: cards);
+    if (posts.length == 0) {
+      return _buildNoPosts(context);
+    }
+    else {
+      List<Widget> cards = List();
+      int index = 0;
+      posts.forEach((post) {
+        cards.add(makeCard(context, post, index));
+        index++;
+      });
+      return Column(children: cards);
+    }
+    
     // return Container(
     //   child: ListView.builder(
     //     scrollDirection: Axis.vertical,
@@ -493,7 +507,6 @@ class ProfilePageState extends State<ProfilePage> {
                       alignment: Alignment.bottomCenter,
                       child: LinearProgressIndicator());
                 default:
-                  // print("build userline");
                   return makeBody(context, snapshot.data.documents);
               }
             })
@@ -590,6 +603,11 @@ class ProfilePageState extends State<ProfilePage> {
         post.content,
         style: TextStyle(fontSize: 11),
       ),
+      trailing: Text(
+        timeago.format(new DateTime.fromMillisecondsSinceEpoch(post.timestamp)),
+        style: TextStyle(fontSize: 11)
+      )
+      
     );
   }
 
