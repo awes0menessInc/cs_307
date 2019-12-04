@@ -176,9 +176,6 @@ class _ListPageState extends State<ListPage> {
                     f['firstName'].toString() + " " + f['lastName'].toString(),
                 topics: List.from(f['topics']),
                 timestamp: f['timestamp'],
-                likes: List.from(f['likes']),
-                postID: f['postID'],
-                score: 0,
                 uid: f['uid']));
             break;
           }
@@ -266,10 +263,10 @@ class _ListPageState extends State<ListPage> {
           ),
         ],
       ),
-      trailing: Text(
-          timeago
-              .format(new DateTime.fromMillisecondsSinceEpoch(post.timestamp)),
-          style: TextStyle(fontSize: 11)),
+      // trailing: Text(timeago
+      //     .format(new DateTime.fromMillisecondsSinceEpoch(post.timestamp))
+      //   ),
+      trailing: Text(timeago.format(DateTime(post.timestamp))),
     );
   }
 

@@ -33,10 +33,12 @@ class ProfilePageState extends State<ProfilePage> {
   int _posts = 199;
   // int _topics = 333;
 
-  int postsList;
+  // List<String> postsList;
   List<Post> posts = [];
-  int followersList;
-  int followingList;
+  int followersNum;
+  int followingNum;
+  int postNum;
+
   bool pressed = false;
   bool isAccountOwner = true; // TODO: Connect to a function on the back end
 
@@ -82,11 +84,14 @@ class ProfilePageState extends State<ProfilePage> {
     followers = AuthService.currentUser.followers;
     following = AuthService.currentUser.following;
     _posts = AuthService.currentUser.posts;
+    followersNum = AuthService.currentUser.followersList.length - 1;
+    followingNum = AuthService.currentUser.followingList.length - 1;
+    postNum = AuthService.currentUser.postsList.length - 1;
+
     // topics = List.from(AuthService.currentUser.topicsList);
     // print(topics);
-    postsList = AuthService.currentUser.postsList.length - 1;
-    followingList = AuthService.currentUser.followingList.length - 1;
-    followersList = AuthService.currentUser.followersList.length - 1;
+
+    // postsList = AuthService.currentUser.postsList;
   }
 
   Future getImage() async {
@@ -229,9 +234,9 @@ class ProfilePageState extends State<ProfilePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          _buildStatItem("Followers", formatStat(followersList)),
-          _buildStatItem("Following", formatStat(followingList)),
-          _buildStatItem("Posts", postsList.toString()),
+          _buildStatItem("Followers", formatStat(followersNum)),
+          _buildStatItem("Following", formatStat(followingNum)),
+          _buildStatItem("Posts", postNum.toString()),
           // _buildStatItem("Topics", _topics.toString()),
         ],
       ),
