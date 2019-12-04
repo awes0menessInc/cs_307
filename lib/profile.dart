@@ -43,6 +43,7 @@ class ProfilePageState extends State<ProfilePage> {
 
   bool pressed = false;
   bool isAccountOwner = true; // TODO: Connect to a function on the back end
+  bool emailPrivate;
 
   File _image;
 
@@ -90,6 +91,7 @@ class ProfilePageState extends State<ProfilePage> {
     followersNum = AuthService.currentUser.followersList.length;
     followingNum = AuthService.currentUser.followingList.length - 1;
     postNum = AuthService.currentUser.postsList.length;
+    emailPrivate = AuthService.currentUser.emailIsPrivate;
 
     // topics = List.from(AuthService.currentUser.topicsList);
 
@@ -187,6 +189,10 @@ class ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildEmail() {
+    if (emailPrivate) {
+      return Container(height: 0);
+    }
+    else {
     return Container(
         margin: EdgeInsets.symmetric(vertical: 10.0),
         child: Text(
@@ -199,6 +205,7 @@ class ProfilePageState extends State<ProfilePage> {
             fontStyle: FontStyle.italic,
           ),
         ));
+    }
   }
 
   Widget _buildStatItem(String label, String count) {
@@ -217,14 +224,8 @@ class ProfilePageState extends State<ProfilePage> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text(
-          count,
-          style: _statCountTextStyle,
-        ),
-        Text(
-          label,
-          style: _statLabelTextStyle,
-        ),
+        Text(count, style: _statCountTextStyle),
+        Text(label, style: _statLabelTextStyle),
       ],
     );
   }
@@ -296,7 +297,7 @@ class ProfilePageState extends State<ProfilePage> {
       width: screenSize.width / 1.2,
       height: 2.0,
       color: Colors.black54,
-      // margin: EdgeInsets.only(top: 4.0),
+      margin: EdgeInsets.only(top: 4.0),
     );
   }
 
@@ -384,16 +385,10 @@ class ProfilePageState extends State<ProfilePage> {
   }
 
   Widget makeBody(BuildContext context, List<DocumentSnapshot> snap) {
-    posts = getPosts(snap);
-    List<Widget> cards = List();
-    int index = 0;
-    posts.forEach((post) {
-      cards.add(makeCard(context, post, index));
-      index++;
-    });
-    if (posts.length == 0) {
+    if (snap == null) {
       return _buildNoPosts(context);
     } else {
+      posts = getPosts(snap);
       List<Widget> cards = List();
       int index = 0;
       posts.forEach((post) {
@@ -406,73 +401,82 @@ class ProfilePageState extends State<ProfilePage> {
 
   Widget makeCard(BuildContext context, Post post, int index) {
     return Card(
-        elevation: 8,
-        margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            SizedBox(
-              child: makeListTile(context, post),
-            ),
-            SizedBox(
-                height: 70,
-                child: ButtonBar(
-                  children: <Widget>[
-                    SizedBox(
-                        width: 25,
-                        child: IconButton(
-                          icon: Icon(Icons.assignment, size: 19),
-                          color: Color.fromRGBO(5, 62, 66, 1.0),
-                          onPressed: () => showTags(context, post),
-                        )),
-                    SizedBox(
-                        width: 25,
-                        child: IconButton(
-                          icon: Icon(Icons.add_comment, size: 19),
-                          color: Color.fromRGBO(5, 62, 66, 1.0),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      RePost(post: posts[index])),
-                            );
-                          },
-                        )),
-                    SizedBox(
-                        width: 40,
-                        child: IconButton(
-                          icon: Icon(Icons.favorite_border, size: 20),
-                          color: Color.fromRGBO(5, 62, 66, 1.0),
-                          onPressed: () => debugPrint('like'),
-                        )),
-                  ],
+      elevation: 8,
+      margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          SizedBox(child: makeListTile(context, post)),
+          SizedBox(
+            height: 70,
+            child: ButtonBar(
+              children: <Widget>[
+                SizedBox(
+                  width: 25,
+                  child: IconButton(
+                    icon: Icon(Icons.assignment, size: 19),
+                    color: Color.fromRGBO(5, 62, 66, 1.0),
+                    onPressed: () => showTags(context, post),
                 )),
-          ],
-        ));
+                SizedBox(
+                  width: 25,
+                  child: IconButton(
+                    icon: Icon(Icons.add_comment, size: 19),
+                    color: Color.fromRGBO(5, 62, 66, 1.0),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RePost(post: posts[index])),
+                    );}
+                )),
+                SizedBox(
+                  width: 40,
+                  child: IconButton(
+                    icon: post.likes.contains(AuthService.currentUser.uid)
+                        ? _iconPressed
+                        : _icon,
+                    color:
+                        post.likes.contains(AuthService.currentUser.uid)
+                            ? _iconColorPressed
+                            : _iconColor,
+                    onPressed: () {
+                      setState(() {
+                        like(post, AuthService.currentUser.uid);
+                      });
+                    },
+                  )),
+              ],
+            )),
+        ],
+      ));
   }
 
   Widget buildUserline(BuildContext context) {
     return Stack(
       children: <Widget>[
         StreamBuilder<QuerySnapshot>(
-            stream: Firestore.instance
-                .collection('posts')
-                .orderBy('timestamp', descending: true)
-                .where('uid', isEqualTo: uid)
-                .snapshots(),
-            builder:
-                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (snapshot.hasError) return Text('Error');
-              switch (snapshot.connectionState) {
-                case ConnectionState.waiting:
-                  return Container(
-                      alignment: Alignment.bottomCenter,
-                      child: LinearProgressIndicator());
-                default:
-                  return makeBody(context, snapshot.data.documents);
-              }
-            })
+          stream: Firestore.instance
+            .collection('posts')
+            .orderBy('timestamp', descending: true)
+            .where('uid', isEqualTo: uid)
+            .snapshots(),
+          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) return Text('Error');
+            if (snapshot.data == null) {
+              return makeBody(context, null);
+            }
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+                return Container(
+                  alignment: Alignment.bottomCenter,
+                  child: LinearProgressIndicator()
+                );
+              default:
+                return makeBody(context, snapshot.data.documents);
+            }
+          }
+        )
       ],
     );
   }
@@ -535,47 +539,47 @@ class ProfilePageState extends State<ProfilePage> {
 
   Widget makeListTile(BuildContext context, Post post) {
     return ListTile(
-        contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-        leading: Container(
-            padding: EdgeInsets.only(right: 5.0),
-            child: Icon(
-              Icons.account_circle,
-              size: 45.0,
-              color: Color.fromRGBO(5, 62, 66, 1.0),
-            )),
-        title: Container(
-            padding: EdgeInsets.all(0),
-            child: InkWell(
-                // onTap: () {
-                //   print("tap!");
-                //   var route = MaterialPageRoute(
-                //       builder: (BuildContext context) =>
-                //           ProfilePage(userPage: post.uid));
-                //   Navigator.of(context).push(route);
-                // },
-                child: Text(
-              post.fullName,
-              style: TextStyle(
-                color: Color.fromRGBO(7, 113, 136, 1.0),
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-                fontFamily: 'Poppins',
-              ),
-            ))),
-        subtitle: Text(
-          post.content,
-          style: TextStyle(fontSize: 11),
-        ),
-        trailing: Text(
-            timeago.format(
-                new DateTime.fromMillisecondsSinceEpoch(post.timestamp)),
-            style: TextStyle(fontSize: 11)));
+      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+      leading: Container(
+          padding: EdgeInsets.only(right: 5.0),
+          child: Icon(
+            Icons.account_circle,
+            size: 45.0,
+            color: Color.fromRGBO(5, 62, 66, 1.0),
+          )),
+      title: Container(
+          padding: EdgeInsets.all(0),
+          child: InkWell(
+              // onTap: () {
+              //   print("tap!");
+              //   var route = MaterialPageRoute(
+              //       builder: (BuildContext context) =>
+              //           ProfilePage(userPage: post.uid));
+              //   Navigator.of(context).push(route);
+              // },
+              child: Text(
+            post.fullName,
+            style: TextStyle(
+              color: Color.fromRGBO(7, 113, 136, 1.0),
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+              fontFamily: 'Poppins',
+            ),
+          ))),
+      subtitle: Text(
+        post.content,
+        style: TextStyle(fontSize: 11),
+      ),
+      trailing: Text(
+        timeago.format(DateTime.fromMillisecondsSinceEpoch(post.timestamp)),
+        style: TextStyle(fontSize: 11)
+      )
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-
     return SingleChildScrollView(
       child: SafeArea(
         child: Column(
@@ -587,44 +591,12 @@ class ProfilePageState extends State<ProfilePage> {
             _buildEmail(),
             _buildStatContainer(context),
             _buildBio(context),
-            // _buildDemoButton(),
             _buildButtons(context),
-            _buildSeparator(screenSize),
-            // _buildNoPosts(context),
-            // _makeBody(context),
+            // _buildSeparator(screenSize),
             buildUserline(context),
           ],
         ),
       ),
     );
-
-    // return Scaffold(
-    //   body: Stack(
-    //     children: <Widget>[
-    //       // _buildCoverImage(screenSize),
-    //       SafeArea(
-    //         child: SingleChildScrollView(
-    //           child: Column(
-    //             children: <Widget>[
-    //               SizedBox(height: screenSize.height / 20),
-    //               _buildProfileImage(),
-    //               SizedBox(height: 10.0),
-    //               _buildFullName(context),
-    //               _buildEmail(),
-    //               _buildStatContainer(context),
-    //               _buildBio(context),
-    //               // _buildDemoButton(),
-    //               _buildButtons(context),
-    //               _buildSeparator(screenSize),
-    //               // _buildNoPosts(context),
-    //               // _makeBody(context),
-    //               // buildUserline(context),
-    //             ],
-    //           ),
-    //         ),
-    //       ),
-    //     ],
-    //   ),
-    // );
   }
 }

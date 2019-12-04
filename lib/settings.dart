@@ -123,17 +123,6 @@ class SettingsState extends State<Settings> {
     }
   }
 
-  String bdayValidator(String value) {
-    Pattern bdayPattern =
-        r'(0[1-9]|1[012])/(0[1-9]|[12][0-9]|3[01])/(19|20)\d\d';
-    RegExp bdayRegex = new RegExp(bdayPattern);
-    if (!bdayRegex.hasMatch(value)) {
-      return "Enter a valid date";
-    } else {
-      return null;
-    }
-  }
-
   void buildDeleteDialog() {
     showDialog(
       context: context,
@@ -165,6 +154,13 @@ class SettingsState extends State<Settings> {
   }
 
   Widget buildSettingsForm() {
+    fnameController.text = _firstName;
+    lnameController.text = _lastName;
+    emailController.text = _email;
+    bioController.text = _bio;
+    bdayController.text = _birthday.toString();
+    websiteController.text = _website;
+
     return Form(
         key: _editFormKey,
         child: Column(
@@ -175,7 +171,7 @@ class SettingsState extends State<Settings> {
                   labelText: 'First Name', hintText: _firstName),
               controller: fnameController,
               onSaved: (value) {
-                fnameController.text = value;
+                // fnameController.text = value;
                 AuthService.currentUser.firstName = value;
               },
               validator: (value) {
@@ -190,7 +186,7 @@ class SettingsState extends State<Settings> {
                   InputDecoration(labelText: 'Last Name', hintText: _lastName),
               controller: lnameController,
               onSaved: (value) {
-                lnameController.text = value;
+                // lnameController.text = value;
                 AuthService.currentUser.lastName = value;
               },
               validator: (value) {
@@ -205,7 +201,7 @@ class SettingsState extends State<Settings> {
                     InputDecoration(labelText: 'Email', hintText: _email),
                 controller: emailController,
                 onSaved: (value) {
-                  emailController.text = value;
+                  // emailController.text = value;
                   AuthService.currentUser.email = value;
                 },
                 validator: emailValidator),
@@ -213,16 +209,14 @@ class SettingsState extends State<Settings> {
               decoration: InputDecoration(labelText: 'Bio', hintText: _bio),
               controller: bioController,
               onSaved: (value) {
-                bioController.text = value;
+                // bioController.text = value;
                 AuthService.currentUser.bio = value;
               },
             ),
             DateTimeField(
               controller: bdayController,
               format: DateFormat("yyyy-MM-dd"),
-              decoration: InputDecoration(
-                  labelText: 'Birthday',
-                  hintText: _birthday.toUtc().toString()),
+              decoration: InputDecoration(labelText: 'Birthday',),
               onShowPicker: (context, currentValue) {
                 return showDatePicker(
                     context: context,
@@ -234,21 +228,12 @@ class SettingsState extends State<Settings> {
                 AuthService.currentUser.birthday = value;
               },
             ),
-            // TextFormField(
-            //   decoration: InputDecoration(
-            //     labelText: 'Birthday', hintText: "10/18/2019"),
-            //   controller: bdayController,
-            //   onSaved: (value) {
-            //     AuthService.currentUser.birthday = value;
-            //   },
-            //   // validator: bdayValidator,
-            // ),
             TextFormField(
               decoration:
                   InputDecoration(labelText: 'Website', hintText: _website),
               controller: websiteController,
               onSaved: (value) {
-                websiteController.text = value;
+                // websiteController.text = value;
                 AuthService.currentUser.website = value;
               },
             ),
@@ -257,10 +242,15 @@ class SettingsState extends State<Settings> {
                   labelText: 'Add a Topic', hintText: _topics.toString()),
               controller: topicController,
               validator: (value) {
-                if (value == null || value.isEmpty || _topics.contains(value)) {
-                  return "Topic not valid.";
+                if (_topics.contains(value)) {
+                  return "Topic already exists";
                 }
-                return null;
+                else if (value.trim().isEmpty) {
+                  return "Invalid topic";
+                }
+                else {
+                  return null;
+                }
               },
               onSaved: (value) {
                 _topics.add(value);
@@ -372,6 +362,5 @@ class SettingsState extends State<Settings> {
             child: SingleChildScrollView(
               child: buildSettingsForm(),
             )));
-    // child: Column(children: <Widget>[buildSettingsForm()]))));
   }
 }
