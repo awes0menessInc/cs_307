@@ -131,16 +131,17 @@ class _HomeState extends State<Home> {
               },
             ),
             bottomNavigationBar: TabBar(
+              
                 tabs: [
-                  Tab(
-                    icon: Icon(
-                      Icons.home,
-                    ),
-                    text: "Home",
-                  ),
-                  Tab(icon: Icon(Icons.search), text: "Search"),
-                  Tab(icon: Icon(Icons.person), text: "Profile"),
-                  Tab(icon: Icon(Icons.settings), text: "Settings"),
+                  // Tab(icon: Icon(Icons.home),text: "Home"),
+                  // Tab(icon: Icon(Icons.search), text: "Search"),
+                  // Tab(icon: Icon(Icons.person), text: "Profile"),
+                  // Tab(icon: Icon(Icons.settings), text: "Settings"),
+
+                  Tab(icon: Icon(Icons.home)),
+                  Tab(icon: Icon(Icons.search)),
+                  Tab(icon: Icon(Icons.person)),
+                  Tab(icon: Icon(Icons.settings)),
                 ],
                 unselectedLabelColor: Color(0xff999999),
                 labelColor: Color(0xff55b0bd),
