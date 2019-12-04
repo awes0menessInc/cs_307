@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:twistter/auth_service.dart';
+import 'package:twistter/metrics.dart';
 import 'package:twistter/post.dart';
 
 import 'package:image_picker/image_picker.dart';
@@ -9,6 +10,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 import 'package:path/path.dart';
 import 'dart:async';
+import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:twistter/repost.dart';
 
@@ -45,6 +47,11 @@ class ProfilePageState extends State<ProfilePage> {
 
   File _image;
 
+  Color _iconColor = Color.fromRGBO(5, 62, 66, 1.0);
+  Color _iconColorPressed = Color.fromRGBO(214, 59, 47, 1.0);
+  Icon _icon = Icon(Icons.favorite_border, size: 20);
+  Icon _iconPressed = Icon(Icons.favorite, size: 20);
+
   @override
   initState() {
     getUserInfo();
@@ -71,15 +78,10 @@ class ProfilePageState extends State<ProfilePage> {
   // }
 
   void getUserInfo() {
-    // if (widget.userPage == null) {
-    //   widget.userPage = AuthService.getUserInfo().uid;
-    // }
-
     uid = AuthService.currentUser.uid;
     firstName = AuthService.currentUser.firstName;
     lastName = AuthService.currentUser.lastName;
     email = AuthService.currentUser.email;
-    print("email: " + email);
     username = AuthService.currentUser.username;
     bio = AuthService.currentUser.bio;
 
@@ -91,7 +93,6 @@ class ProfilePageState extends State<ProfilePage> {
     postNum = AuthService.currentUser.postsList.length;
 
     // topics = List.from(AuthService.currentUser.topicsList);
-    // print(topics);
 
     // postsList = AuthService.currentUser.postsList;
   }
@@ -269,18 +270,6 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Widget _buildDemoButton() {
-  //   return FlatButton(
-  //       color: Colors.white,
-  //       onPressed: () {
-  //         setState(() {
-  //           isAccountOwner = !isAccountOwner;
-  //         });
-  //       },
-  //       child: Text('For Demo Purposes Only',
-  //           style: TextStyle(color: Colors.red)));
-  // }
-
   Widget _buildBio(BuildContext context) {
     TextStyle bioTextStyle = TextStyle(
       fontFamily: 'Spectral',
@@ -387,7 +376,10 @@ class ProfilePageState extends State<ProfilePage> {
           fullName:
               post['firstName'].toString() + " " + post['lastName'].toString(),
           topics: List.from(post['topics']),
-          uid: post['uid']));
+          uid: post['uid'],
+          likes: List.from(post['likes']),
+          postID: post['postID'],
+          timestamp: post['timestamp']));
     });
     return posts;
   }
@@ -400,30 +392,18 @@ class ProfilePageState extends State<ProfilePage> {
       cards.add(makeCard(context, post, index));
       index++;
     });
-    return Column(children: cards);
-    // return Container(
-    //   child: ListView.builder(
-    //     scrollDirection: Axis.vertical,
-    //     shrinkWrap: true,
-    //     itemBuilder: (content, index) => makeCard(context, posts[index]),
-    //     itemCount: posts.length,
-    //   )
-    // );
+    if (posts.length == 0) {
+      return _buildNoPosts(context);
+    } else {
+      List<Widget> cards = List();
+      int index = 0;
+      posts.forEach((post) {
+        cards.add(makeCard(context, post, index));
+        index++;
+      });
+      return Column(children: cards);
+    }
   }
-
-  // Widget makeCard(BuildContext context, Post post) {
-  //   return Card(
-  //     elevation: 8.0,
-  //     margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-  //     child: Container(
-  //       decoration: BoxDecoration(
-  //         borderRadius: BorderRadius.circular(10),
-  //         color: Colors.white,
-  //       ),
-  //       child: makeListTile(context, post),
-  //     ),
-  //   );
-  // }
 
   Widget makeCard(BuildContext context, Post post, int index) {
     return Card(
@@ -491,7 +471,6 @@ class ProfilePageState extends State<ProfilePage> {
                       alignment: Alignment.bottomCenter,
                       child: LinearProgressIndicator());
                 default:
-                  // print("build userline");
                   return makeBody(context, snapshot.data.documents);
               }
             })
@@ -557,38 +536,41 @@ class ProfilePageState extends State<ProfilePage> {
 
   Widget makeListTile(BuildContext context, Post post) {
     return ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-      leading: Container(
-          padding: EdgeInsets.only(right: 5.0),
-          child: Icon(
-            Icons.account_circle,
-            size: 45.0,
-            color: Color.fromRGBO(5, 62, 66, 1.0),
-          )),
-      title: Container(
-          padding: EdgeInsets.all(0),
-          child: InkWell(
-              onTap: () {
-                print("tap!");
-                var route = MaterialPageRoute(
-                    builder: (BuildContext context) =>
-                        ProfilePage(userPage: post.uid));
-                Navigator.of(context).push(route);
-              },
-              child: Text(
-                post.fullName,
-                style: TextStyle(
-                  color: Color.fromRGBO(7, 113, 136, 1.0),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                  fontFamily: 'Poppins',
-                ),
-              ))),
-      subtitle: Text(
-        post.content,
-        style: TextStyle(fontSize: 11),
-      ),
-    );
+        contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+        leading: Container(
+            padding: EdgeInsets.only(right: 5.0),
+            child: Icon(
+              Icons.account_circle,
+              size: 45.0,
+              color: Color.fromRGBO(5, 62, 66, 1.0),
+            )),
+        title: Container(
+            padding: EdgeInsets.all(0),
+            child: InkWell(
+                // onTap: () {
+                //   print("tap!");
+                //   var route = MaterialPageRoute(
+                //       builder: (BuildContext context) =>
+                //           ProfilePage(userPage: post.uid));
+                //   Navigator.of(context).push(route);
+                // },
+                child: Text(
+              post.fullName,
+              style: TextStyle(
+                color: Color.fromRGBO(7, 113, 136, 1.0),
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+                fontFamily: 'Poppins',
+              ),
+            ))),
+        subtitle: Text(
+          post.content,
+          style: TextStyle(fontSize: 11),
+        ),
+        trailing: Text(
+            timeago.format(
+                new DateTime.fromMillisecondsSinceEpoch(post.timestamp)),
+            style: TextStyle(fontSize: 11)));
   }
 
   @override
