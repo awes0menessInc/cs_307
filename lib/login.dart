@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:twistter/auth_service.dart';
 import 'package:twistter/home.dart';
 
-
 class Login extends StatefulWidget {
   Login({Key key}) : super(key: key);
 
@@ -29,7 +28,7 @@ class _LoginState extends State<Login> {
 
   String emailValidator(String value) {
     Pattern pattern =
-      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regex = new RegExp(pattern);
     if (!regex.hasMatch(value.trim())) {
       return 'Email format is invalid';
@@ -55,16 +54,15 @@ class _LoginState extends State<Login> {
           content: Text(message),
           actions: <Widget>[
             FlatButton(
-              child: Text('Close'),
-              onPressed: () {
-                // loading = false;
-                setState(() {
-                  loading = !loading;
-                });
-                pwdInputController.clear();
-                Navigator.of(context).pop();
-              }
-            )
+                child: Text('Close'),
+                onPressed: () {
+                  // loading = false;
+                  setState(() {
+                    loading = !loading;
+                  });
+                  pwdInputController.clear();
+                  Navigator.of(context).pop();
+                })
           ],
         );
       },
@@ -74,148 +72,116 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Login"),
-      ),
-      body: Container(
-        padding: const EdgeInsets.all(20.0),
-        child: SingleChildScrollView(
-          child: Form(
-            key: _loginFormKey,
-            child: Column(
-              children: <Widget>[
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Email', hintText: "john.doe@gmail.com"),
+        appBar: AppBar(
+          title: Text("Login"),
+        ),
+        body: Container(
+            padding: const EdgeInsets.all(20.0),
+            child: SingleChildScrollView(
+                child: Form(
+              key: _loginFormKey,
+              child: Column(
+                children: <Widget>[
+                  TextFormField(
+                    decoration: InputDecoration(
+                        labelText: 'Email', hintText: "john.doe@gmail.com"),
                     controller: emailInputController,
                     keyboardType: TextInputType.emailAddress,
                     validator: emailValidator,
-                ),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Password', hintText: "********"),
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(
+                        labelText: 'Password', hintText: "********"),
                     controller: pwdInputController,
                     obscureText: true,
                     validator: pwdValidator,
-                ),
-                FlatButton(
-                  child: Text(
-                    "Forgot password?",
-                    style: TextStyle(
-                      color: Colors.lightBlue,
-                      fontSize: 12,
-                    )
                   ),
-                  onPressed: (){
-                    FirebaseAuth.instance.sendPasswordResetEmail(email: emailInputController.text)
-                    .then((currentUser) => showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text("Email Sent!"),
-                          content: Text("Please reset your password using the link sent to your email address"),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text("Close"),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            )
-                          ],
-                        );
-                        })).catchError((err) => showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text("Error"),
-                              content: Text("An account doesn't exist with this email address"),
-                              actions: <Widget>[
-                                FlatButton(
-                                  child: Text("Close"),
-                                  onPressed: () {
-                                    emailInputController.clear();
-                                    Navigator.of(context).pop();
-                                  },
-                                )
-                              ],
-                            );
-                          }));
-                  }
-                ),
-                RaisedButton(
-                  child: Text("Login"),
-                  color: Theme.of(context).primaryColor,
-                  textColor: Colors.black,
-                  onPressed: () async {
-                    if (_loginFormKey.currentState.validate()) {
-                      setState(() {
-                        loading = !loading;
-                      });
-                      try {
-                        FirebaseUser result = 
-                        await Provider.of<AuthService>(context).loginUser(
+                  FlatButton(
+                      child: Text("Forgot password?",
+                          style: TextStyle(
+                            color: Colors.lightBlue,
+                            fontSize: 12,
+                          )),
+                      onPressed: () {
+                        FirebaseAuth.instance
+                            .sendPasswordResetEmail(
+                                email: emailInputController.text)
+                            .then((currentUser) => showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("Email Sent!"),
+                                    content: Text(
+                                        "Please reset your password using the link sent to your email address"),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        child: Text("Close"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      )
+                                    ],
+                                  );
+                                }))
+                            .catchError((err) => showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("Error"),
+                                    content: Text(
+                                        "An account doesn't exist with this email address"),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        child: Text("Close"),
+                                        onPressed: () {
+                                          emailInputController.clear();
+                                          Navigator.of(context).pop();
+                                        },
+                                      )
+                                    ],
+                                  );
+                                }));
+                      }),
+                  RaisedButton(
+                    child: Text("Login"),
+                    color: Theme.of(context).primaryColor,
+                    textColor: Colors.black,
+                    onPressed: () async {
+                      if (_loginFormKey.currentState.validate()) {
+                        setState(() {
+                          loading = !loading;
+                        });
+                        try {
+                          FirebaseUser result =
+                              await Provider.of<AuthService>(context).loginUser(
                                   email: emailInputController.text,
                                   password: pwdInputController.text);
                           // print(result);
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => Home())
-                          );
+                          Navigator.pushReplacement(context,
+                              MaterialPageRoute(builder: (context) => Home()));
                         } on AuthException catch (error) {
-                          return buildErrorDialog(context, "Incorrect email address or password");
+                          return buildErrorDialog(
+                              context, "Incorrect email address or password");
                         } on Exception catch (error) {
                           return buildErrorDialog(context, error.toString());
                         }
-                    }
-
-                    // if (_loginFormKey.currentState.validate()) {
-                    //   FirebaseAuth.instance.signInWithEmailAndPassword(
-                    //     email: emailInputController.text,
-                    //     password: pwdInputController.text)
-                    //     .catchError((err) => showDialog(
-                    //       context: context,
-                    //       builder: (BuildContext context) {
-                    //         return AlertDialog(
-                    //           title: Text("Error"),
-                    //           content: Text("Incorrect email address or password"),
-                    //           actions: <Widget>[
-                    //             FlatButton(
-                    //               child: Text("Close"),
-                    //               onPressed: () {
-                    //                 loading = false;
-                    //                 pwdInputController.clear();
-                    //                 Navigator.of(context).pop();
-                    //               },
-                    //             )
-                    //           ],
-                    //         );
-                    //       }))
-                    //     .then((currentUser) => Firestore.instance.collection("users")
-                    //     .document(currentUser.uid).get()
-                    //     .then((DocumentSnapshot result) => Navigator.pushReplacement(
-                    //       context,
-                    //       MaterialPageRoute(
-                    //         builder: (context) => Home(uid: currentUser.uid,)
-                    //         )
-                    //       )
-                    //     ).catchError((err) => print(err))
-                    //   ).catchError((err) => print(err));
-                    // }
-                  },
-                ),
-                Text("Don't have an account?"),
-                RaisedButton(
-                  child: Text("Register"),
-                  onPressed: () {
-                    Navigator.pushNamed(context, "/register");
-                  },
-                ),
-                Container(
-                  alignment: Alignment.bottomCenter,
-                  child: loading ? LinearProgressIndicator() : Container(height:0)
-                )
-              ],
-            ),
-        ))));
+                      }
+                    },
+                  ),
+                  Text("Don't have an account?"),
+                  RaisedButton(
+                    child: Text("Register"),
+                    onPressed: () {
+                      Navigator.pushNamed(context, "/register");
+                    },
+                  ),
+                  Container(
+                      alignment: Alignment.bottomCenter,
+                      child: loading
+                          ? LinearProgressIndicator()
+                          : Container(height: 0))
+                ],
+              ),
+            ))));
   }
 }

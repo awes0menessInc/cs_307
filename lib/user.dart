@@ -13,6 +13,7 @@ class User {
   int following;
   int posts;
   int topics;
+  int score;
 
   List<String> followersList;
   List<String> followingList;
@@ -38,5 +39,6 @@ class User {
     this.postsList,
     this.topicsList,
     this.followingUserTopicList,
+    this.score,
   });
 }

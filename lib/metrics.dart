@@ -1,8 +1,7 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:twistter/post.dart';
+import 'package:twistter/user.dart';
 import 'package:twistter/auth_service.dart';
 
 bool sortFlag = false;
@@ -80,4 +79,56 @@ List<Post> sortPosts(List<Post> posts) {
   posts.sort((b, a) => a.score.compareTo(b.score));
 
   return posts;
+}
+
+List<User> sortFollowing(List<User> users) {
+  if (!sortFlag) return users;
+
+  Map<String, int> userScore = {};
+
+  //Fetch latest user
+  AuthService.initUser(AuthService.currentUser.uid);
+
+  // Update score
+  AuthService.currentUser.followingUserTopicList.forEach((user, userMap) {
+    userMap["Following"].forEach((topic, score) {
+      userScore.update(user, (dynamic val) => val + score,
+          ifAbsent: () => score);
+    });
+  });
+
+  // print(users[0].score);
+  users.forEach((user) {
+    user.score = userScore[user.uid];
+  });
+
+  users.sort((b, a) => a.score.compareTo(b.score));
+
+  return users;
+}
+
+List<User> sortFollowers(List<User> users) {
+  // if (!sortFlag) return users;
+
+  // Map<String, int> userScore = {};
+
+  // //Fetch latest user
+  // AuthService.initUser(AuthService.currentUser.uid);
+
+  // // Update score
+  // AuthService.currentUser.followingUserTopicList.forEach((user, userMap) {
+  //   userMap["Following"].forEach((topic, score) {
+  //     userScore.update(user, (dynamic val) => val + score,
+  //         ifAbsent: () => score);
+  //   });
+  // });
+
+  // // print(users[0].score);
+  // users.forEach((user) {
+  //   user.score = userScore[user.uid];
+  // });
+
+  // users.sort((b, a) => a.score.compareTo(b.score));
+
+  return users;
 }

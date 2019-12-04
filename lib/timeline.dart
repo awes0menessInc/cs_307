@@ -145,7 +145,6 @@ class _ListPageState extends State<ListPage> {
 
   List<Post> getPosts(List<DocumentSnapshot> snap) {
     List<Post> postsList = [];
-    List<dynamic> tags = [];
     snap.forEach((f) {
       if (followingUserTopic != null &&
           followingUserTopic.containsKey(f["uid"])) {
@@ -361,7 +360,8 @@ class _ListPageState extends State<ListPage> {
                       .snapshots(),
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {
-                    if (snapshot.hasError) return new Text('Error');
+                    if (snapshot.hasError)
+                      return new Text('Error in timeline StreamBuilder');
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
                         return Container(

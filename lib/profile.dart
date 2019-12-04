@@ -116,7 +116,7 @@ class ProfilePageState extends State<ProfilePage> {
             padding: EdgeInsets.only(left: 47),
             child: CircleAvatar(
               radius: 75,
-              backgroundColor: Color(0xff476cfb),
+              backgroundColor: Colors.white,
               child: ClipOval(
                 child: new SizedBox(
                   width: 140.0,
@@ -216,7 +216,7 @@ class ProfilePageState extends State<ProfilePage> {
     return newStat;
   }
 
-  Widget _buildStatContainer() {
+  Widget _buildStatContainer(context) {
     return Container(
       height: 60.0,
       margin: EdgeInsets.only(top: 8.0),
@@ -226,8 +226,18 @@ class ProfilePageState extends State<ProfilePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          _buildStatItem("Followers", formatStat(followers)),
-          _buildStatItem("Following", formatStat(following)),
+          InkWell(
+            child: _buildStatItem("Followers", formatStat(followers)),
+            onTap: () {
+              Navigator.pushNamed(context, "/followers");
+            },
+          ),
+          InkWell(
+            child: _buildStatItem("Following", formatStat(following)),
+            onTap: () {
+              Navigator.pushNamed(context, "/following");
+            },
+          ),
           _buildStatItem("Posts", _posts.toString()),
           _buildStatItem("Topics", _topics.toString()),
         ],
@@ -615,7 +625,7 @@ class ProfilePageState extends State<ProfilePage> {
                   _buildProfileImage(),
                   SizedBox(height: 10.0),
                   _buildFullName(context),
-                  _buildStatContainer(),
+                  _buildStatContainer(context),
                   _buildBio(context),
                   // _buildDemoButton(),
                   _buildButtons(context),
