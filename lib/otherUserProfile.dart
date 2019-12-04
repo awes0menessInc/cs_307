@@ -39,8 +39,9 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
   List<Post> posts = [];
   List<String> _topicsList = [];
   List<String> followersList = [];
+  List<String> topicsSelected = [];
 
-  bool pressed = false;
+  static bool pressed = false;
   bool isAccountOwner = false; // TODO: Connect to a function on the back end
 
   File _image;
@@ -79,6 +80,15 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
           _topicsList = List<String>.from(data.documents[0].data['topicsList']);
           followers = followersList.length;
           following = followList.length - 1;
+          Map<String, dynamic> completeList =
+              AuthService.currentUser.followingUserTopicList;
+          if (completeList.containsKey(uid)) {
+            Map<String, dynamic> fol = completeList[uid];
+            Map<String, dynamic> f = fol["Following"];
+            topicsSelected = List<String>.from(f.keys);
+          } else {
+            topicsSelected = [];
+          }
         });
       }
     });
@@ -178,16 +188,16 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
   List<String> notSelectedTopics = List();
   List<Widget> _buildChoiceList(List<String> topic) {
     if (topic != null && topic.length != 0) {
-      topic.removeWhere((item) =>
-          item == "" ||
-          item ==
-              "RT"); //removes any empty strings from the topic list before displaying
+      // topic.removeWhere((item) =>
+      //     item == "" ||
+      //     item ==
+      //         "RT"); //removes any empty strings from the topic list before displaying
       if (topic.length == 0) {
         return null;
       }
       // topic.removeWhere((item) => item == "RT");
       List<Widget> choices = List();
-      Map<String, dynamic> followingTopics = new Map();
+
       topic.forEach((item) {
         choices.add(Container(
           padding: const EdgeInsets.all(2.0),
@@ -198,28 +208,57 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
             ),
             selectedShadowColor: Color(0xff55B0BD),
             selectedColor: Color(0xff55B0BD),
-            selected: selectedTopics.contains(item),
+            selected: topicsSelected.contains(item),
             onSelected: (selected) {
               setState(() {
-                selectedTopics.contains(item)
-                    ? selectedTopics.remove(item)
-                    : selectedTopics.add(item);
-                notSelectedTopics.contains(item)
-                    ? notSelectedTopics.remove(item)
-                    : notSelectedTopics.add(item);
+                if (selectedTopics.contains(item)) {
+                  selectedTopics.remove(item);
+                  notSelectedTopics.add(item);
+                } else {
+                  notSelectedTopics.remove(item);
+                  selectedTopics.add(item);
+                }
+                //     ? selectedTopics.remove(item)
+                //     : selectedTopics.add(item);
+                // notSelectedTopics.contains(item)
+                //     ? notSelectedTopics.remove(item)
+                //     : notSelectedTopics.add(item);
               });
-              for (item in selectedTopics) {
-                Firestore.instance
-                    .collection("users")
-                    .document(AuthService.currentUser.uid)
-                    .updateData({
-                  // "followingUserTopicList":
-                });
-              }
             },
           ),
         ));
       });
+      Map<String, dynamic> followingUserTopicsList =
+          AuthService.currentUser.followingUserTopicList;
+      if (followingUserTopicsList.containsKey(uid)) {
+        Map<String, dynamic> follow = followingUserTopicsList[uid];
+        Map<String, int> followingTopics = follow["Following"];
+        Map<String, int> notFollowingTopics = follow["NotFollowing"];
+        for (String item in selectedTopics) {
+          followingTopics[item] = 0;
+          notFollowingTopics.remove(item);
+        }
+        topicsSelected = List<String>.from(followingTopics.keys);
+        for (String item in notSelectedTopics) {
+          notFollowingTopics[item] = 0;
+          followingTopics.remove(item);
+        }
+        Map<String, dynamic> notFollowingUserTopicsList = {
+          "Following": followingTopics,
+          "NotFollowing": notFollowingTopics
+        };
+        Map<String, dynamic> temp = {
+          uid: Map<String, dynamic>.from(notFollowingUserTopicsList)
+        };
+        followingUserTopicsList.addAll(temp);
+        Firestore.instance
+            .collection("users")
+            .document(AuthService.currentUser.uid)
+            .updateData({
+          "followingUserTopicList":
+              Map<String, dynamic>.from(followingUserTopicsList)
+        });
+      }
       return choices;
     } else {
       return null;
@@ -369,17 +408,17 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
                                   followersList != null &&
                                   followersList
                                       .contains(AuthService.currentUser.uid)) {
-                                // if (followersList
-                                //     .contains(AuthService.currentUser.uid)) {
-                                followersList
-                                    .remove(AuthService.currentUser.uid);
-                                Firestore.instance
-                                    .collection("users")
-                                    .document(uid)
-                                    .updateData({
-                                  "followersList": List.from(followersList)
-                                });
-                                //}
+                                if (followersList
+                                    .contains(AuthService.currentUser.uid)) {
+                                  followersList
+                                      .remove(AuthService.currentUser.uid);
+                                  Firestore.instance
+                                      .collection("users")
+                                      .document(uid)
+                                      .updateData({
+                                    "followersList": List.from(followersList)
+                                  });
+                                }
                                 if (AuthService
                                     .currentUser.followingUserTopicList
                                     .containsKey(uid)) {
