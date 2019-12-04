@@ -241,12 +241,17 @@ class SettingsState extends State<Settings> {
               decoration: InputDecoration(
                   labelText: 'Add a Topic', hintText: _topics.toString()),
               controller: topicController,
-              // validator: (value) {
-              //   if (value == null || value.isEmpty || _topics.contains(value)) {
-              //     return "Topic not valid.";
-              //   }
-              //   return null;
-              // },
+              validator: (value) {
+                if (_topics.contains(value)) {
+                  return "Topic already exists";
+                }
+                else if (value.trim().isEmpty) {
+                  return "Invalid topic";
+                }
+                else {
+                  return null;
+                }
+              },
               onSaved: (value) {
                 _topics.add(value);
               },
