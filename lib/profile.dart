@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:twistter/auth_service.dart';
 import 'package:twistter/post.dart';
-import 'package:twistter/timeline.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -31,10 +29,13 @@ class ProfilePageState extends State<ProfilePage> {
   int followers;
   int following;
   int _posts = 199;
-  int _topics = 333;
+  // int _topics = 333;
 
   // List<String> postsList;
   List<Post> posts = [];
+  int followersNum;
+  int followingNum;
+  int postNum;
 
   bool pressed = false;
   bool isAccountOwner = true; // TODO: Connect to a function on the back end
@@ -78,10 +79,15 @@ class ProfilePageState extends State<ProfilePage> {
     username = AuthService.currentUser.username;
     bio = AuthService.currentUser.bio;
 
-    followers = AuthService.currentUser.followersList.length - 1;
-    following = AuthService.currentUser.followingList.length - 1;
-    _posts = AuthService.currentUser.postsList.length - 1;
-    _topics = AuthService.currentUser.topicsList.length;
+    followers = AuthService.currentUser.followers;
+    following = AuthService.currentUser.following;
+    _posts = AuthService.currentUser.posts;
+    followersNum = AuthService.currentUser.followersList.length - 1;
+    followingNum = AuthService.currentUser.followingList.length - 1;
+    postNum = AuthService.currentUser.postsList.length - 1;
+
+    // topics = List.from(AuthService.currentUser.topicsList);
+    // print(topics);
 
     // postsList = AuthService.currentUser.postsList;
   }
@@ -115,8 +121,8 @@ class ProfilePageState extends State<ProfilePage> {
           child: Container(
             padding: EdgeInsets.only(left: 47),
             child: CircleAvatar(
-              radius: 75,
               backgroundColor: Colors.white,
+              radius: 75,
               child: ClipOval(
                 child: new SizedBox(
                   width: 140.0,
@@ -227,19 +233,18 @@ class ProfilePageState extends State<ProfilePage> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           InkWell(
-            child: _buildStatItem("Followers", formatStat(followers)),
+            child: _buildStatItem("Followers", formatStat(followersNum)),
             onTap: () {
               Navigator.pushNamed(context, "/followers");
             },
           ),
           InkWell(
-            child: _buildStatItem("Following", formatStat(following)),
+            child: _buildStatItem("Following", formatStat(followingNum)),
             onTap: () {
               Navigator.pushNamed(context, "/following");
             },
           ),
           _buildStatItem("Posts", _posts.toString()),
-          _buildStatItem("Topics", _topics.toString()),
         ],
       ),
     );
@@ -264,15 +269,19 @@ class ProfilePageState extends State<ProfilePage> {
       color: Colors.black,
       fontSize: 16.0,
     );
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      padding: EdgeInsets.all(8.0),
-      child: Text(
-        bio,
-        textAlign: TextAlign.center,
-        style: bioTextStyle,
-      ),
-    );
+    if (bio != null && bio != "") {
+      return Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        padding: EdgeInsets.all(8.0),
+        child: Text(
+          bio,
+          textAlign: TextAlign.center,
+          style: bioTextStyle,
+        ),
+      );
+    } else {
+      return Container(height: 0);
+    }
   }
 
   Widget _buildSeparator(Size screenSize) {
@@ -280,7 +289,7 @@ class ProfilePageState extends State<ProfilePage> {
       width: screenSize.width / 1.2,
       height: 2.0,
       color: Colors.black54,
-      margin: EdgeInsets.only(top: 4.0),
+      // margin: EdgeInsets.only(top: 4.0),
     );
   }
 

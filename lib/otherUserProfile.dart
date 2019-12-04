@@ -25,14 +25,15 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
   String firstName = "N";
   String username = "";
   String lastName = "A";
-  // String email;
+  String email;
   String bio = "";
   String userPage;
+  // List<String> _topics;
 
-  int followers = 0;
-  int following = 0;
-  int _posts = 199;
-  int _topics = 333;
+  int followers;
+  int following;
+  int _posts;
+  int _topics;
 
   // List<String> postsList;
   List<Post> posts = [];
@@ -69,15 +70,15 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
               List<String>.from(data.documents[0].data['postsList']);
           List<String> topList =
               List<String>.from(data.documents[0].data['topicsList']);
-          _posts = postsList.length;
+          _posts = postsList.length - 1;
           _topics = topList.length;
           followersList =
               List<String>.from(data.documents[0].data['followersList']);
           List<String> followList =
               List<String>.from(data.documents[0].data['followingList']);
           _topicsList = List<String>.from(data.documents[0].data['topicsList']);
-          followers = followersList.length;
-          following = followList.length;
+          followers = followersList.length - 1;
+          following = followList.length - 1;
         });
       }
     });
@@ -112,8 +113,8 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
           child: Container(
             padding: EdgeInsets.only(left: 47),
             child: CircleAvatar(
+              backgroundColor: Colors.white,
               radius: 75,
-              backgroundColor: Color(0xff476cfb),
               child: ClipOval(
                 child: new SizedBox(
                   width: 140.0,
@@ -173,6 +174,53 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
         ));
   }
 
+  List<String> selectedTopics = List();
+  List<Widget> _buildChoiceList(List<String> topic) {
+    if (topic != null && topic.length != 0) {
+      topic.removeWhere((item) =>
+          item == "" ||
+          item ==
+              "RT"); //removes any empty strings from the topic list before displaying
+      if (topic.length == 0) {
+        return null;
+      }
+      // topic.removeWhere((item) => item == "RT");
+      List<Widget> choices = List();
+      topic.forEach((item) {
+        choices.add(Container(
+          padding: const EdgeInsets.all(2.0),
+          child: ChoiceChip(
+            label: Text(
+              item,
+              style: TextStyle(color: Colors.black),
+            ),
+            selectedShadowColor: Color(0xff55B0BD),
+            selectedColor: Color(0xff55B0BD),
+            selected: selectedTopics.contains(item),
+            onSelected: (selected) {
+              setState(() {
+                selectedTopics.contains(item)
+                    ? selectedTopics.remove(item)
+                    : selectedTopics.add(item);
+              });
+              for (item in selectedTopics) {
+                Firestore.instance
+                    .collection("users")
+                    .document(AuthService.currentUser.uid)
+                    .updateData({
+                  // "followingUserTopicList":
+                });
+              }
+            },
+          ),
+        ));
+      });
+      return choices;
+    } else {
+      return null;
+    }
+  }
+
   Widget _buildStatItem(String label, String count) {
     TextStyle _statLabelTextStyle = TextStyle(
       fontFamily: 'Montserrat',
@@ -226,7 +274,7 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
           _buildStatItem("Followers", formatStat(followers)),
           _buildStatItem("Following", formatStat(following)),
           _buildStatItem("Posts", _posts.toString()),
-          _buildStatItem("Topics", _topics.toString()),
+          // _buildStatItem("Topics", _topics.toString()),
         ],
       ),
     );
@@ -536,6 +584,31 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
     ));
   }
 
+  Widget _buildTopicsText() {
+    if (_buildChoiceList(_topicsList) == null) {
+      return Container(height: 0);
+    } else {
+      return Text(
+        firstName + "'s topics:",
+        textAlign: TextAlign.right,
+        style: TextStyle(),
+      );
+    }
+  }
+
+  Widget _buildTopicsContainer() {
+    if (_buildChoiceList(_topicsList) == null) {
+      return Container(height: 0);
+    } else {
+      return Container(
+        padding: EdgeInsets.symmetric(vertical: 10),
+        child: Wrap(
+          children: _buildChoiceList(_topicsList),
+        ),
+      );
+    }
+  }
+
   void showTags(BuildContext context, Post post) {
     AlertDialog viewTags = AlertDialog(
       shape: RoundedRectangleBorder(
@@ -622,18 +695,18 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
 
   Widget buildBackButton(BuildContext context, Size screensize) {
     return SizedBox(
-      child: Align(
-        alignment: Alignment.topLeft,
-        child: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+        child: Align(
+          alignment: Alignment.topLeft,
+          child: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
         ),
-      ),
-      height: screensize.height / 20
-    );
+        height: screensize.height / 20);
   }
+
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
@@ -650,6 +723,9 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
                   SizedBox(height: 10.0),
                   _buildFullName(context),
                   _buildStatContainer(),
+                  SizedBox(height: 10.0),
+                  _buildTopicsText(),
+                  _buildTopicsContainer(),
                   _buildBio(context),
                   // _buildDemoButton(),
                   _buildButtons(context),
