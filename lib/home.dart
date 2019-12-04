@@ -22,6 +22,8 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   String uid;
   Text sortText = new Text("Time");
+  Icon sortButton = Icon(Icons.access_time);
+
   _HomeState(this.uid);
   @override
   void initState() {
@@ -57,50 +59,66 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-        length: 4,
-        child: Theme(
-          data: ThemeData(brightness: Brightness.light),
-          child: Scaffold(
-            appBar: AppBar(
-                centerTitle: true,
-                title: Text(
-                  "twistter",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Amaranth',
-                      fontWeight: FontWeight.bold,
-                      fontStyle: FontStyle.italic,
-                      fontSize: 27),
-                ),
-                backgroundColor: Color.fromRGBO(85, 176, 189, 1.0),
-                actions: <Widget>[
-                  FlatButton(
-                    child: sortText,
-                    onPressed: () {
-                      setState(() {
-                        if (sortText.data == "Time") {
-                          setSort(true);
-                          sortText = new Text("Relevance");
-                        } else {
-                          setSort(false);
-                          sortText = new Text("Time");
-                        }
-                      });
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.exit_to_app, color: Colors.black),
-                    onPressed: () {
-                      try {
-                        Provider.of<AuthService>(context).logout();
-                      } on Exception catch (error) {
-                        return buildErrorDialog(context, error.toString());
-                      }
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => Login()));
-                    },
-                  )
+        return DefaultTabController(
+            length: 4,
+            child: Theme(
+              data: ThemeData(brightness: Brightness.light),
+              child: Scaffold(
+                appBar: AppBar(
+                    centerTitle: true,
+                    title: Text(
+                      "twistter",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Amaranth',
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic,
+                          fontSize: 27),
+                    ),
+                    backgroundColor: Color.fromRGBO(85, 176, 189, 1.0),
+                    actions: <Widget>[
+                      // FlatButton(
+                      //   child: sortText,
+                      //   onPressed: () {
+                      //     setState(() {
+                      //       if (sortText.data == "Time") {
+                      //         setSort(true);
+                      //         sortText = new Text("Relevance");
+                      //       } else {
+                      //         setSort(false);
+                      //         sortText = new Text("Time");
+                      //       }
+                      //     });
+                      //   },
+                      // ),
+                      IconButton(
+                        icon: sortButton,
+                        onPressed: () {
+                          setState(() {
+                            if (sortButton.icon.codePoint == 57746) {
+                              setSort(true);
+                              // sortText = new Text("Relevance");
+                              sortButton = Icon(Icons.show_chart);
+                            } else {
+                              setSort(false);
+                              // sortText = new Text("Time");
+                              sortButton = Icon(Icons.access_time);
+                            }
+                          });
+                        },
+                      ),
+                  // IconButton(
+                  //   icon: Icon(Icons.exit_to_app, color: Colors.black),
+                  //   onPressed: () {
+                  //     try {
+                  //       Provider.of<AuthService>(context).logout();
+                  //     } on Exception catch (error) {
+                  //       return buildErrorDialog(context, error.toString());
+                  //     }
+                  //     Navigator.pushReplacement(context,
+                  //         MaterialPageRoute(builder: (context) => Login()));
+                  //   },
+                  // )
                 ]),
             floatingActionButton: FloatingActionButton(
               child: Icon(Icons.create),
