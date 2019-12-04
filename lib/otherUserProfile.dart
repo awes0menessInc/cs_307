@@ -679,23 +679,27 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
     return Stack(
       children: <Widget>[
         StreamBuilder<QuerySnapshot>(
-            stream: Firestore.instance
-                .collection('posts')
-                .orderBy('timestamp', descending: true)
-                .where('uid', isEqualTo: uid)
-                .snapshots(),
-            builder:
-                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (snapshot.hasError) return Text('Error');
-              switch (snapshot.connectionState) {
-                case ConnectionState.waiting:
-                  return Container(
-                      alignment: Alignment.bottomCenter,
-                      child: LinearProgressIndicator());
-                default:
-                  return makeBody(context, snapshot.data.documents);
-              }
-            })
+          stream: Firestore.instance
+            .collection('posts')
+            .orderBy('timestamp', descending: true)
+            .where('uid', isEqualTo: uid)
+            .snapshots(),
+          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) return Text('Error');
+            if (snapshot.data == null) {
+              return makeBody(context, null);
+            }
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+                return Container(
+                  alignment: Alignment.bottomCenter,
+                  child: LinearProgressIndicator()
+                );
+              default:
+                return makeBody(context, snapshot.data.documents);
+            }
+          }
+        )
       ],
     );
   }
@@ -809,7 +813,7 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
                   _buildTopicsContainer(),
                   _buildBio(context),
                   _buildButtons(context),
-                  _buildSeparator(screenSize),
+                  // _buildSeparator(screenSize),
                   buildUserline(context),
                 ],
               ),
