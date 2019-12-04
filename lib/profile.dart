@@ -418,43 +418,22 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _makeBody(BuildContext context) {
-    return Container(
-      child: ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: 10,
-        itemBuilder: (BuildContext context, int index) {
-          return _makeCard(context);
-        },
-      ),
-    );
-  }
-
   Widget makeBody(BuildContext context, List<DocumentSnapshot> snap) {
     posts = getPosts(snap);
-    return Container(
-        child: ListView.builder(
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-      itemBuilder: (content, index) => makeCard(context, posts[index]),
-      itemCount: posts.length,
-    ));
-  }
 
-  Widget _makeCard(BuildContext context) {
-    return Card(
-      elevation: 8.0,
-      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),),
-      margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Colors.white,
-        ),
-        child: _makeListTile(context),
-      ),
-    );
+    List<Widget> cards = List();
+    posts.forEach((post) {
+      cards.add(makeCard(context, post));
+    });
+    return Column(children: cards);
+    // return Container(
+    //   child: ListView.builder(
+    //     scrollDirection: Axis.vertical,
+    //     shrinkWrap: true,
+    //     itemBuilder: (content, index) => makeCard(context, posts[index]),
+    //     itemCount: posts.length,
+    //   )
+    // );
   }
 
   Widget makeCard(BuildContext context, Post post) {
@@ -543,7 +522,7 @@ class ProfilePageState extends State<ProfilePage> {
                       alignment: Alignment.bottomCenter,
                       child: LinearProgressIndicator());
                 default:
-                  print("build userline");
+                  // print("build userline");
                   return makeBody(context, snapshot.data.documents);
               }
             })
