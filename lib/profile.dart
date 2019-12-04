@@ -78,15 +78,10 @@ class ProfilePageState extends State<ProfilePage> {
   // }
 
   void getUserInfo() {
-    // if (widget.userPage == null) {
-    //   widget.userPage = AuthService.getUserInfo().uid;
-    // }
-
     uid = AuthService.currentUser.uid;
     firstName = AuthService.currentUser.firstName;
     lastName = AuthService.currentUser.lastName;
     email = AuthService.currentUser.email;
-    print("email: " + email);
     username = AuthService.currentUser.username;
     bio = AuthService.currentUser.bio;
 
@@ -98,7 +93,6 @@ class ProfilePageState extends State<ProfilePage> {
     postNum = AuthService.currentUser.postsList.length;
 
     // topics = List.from(AuthService.currentUser.topicsList);
-    // print(topics);
 
     // postsList = AuthService.currentUser.postsList;
   }
@@ -277,18 +271,6 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Widget _buildDemoButton() {
-  //   return FlatButton(
-  //       color: Colors.white,
-  //       onPressed: () {
-  //         setState(() {
-  //           isAccountOwner = !isAccountOwner;
-  //         });
-  //       },
-  //       child: Text('For Demo Purposes Only',
-  //           style: TextStyle(color: Colors.red)));
-  // }
-
   Widget _buildBio(BuildContext context) {
     TextStyle bioTextStyle = TextStyle(
       fontFamily: 'Spectral',
@@ -309,7 +291,6 @@ class ProfilePageState extends State<ProfilePage> {
     }
     else {return Container(height: 0);}
   }
-
 
   Widget _buildSeparator(Size screenSize) {
     return Container(
@@ -423,15 +404,6 @@ class ProfilePageState extends State<ProfilePage> {
       });
       return Column(children: cards);
     }
-    
-    // return Container(
-    //   child: ListView.builder(
-    //     scrollDirection: Axis.vertical,
-    //     shrinkWrap: true,
-    //     itemBuilder: (content, index) => makeCard(context, posts[index]),
-    //     itemCount: posts.length,
-    //   )
-    // );
   }
 
   Widget makeCard(BuildContext context, Post post, int index) {
@@ -441,9 +413,7 @@ class ProfilePageState extends State<ProfilePage> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          SizedBox(
-            child: makeListTile(context, post),
-          ),
+          SizedBox(child: makeListTile(context, post)),
           SizedBox(
             height: 50,
             child: ButtonBar(
@@ -484,9 +454,10 @@ class ProfilePageState extends State<ProfilePage> {
                 ),
               ],
             )
-            ),
-          ],
-        ));
+          ),
+        ],
+      )
+    );
   }
 
   Widget buildUserline(BuildContext context) {
@@ -583,13 +554,13 @@ class ProfilePageState extends State<ProfilePage> {
       title: Container(
           padding: EdgeInsets.all(0),
           child: InkWell(
-              onTap: () {
-                print("tap!");
-                var route = MaterialPageRoute(
-                    builder: (BuildContext context) =>
-                        ProfilePage(userPage: post.uid));
-                Navigator.of(context).push(route);
-              },
+              // onTap: () {
+              //   print("tap!");
+              //   var route = MaterialPageRoute(
+              //       builder: (BuildContext context) =>
+              //           ProfilePage(userPage: post.uid));
+              //   Navigator.of(context).push(route);
+              // },
               child: Text(
                 post.fullName,
                 style: TextStyle(
@@ -626,44 +597,12 @@ class ProfilePageState extends State<ProfilePage> {
                 _buildEmail(),
                 _buildStatContainer(context),
                 _buildBio(context),
-                // _buildDemoButton(),
                 _buildButtons(context),
                 _buildSeparator(screenSize),
-                // _buildNoPosts(context),
-                // _makeBody(context),
                 buildUserline(context),
             ],
           ),
         ),
       );
-
-    // return Scaffold(
-    //   body: Stack(
-    //     children: <Widget>[
-    //       // _buildCoverImage(screenSize),
-    //       SafeArea(
-    //         child: SingleChildScrollView(
-    //           child: Column(
-    //             children: <Widget>[
-    //               SizedBox(height: screenSize.height / 20),
-    //               _buildProfileImage(),
-    //               SizedBox(height: 10.0),
-    //               _buildFullName(context),
-    //               _buildEmail(),
-    //               _buildStatContainer(context),
-    //               _buildBio(context),
-    //               // _buildDemoButton(),
-    //               _buildButtons(context),
-    //               _buildSeparator(screenSize),
-    //               // _buildNoPosts(context),
-    //               // _makeBody(context),
-    //               // buildUserline(context),
-    //             ],
-    //           ),
-    //         ),
-    //       ),
-    //     ],
-    //   ),
-    // );
   }
 }
