@@ -36,8 +36,7 @@ class _NewPostState extends State<NewPost> {
   List<String> selectedTopics = List();
   List<Widget> _buildChoiceList(List<String> topic) {
     topic.removeWhere((item) =>
-        item ==
-        ""); //removes any empty strings from the topic list before displaying
+        item ==""); //removes any empty strings from the topic list before displaying
     if (topic.length == 0) {
       return null;
     }
@@ -67,7 +66,7 @@ class _NewPostState extends State<NewPost> {
           title: Text("Create New Post"),
           actions: <Widget>[
             IconButton(
-              icon: Icon(Icons.add_comment),
+              icon: Icon(Icons.send),
               onPressed: () async {
                 if (selectedTopics != null && selectedTopics.isNotEmpty) {
                   Firestore.instance
@@ -119,7 +118,7 @@ class _NewPostState extends State<NewPost> {
                               Text('Please select a topic before you post'),
                           actions: <Widget>[
                             FlatButton(
-                              child: Text("Close"),
+                              child: Text("OK"),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },

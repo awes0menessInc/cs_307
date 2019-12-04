@@ -116,8 +116,8 @@ class ProfilePageState extends State<ProfilePage> {
           child: Container(
             padding: EdgeInsets.only(left: 47),
             child: CircleAvatar(
+              backgroundColor: Colors.white,
               radius: 75,
-              backgroundColor: Color(0xff476cfb),
               child: ClipOval(
                 child: new SizedBox(
                   width: 140.0,
@@ -255,15 +255,20 @@ class ProfilePageState extends State<ProfilePage> {
       color: Colors.black,
       fontSize: 16.0,
     );
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      padding: EdgeInsets.all(8.0),
-      child: Text(
-        bio,
-        textAlign: TextAlign.center,
-        style: bioTextStyle,
-      ),
-    );
+    if(bio != null && bio != "") {
+      return Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        padding: EdgeInsets.all(8.0),
+        child: Text(
+          bio,
+          textAlign: TextAlign.center,
+          style: bioTextStyle,
+        ),
+      );
+    }
+    else {
+      return Container(height: 0);
+    }
   }
 
   Widget buildSeparator(Size screenSize) {
@@ -271,7 +276,7 @@ class ProfilePageState extends State<ProfilePage> {
       width: screenSize.width / 1.2,
       height: 2.0,
       color: Colors.black54,
-      margin: EdgeInsets.only(top: 4.0),
+      // margin: EdgeInsets.only(top: 4.0),
     );
   }
 
