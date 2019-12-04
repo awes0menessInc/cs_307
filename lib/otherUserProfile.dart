@@ -367,7 +367,9 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
   }
 
   Text getText(bool pressed) {
-    if (pressed || followersList.contains(AuthService.currentUser.uid)) {
+    if (pressed ||
+        (followersList != null &&
+            followersList.contains(AuthService.currentUser.uid))) {
       return Text('Following', style: TextStyle(color: Colors.black));
     } else {
       return Text('Follow', style: TextStyle(color: Colors.white));
@@ -388,19 +390,20 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
                           onPressed: () {
                             setState(() {
                               if (pressed &&
+                                  followersList != null &&
                                   followersList
                                       .contains(AuthService.currentUser.uid)) {
-                                if (followersList
-                                    .contains(AuthService.currentUser.uid)) {
-                                  followersList
-                                      .remove(AuthService.currentUser.uid);
-                                  Firestore.instance
-                                      .collection("users")
-                                      .document(uid)
-                                      .updateData({
-                                    "followersList": List.from(followersList)
-                                  });
-                                }
+                                // if (followersList
+                                //     .contains(AuthService.currentUser.uid)) {
+                                followersList
+                                    .remove(AuthService.currentUser.uid);
+                                Firestore.instance
+                                    .collection("users")
+                                    .document(uid)
+                                    .updateData({
+                                  "followersList": List.from(followersList)
+                                });
+                                //}
                                 if (AuthService
                                     .currentUser.followingUserTopicList
                                     .containsKey(uid)) {
