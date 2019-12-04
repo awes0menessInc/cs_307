@@ -526,8 +526,7 @@ class ProfilePageState extends State<ProfilePage> {
   // }
 
   Widget buildUserline(BuildContext context) {
-    return Scaffold(
-        body: Stack(
+    return Stack(
       children: <Widget>[
         StreamBuilder<QuerySnapshot>(
             stream: Firestore.instance
@@ -549,7 +548,7 @@ class ProfilePageState extends State<ProfilePage> {
               }
             })
       ],
-    ));
+    );
   }
 
   void showTags(BuildContext context, Post post) {
@@ -639,33 +638,56 @@ class ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-    return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          // _buildCoverImage(screenSize),
-          SafeArea(
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  SizedBox(height: screenSize.height / 20),
-                  _buildProfileImage(),
-                  SizedBox(height: 10.0),
-                  _buildFullName(context),
-                  _buildEmail(),
-                  _buildStatContainer(context),
-                  _buildBio(context),
-                  // _buildDemoButton(),
-                  _buildButtons(context),
-                  _buildSeparator(screenSize),
-                  // _buildNoPosts(context),
-                  _makeBody(context),
-                  // buildUserline(context),
-                ],
-              ),
-            ),
+
+    return SingleChildScrollView(
+      child: SafeArea(
+        child: Column(
+          children: <Widget>[
+            SizedBox(height: screenSize.height / 20),
+                _buildProfileImage(),
+                SizedBox(height: 10.0),
+                _buildFullName(context),
+                _buildEmail(),
+                _buildStatContainer(context),
+                _buildBio(context),
+                // _buildDemoButton(),
+                _buildButtons(context),
+                _buildSeparator(screenSize),
+                // _buildNoPosts(context),
+                // _makeBody(context),
+                buildUserline(context),
+            ],
           ),
-        ],
-      ),
-    );
+        ),
+      );
+
+    // return Scaffold(
+    //   body: Stack(
+    //     children: <Widget>[
+    //       // _buildCoverImage(screenSize),
+    //       SafeArea(
+    //         child: SingleChildScrollView(
+    //           child: Column(
+    //             children: <Widget>[
+    //               SizedBox(height: screenSize.height / 20),
+    //               _buildProfileImage(),
+    //               SizedBox(height: 10.0),
+    //               _buildFullName(context),
+    //               _buildEmail(),
+    //               _buildStatContainer(context),
+    //               _buildBio(context),
+    //               // _buildDemoButton(),
+    //               _buildButtons(context),
+    //               _buildSeparator(screenSize),
+    //               // _buildNoPosts(context),
+    //               // _makeBody(context),
+    //               // buildUserline(context),
+    //             ],
+    //           ),
+    //         ),
+    //       ),
+    //     ],
+    //   ),
+    // );
   }
 }
