@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:twistter/auth_service.dart';
-import 'package:twistter/metrics.dart';
 import 'package:twistter/post.dart';
 
 import 'package:image_picker/image_picker.dart';
