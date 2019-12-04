@@ -74,7 +74,7 @@ class _NewPostState extends State<NewPost> {
                       .collection('posts')
                       .add({
                         'content': postEditingController.text,
-                        'likes': [],
+                        'likes': [""],
                         'quotes': 0,
                         'timestamp': DateTime.now().millisecondsSinceEpoch,
                         'topics': FieldValue.arrayUnion(List.from(

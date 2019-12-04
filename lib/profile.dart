@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:twistter/auth_service.dart';
+import 'package:twistter/metrics.dart';
 import 'package:twistter/post.dart';
 
 import 'package:image_picker/image_picker.dart';
@@ -44,6 +45,11 @@ class ProfilePageState extends State<ProfilePage> {
   bool isAccountOwner = true; // TODO: Connect to a function on the back end
 
   File _image;
+
+  Color _iconColor = Color.fromRGBO(5, 62, 66, 1.0);
+  Color _iconColorPressed = Color.fromRGBO(214, 59, 47, 1.0);
+  Icon _icon = Icon(Icons.favorite_border, size: 20);
+  Icon _iconPressed = Icon(Icons.favorite, size: 20);
 
   @override
   initState() {
@@ -383,12 +389,14 @@ class ProfilePageState extends State<ProfilePage> {
     List<Post> posts = [];
     snap.forEach((post) {
       posts.add(Post(
-          content: post['content'],
-          username: post['username'],
-          fullName:
-              post['firstName'].toString() + " " + post['lastName'].toString(),
-          topics: List.from(post['topics']),
-          uid: post['uid']));
+        content: post['content'],
+        username: post['username'],
+        fullName: post['firstName'].toString() + " " + post['lastName'].toString(),
+        topics: List.from(post['topics']),
+        uid: post['uid'],
+        likes: List.from(post['likes']),
+        postID: post['postID'],
+      ));
     });
     return posts;
   }
@@ -411,20 +419,6 @@ class ProfilePageState extends State<ProfilePage> {
     //   )
     // );
   }
-
-  // Widget makeCard(BuildContext context, Post post) {
-  //   return Card(
-  //     elevation: 8.0,
-  //     margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-  //     child: Container(
-  //       decoration: BoxDecoration(
-  //         borderRadius: BorderRadius.circular(10),
-  //         color: Colors.white,
-  //       ),
-  //       child: makeListTile(context, post),
-  //     ),
-  //   );
-  // }
 
   Widget makeCard(BuildContext context, Post post, int index) {
     return Card(
@@ -465,13 +459,18 @@ class ProfilePageState extends State<ProfilePage> {
                 SizedBox(
                   width: 40,
                   child: IconButton(
-                    icon: Icon(Icons.favorite_border, size: 20),
-                    color: Color.fromRGBO(5, 62, 66, 1.0),
-                    onPressed: () => debugPrint('like'),
+                    icon: post.likes.contains(AuthService.currentUser.uid) ? _iconPressed : _icon,
+                    color: post.likes.contains(AuthService.currentUser.uid) ? _iconColorPressed : _iconColor,
+                    onPressed: () {
+                      setState(() {
+                        like(post, AuthService.currentUser.uid);
+                      });
+                    },
                   )
                 ),
               ],
-            )),
+            )
+            ),
           ],
         ));
   }
