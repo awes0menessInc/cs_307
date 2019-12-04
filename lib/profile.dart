@@ -30,11 +30,11 @@ class ProfilePageState extends State<ProfilePage> {
 
   int followers;
   int following;
-  int _posts = 199;
-  int _topics = 333;
+  int _posts;
+  int _topics;
 
-  // List<String> postsList;
-  List<Post> posts = [];
+  List<String> postsList;
+  List<Post> posts;
 
   bool pressed = false;
   bool isAccountOwner = true; // TODO: Connect to a function on the back end
@@ -83,7 +83,8 @@ class ProfilePageState extends State<ProfilePage> {
     _posts = AuthService.currentUser.postsList.length - 1;
     _topics = AuthService.currentUser.topicsList.length;
 
-    // postsList = AuthService.currentUser.postsList;
+    postsList = AuthService.currentUser.postsList;
+    print(postsList.toString());
   }
 
   Future getImage() async {
@@ -162,7 +163,7 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildFullName(BuildContext context) {
+  Widget buildName(BuildContext context) {
     return Container(
         margin: EdgeInsets.symmetric(vertical: 10.0),
         child: Text(
@@ -176,7 +177,7 @@ class ProfilePageState extends State<ProfilePage> {
         ));
   }
 
-  Widget _buildStatItem(String label, String count) {
+  Widget buildStatItem(String label, String count) {
     TextStyle _statLabelTextStyle = TextStyle(
       fontFamily: 'Montserrat',
       color: Colors.black,
@@ -216,7 +217,7 @@ class ProfilePageState extends State<ProfilePage> {
     return newStat;
   }
 
-  Widget _buildStatContainer() {
+  Widget buildStatContainer() {
     return Container(
       height: 60.0,
       margin: EdgeInsets.only(top: 8.0),
@@ -226,28 +227,28 @@ class ProfilePageState extends State<ProfilePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          _buildStatItem("Followers", formatStat(followers)),
-          _buildStatItem("Following", formatStat(following)),
-          _buildStatItem("Posts", _posts.toString()),
-          _buildStatItem("Topics", _topics.toString()),
+          buildStatItem("Followers", formatStat(followers)),
+          buildStatItem("Following", formatStat(following)),
+          buildStatItem("Posts", _posts.toString()),
+          buildStatItem("Topics", _topics.toString()),
         ],
       ),
     );
   }
 
-  // Widget _buildDemoButton() {
-  //   return FlatButton(
-  //       color: Colors.white,
-  //       onPressed: () {
-  //         setState(() {
-  //           isAccountOwner = !isAccountOwner;
-  //         });
-  //       },
-  //       child: Text('For Demo Purposes Only',
-  //           style: TextStyle(color: Colors.red)));
-  // }
+  Widget buildDemoButton() {
+    return FlatButton(
+        color: Colors.white,
+        onPressed: () {
+          setState(() {
+            isAccountOwner = !isAccountOwner;
+          });
+        },
+        child: Text('For Demo Purposes Only',
+            style: TextStyle(color: Colors.red)));
+  }
 
-  Widget _buildBio(BuildContext context) {
+  Widget buildBio(BuildContext context) {
     TextStyle bioTextStyle = TextStyle(
       fontFamily: 'Spectral',
       fontWeight: FontWeight.w600,
@@ -265,7 +266,7 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildSeparator(Size screenSize) {
+  Widget buildSeparator(Size screenSize) {
     return Container(
       width: screenSize.width / 1.2,
       height: 2.0,
@@ -290,7 +291,7 @@ class ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Widget _buildButtons(BuildContext context) {
+  Widget buildFollowButton(BuildContext context) {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         child: Column(
@@ -314,7 +315,7 @@ class ProfilePageState extends State<ProfilePage> {
         ));
   }
 
-  Text _noPostsText() {
+  Text noPostsText() {
     TextStyle ts = TextStyle(
       fontFamily: 'Spectral',
       fontWeight: FontWeight.w400,
@@ -333,108 +334,129 @@ class ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Widget _buildNoPosts(BuildContext context) {
+  Widget buildNoPosts(BuildContext context) {
     return Container(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        padding: EdgeInsets.all(8.0),
-        child: _noPostsText());
+      color: Theme.of(context).scaffoldBackgroundColor,
+      padding: EdgeInsets.all(8.0),
+      child: noPostsText()
+    );
   }
 
-  List<Post> getPosts(List<DocumentSnapshot> snap) {
-    List<Post> posts = [];
-    snap.forEach((post) {
-      posts.add(Post(
-          content: post['content'],
-          username: post['username'],
-          fullName:
-              post['firstName'].toString() + " " + post['lastName'].toString(),
-          topics: List.from(post['topics']),
-          uid: post['uid']));
+  // List<Post> getPosts(List<DocumentSnapshot> snap) {
+  //   List<Post> posts = [];
+  //   snap.forEach((post) {
+  //     posts.add(Post(
+  //       content: post['content'],
+  //       username: post['username'],
+  //       fullName: post['firstName'].toString() + " " + post['lastName'].toString(),
+  //       topics: List.from(post['topics']),
+  //       uid: post['uid'])
+  //     );
+  //   });
+  //   return posts;
+  // }
+
+  List<Post> getPosts() {
+    List<Post> result = List();
+    postsList.forEach((postID) {
+      Firestore.instance.collection('posts').document(postID).get()
+      .then((doc) => {
+        result.add(Post(
+          content: doc['content'],
+          username: doc['username'],
+          fullName: doc['firstName'].toString() + " " + doc['lastName'].toString(),
+          topics: List.from(doc['topics']),
+          uid: doc['uid'],
+          timestamp: (doc['timestamp'] as Timestamp).millisecondsSinceEpoch
+        ))
+      });
     });
-    return posts;
+    print (result.toString());
+    return result;
   }
 
-  Widget _makeListTile(BuildContext context) {
-    return ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-      leading: Container(
-        padding: EdgeInsets.only(right: 5.0),
-        child: Icon(Icons.account_circle,
-            size: 45.0, color: Color.fromRGBO(5, 62, 66, 1.0)),
-      ),
-      title: Text(
-        "BoilerMaker",
-        style: TextStyle(
-            color: Color.fromRGBO(7, 113, 136, 1.0),
-            fontWeight: FontWeight.bold,
-            fontSize: 12),
-      ),
-      subtitle: Text(
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-          style: TextStyle(fontSize: 11)),
-      trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Icon(Icons.favorite, size: 20.0),
-            Icon(Icons.add_comment, size: 20.0)
-          ]),
-    );
-  }
+  // Widget _makeListTile(BuildContext context) {
+  //   return ListTile(
+  //     contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+  //     leading: Container(
+  //       padding: EdgeInsets.only(right: 5.0),
+  //       child: Icon(Icons.account_circle,
+  //           size: 45.0, color: Color.fromRGBO(5, 62, 66, 1.0)),
+  //     ),
+  //     title: Text(
+  //       "BoilerMaker",
+  //       style: TextStyle(
+  //           color: Color.fromRGBO(7, 113, 136, 1.0),
+  //           fontWeight: FontWeight.bold,
+  //           fontSize: 12),
+  //     ),
+  //     subtitle: Text(
+  //         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  //         style: TextStyle(fontSize: 11)),
+  //     trailing: Row(
+  //         mainAxisSize: MainAxisSize.min,
+  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //         children: <Widget>[
+  //           Icon(Icons.favorite, size: 20.0),
+  //           Icon(Icons.add_comment, size: 20.0)
+  //         ]),
+  //   );
+  // }
 
-  Widget _makeBody(BuildContext context) {
-    return Container(
-      child: ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: 10,
-        itemBuilder: (BuildContext context, int index) {
-          return _makeCard(context);
-        },
-      ),
-    );
-  }
+  // Widget _makeBody(BuildContext context) {
+  //   return Container(
+  //     child: ListView.builder(
+  //       scrollDirection: Axis.vertical,
+  //       shrinkWrap: true,
+  //       itemCount: 10,
+  //       itemBuilder: (BuildContext context, int index) {
+  //         return _makeCard(context);
+  //       },
+  //     ),
+  //   );
+  // }
 
-  Widget makeBody(BuildContext context, List<DocumentSnapshot> snap) {
-    posts = getPosts(snap);
-    return Container(
-        child: ListView.builder(
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-      itemBuilder: (content, index) => makeCard(context, posts[index]),
-      itemCount: posts.length,
-    ));
-  }
+  // Widget makeBody(BuildContext context, List<DocumentSnapshot> snap) {
+  //   posts = getPosts();
+  //   return Container(
+  //       child: ListView.builder(
+  //     scrollDirection: Axis.vertical,
+  //     shrinkWrap: true,
+  //     itemBuilder: (content, index) => makeCard(context, posts[index]),
+  //     itemCount: posts.length,
+  //   )
+  //   );
+  // }
 
-  Widget _makeCard(BuildContext context) {
-    return Card(
-      elevation: 8.0,
-      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),),
-      margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Colors.white,
-        ),
-        child: _makeListTile(context),
-      ),
-    );
-  }
+  // Widget _makeCard(BuildContext context) {
+  //   return Card(
+  //     elevation: 8.0,
+  //     // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),),
+  //     margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+  //     child: Container(
+  //       decoration: BoxDecoration(
+  //         borderRadius: BorderRadius.circular(10),
+  //         color: Colors.white,
+  //       ),
+  //       child: _makeListTile(context),
+  //     ),
+  //   );
+  // }
 
-  Widget makeCard(BuildContext context, Post post) {
-    return Card(
-      elevation: 8.0,
-      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),),
-      margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Colors.white,
-        ),
-        child: makeListTile(context, post),
-      ),
-    );
-  }
+  // Widget makeCard(BuildContext context, Post post) {
+  //   return Card(
+  //     elevation: 8.0,
+  //     // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),),
+  //     margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+  //     child: Container(
+  //       decoration: BoxDecoration(
+  //         borderRadius: BorderRadius.circular(10),
+  //         color: Colors.white,
+  //       ),
+  //       child: makeListTile(context, post),
+  //     ),
+  //   );
+  // }
 
   // Widget makeCard(BuildContext context, Post post) {
   //   return Card(
@@ -490,30 +512,110 @@ class ProfilePageState extends State<ProfilePage> {
   // }
 
   Widget buildUserline(BuildContext context) {
-    return Scaffold(
-        body: Stack(
-      children: <Widget>[
-        StreamBuilder<QuerySnapshot>(
-            stream: Firestore.instance
-                .collection('posts')
-                .orderBy('timestamp', descending: true)
-                .where('uid', isEqualTo: uid)
-                .snapshots(),
-            builder:
-                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (snapshot.hasError) return Text('Error');
-              switch (snapshot.connectionState) {
-                case ConnectionState.waiting:
-                  return Container(
-                      alignment: Alignment.bottomCenter,
-                      child: LinearProgressIndicator());
-                default:
-                  print("build userline");
-                  return makeBody(context, snapshot.data.documents);
-              }
-            })
-      ],
-    ));
+    return Column(children: buildPosts(context));
+  }
+
+  List<Widget> buildPosts(BuildContext context) {
+    List<Widget> postTiles = List();
+    Size screenSize = MediaQuery.of(context).size;
+    postTiles.add(buildProfileCard(context, screenSize));
+    // posts = getPosts();
+    posts = [
+      Post.test(),
+      Post.test(),
+      Post.test(),
+      Post.test(),
+    ];
+    posts.forEach((post) {
+      postTiles.add(buildCard(context, post));
+    });
+    return postTiles;
+  }
+
+  Widget buildCard(BuildContext context, Post post) {
+    return Card(
+      elevation: 8,
+      margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          SizedBox(
+            child: buildPostTile(context, post),
+          ),
+          SizedBox(
+            height: 50,
+            child: ButtonBar(
+              // padding: EdgeInsets.only(top: 0),
+              children: <Widget>[
+                SizedBox(
+                  width: 25,
+                  child: IconButton(
+                    icon: Icon(Icons.assignment, size: 19),
+                    color: Color.fromRGBO(5, 62, 66, 1.0),
+                    onPressed: () => showTags(context, post),
+                  )
+                ),
+                SizedBox(
+                  width: 25,
+                  child: IconButton(
+                    icon: Icon(Icons.add_comment, size: 19),
+                    color: Color.fromRGBO(5, 62, 66, 1.0),
+                    onPressed: () => debugPrint("reblog"),
+                  )
+                ),
+                SizedBox(
+                  width: 40,
+                  child: IconButton(
+                    icon: Icon(Icons.favorite_border, size: 20),
+                    color: Color.fromRGBO(5, 62, 66, 1.0),
+                    onPressed: () => debugPrint('like'),
+                  )
+                ),
+              ],
+            )),
+          ],
+        ));
+  }
+
+  Widget buildPostTile(BuildContext context, Post post) {
+    return ListTile(
+      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+      leading: Container(
+        padding: EdgeInsets.only(right: 5.0),
+        child: Icon(
+          Icons.account_circle,
+          size: 45.0,
+          color: Color.fromRGBO(5, 62, 66, 1.0),
+        )
+      ),
+      title: Container(
+        padding: EdgeInsets.all(0),
+        child: InkWell(
+          onTap: () {
+            print("tap!");
+            var route = MaterialPageRoute(
+                builder: (BuildContext context) =>
+                    ProfilePage(userPage: post.uid));
+            Navigator.of(context).push(route);
+          },
+          child: Text(
+            post.fullName,
+            style: TextStyle(
+              color: Color.fromRGBO(7, 113, 136, 1.0),
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+              fontFamily: 'Poppins',
+            ),
+          ))),
+      subtitle: Text(
+        post.content,
+        style: TextStyle(fontSize: 11),
+      ),
+      trailing: Text(
+        DateTime(post.timestamp).toString(),
+        style: TextStyle(fontSize: 10, color: Colors.grey),
+      ),
+    );
   }
 
   void showTags(BuildContext context, Post post) {
@@ -564,71 +666,62 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget makeListTile(BuildContext context, Post post) {
-    return ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-      leading: Container(
-          padding: EdgeInsets.only(right: 5.0),
-          child: Icon(
-            Icons.account_circle,
-            size: 45.0,
-            color: Color.fromRGBO(5, 62, 66, 1.0),
-          )),
-      title: Container(
-          padding: EdgeInsets.all(0),
-          child: InkWell(
-              onTap: () {
-                print("tap!");
-                var route = MaterialPageRoute(
-                    builder: (BuildContext context) =>
-                        ProfilePage(userPage: post.uid));
-                Navigator.of(context).push(route);
-              },
-              child: Text(
-                post.fullName,
-                style: TextStyle(
-                  color: Color.fromRGBO(7, 113, 136, 1.0),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                  fontFamily: 'Poppins',
-                ),
-              ))),
-      subtitle: Text(
-        post.content,
-        style: TextStyle(fontSize: 11),
-      ),
+  Widget buildProfileCard(BuildContext context, screenSize) {
+    return Column(
+      children: <Widget> [
+        SizedBox(height: screenSize.height / 20),
+        _buildProfileImage(),
+        SizedBox(height: 10.0),
+        buildName(context),
+        buildStatContainer(),
+        buildBio(context),
+        // buildDemoButton(),
+        buildFollowButton(context),
+        buildSeparator(screenSize),
+      ]
     );
   }
 
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-    return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          // _buildCoverImage(screenSize),
-          SafeArea(
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  SizedBox(height: screenSize.height / 20),
-                  _buildProfileImage(),
-                  SizedBox(height: 10.0),
-                  _buildFullName(context),
-                  _buildStatContainer(),
-                  _buildBio(context),
-                  // _buildDemoButton(),
-                  _buildButtons(context),
-                  _buildSeparator(screenSize),
-                  // _buildNoPosts(context),
-                  _makeBody(context),
-                  // buildUserline(context),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+    // Post p = Post(
+    //   username: "poopoo",
+    //   fullName: "Poo Poo",
+    //   content: "uh oh stinky",
+    //   timestamp: DateTime.now().toUtc(),
+    //   uid: "2566",
+    //   topics: ["poop"],
+
+    // );
+    // return buildCard(context, p);
+
+    return SingleChildScrollView(
+      child: buildUserline(context)
+      // child: Column(
+      //   children: buildPosts(context),
+      // )
     );
+
+    // return Scaffold(
+    //   body: Stack(
+    //     children: <Widget>[
+    //       // _buildCoverImage(screenSize),
+    //       SafeArea(
+    //         child: SingleChildScrollView(
+    //           child: Column(
+    //             // children: 
+    //             // <Widget>[
+    //             //   buildProfileCard(context, screenSize),
+    //             //   // buildUserline(context),
+    //             //   buildNoPosts(context),
+    //             //   // _makeBody(context),                  
+    //             // ],
+    //           ),
+    //         ),
+    //       ),
+    //     ],
+    //   ),
+    // );
   }
 }

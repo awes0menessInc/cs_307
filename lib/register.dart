@@ -243,9 +243,9 @@ class _RegisterState extends State<Register> {
                                     "following": 0,
                                     "posts": 0,
                                     "topics": 1,
-                                    "postsList": [""],
+                                    "postsList": [],
                                     "topicsList": ["RT"],
-                                    "followersList": [""],
+                                    "followersList": [],
                                     "followingList": FieldValue.arrayUnion(
                                         [currentUser.uid.toString()]),
                                     "followingUserTopicList": {
