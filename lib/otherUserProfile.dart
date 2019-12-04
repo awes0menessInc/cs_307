@@ -25,9 +25,10 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
   String firstName = "N";
   String username = "";
   String lastName = "A";
-  String email;
+  String email = "";
   String bio = "";
   String userPage;
+  bool emailIsPrivate;
   // List<String> _topics;
 
   int followers;
@@ -67,6 +68,8 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
           lastName = data.documents[0].data['lastName'];
           username = data.documents[0].data['username'];
           bio = data.documents[0].data['bio'];
+          email = data.documents[0].data['email'];
+          emailIsPrivate = data.documents[0].data['emailIsPrivate'];
           List<String> postsList =
               List<String>.from(data.documents[0].data['postsList']);
           List<String> topList =
@@ -182,6 +185,24 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
             fontWeight: FontWeight.w500,
           ),
         ));
+  }
+
+  Widget _buildEmail(){
+    if(emailIsPrivate == false) {
+    return Container(
+        margin: EdgeInsets.symmetric(vertical: 10.0),
+        child: Text(
+          email,
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            color: Colors.black,
+            fontSize: 15.0,
+            fontWeight: FontWeight.w400,
+            fontStyle: FontStyle.italic,
+          ),
+        ));
+    }
+    else {return Container(height:0);}
   }
 
   List<String> selectedTopics = List();
@@ -353,7 +374,8 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
       color: Colors.black,
       fontSize: 16.0,
     );
-    return Container(
+    if (bio != null && bio != "") {
+      return Container(
       color: Theme.of(context).scaffoldBackgroundColor,
       padding: EdgeInsets.all(8.0),
       child: Text(
@@ -362,6 +384,8 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
         style: bioTextStyle,
       ),
     );
+    }
+    else {return Container(height: 0);}
   }
 
   Widget _buildSeparator(Size screenSize) {
@@ -779,6 +803,7 @@ class OtherUserProfilePageState extends State<OtherUserProfilePage> {
                   _buildProfileImage(),
                   SizedBox(height: 10.0),
                   _buildFullName(context),
+                  _buildEmail(),
                   _buildStatContainer(context),
                   SizedBox(height: 10.0),
                   _buildTopicsText(),

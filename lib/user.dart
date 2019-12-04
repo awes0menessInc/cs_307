@@ -21,6 +21,8 @@ class User {
   List<String> topicsList;
   Map<String, dynamic> followingUserTopicList;
 
+  bool emailIsPrivate;
+
   User({
     this.uid,
     this.username,
@@ -40,5 +42,6 @@ class User {
     this.topicsList,
     this.followingUserTopicList,
     this.score,
+    this.emailIsPrivate,
   });
 }

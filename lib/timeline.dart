@@ -22,7 +22,7 @@ class _TimelineState extends State<Timeline> {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      theme: new ThemeData(primaryColor: Colors.white),
+      theme: new ThemeData(primaryColor: Color(0xff053E42)),
       home: new ListPage(
         title: 'Timeline',
       ),
@@ -211,6 +211,15 @@ class _ListPageState extends State<ListPage> {
     ));
   }
 
+  _pageNavigation(uid){
+    if (uid == AuthService.currentUser.uid) {
+      return new ProfilePage(userPage: uid);
+    }
+    else {
+      return new OtherUserProfilePage(userPage: uid);
+    }
+  }
+
   Widget _makeListTile(BuildContext context, Post post) {
     return ListTile(
       contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
@@ -228,7 +237,7 @@ class _ListPageState extends State<ListPage> {
                 print("tap!");
                 var route = new MaterialPageRoute(
                   builder: (BuildContext context) =>
-                      new OtherUserProfilePage(userPage: post.uid),
+                      _pageNavigation(post.uid),
                 );
                 Navigator.of(context).push(route);
               },

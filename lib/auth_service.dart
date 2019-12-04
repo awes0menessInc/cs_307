@@ -41,6 +41,7 @@ class AuthService with ChangeNotifier {
                   firstName: document['firstName'],
                   lastName: document['lastName'],
                   email: document['email'],
+                  emailIsPrivate: document['emailIsPrivate'],
                   bio: document['bio'],
                   birthday: document['birthday'].toDate(),
                   website: document['website'],
@@ -62,6 +63,7 @@ class AuthService with ChangeNotifier {
     currentUser.firstName = firstName;
     currentUser.lastName = lastName;
     currentUser.email = email;
+    // currentUser.emailIsPrivate = emailIsPrivate;
     currentUser.bio = bio;
     currentUser.birthday = birthday;
     currentUser.website = website;
