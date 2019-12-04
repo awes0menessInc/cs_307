@@ -73,7 +73,6 @@ class SettingsState extends State<Settings> {
   void getUser() {
     _uid = AuthService.currentUser.uid;
     _firstName = AuthService.currentUser.firstName;
-    print('from the database: ' + _firstName);
     _lastName = AuthService.currentUser.lastName;
     _email = AuthService.currentUser.email;
     _bio = AuthService.currentUser.bio;
@@ -81,7 +80,6 @@ class SettingsState extends State<Settings> {
     _birthday = AuthService.currentUser.birthday;
     _topics = AuthService.currentUser.topicsList;
     _emailIsPrivate = AuthService.currentUser.emailIsPrivate;
-    print('from the database: ' + _emailIsPrivate.toString());
   }
 
   Future deleteUser() async {
@@ -167,22 +165,17 @@ class SettingsState extends State<Settings> {
   }
 
   Widget buildSettingsForm() {
-    fnameController.text = _firstName;
-    lnameController.text = _lastName;
-    emailController.text = _email;
-    bdayController.text = _birthday.toString();
-    bioController.text = _bio;
-    websiteController.text = _website;
     return Form(
         key: _editFormKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-                TextFormField(
-                decoration:
-                  InputDecoration(labelText: 'First Name', hintText: "John"),
-                controller: fnameController,
-                onSaved: (value) {
+            TextFormField(
+              decoration: InputDecoration(
+                  labelText: 'First Name', hintText: _firstName),
+              controller: fnameController,
+              onSaved: (value) {
+                fnameController.text = value;
                 AuthService.currentUser.firstName = value;
               },
               validator: (value) {
@@ -194,9 +187,10 @@ class SettingsState extends State<Settings> {
             ),
             TextFormField(
               decoration:
-                  InputDecoration(labelText: 'Last Name', hintText: "Doe"),
+                  InputDecoration(labelText: 'Last Name', hintText: _lastName),
               controller: lnameController,
               onSaved: (value) {
+                lnameController.text = value;
                 AuthService.currentUser.lastName = value;
               },
               validator: (value) {
@@ -207,24 +201,28 @@ class SettingsState extends State<Settings> {
               },
             ),
             TextFormField(
-                decoration: InputDecoration(
-                    labelText: 'Email', hintText: "example@email.com"),
+                decoration:
+                    InputDecoration(labelText: 'Email', hintText: _email),
                 controller: emailController,
                 onSaved: (value) {
+                  emailController.text = value;
                   AuthService.currentUser.email = value;
                 },
                 validator: emailValidator),
             TextFormField(
-              decoration: InputDecoration(labelText: 'Bio', hintText: "Bio"),
+              decoration: InputDecoration(labelText: 'Bio', hintText: _bio),
               controller: bioController,
               onSaved: (value) {
+                bioController.text = value;
                 AuthService.currentUser.bio = value;
               },
             ),
             DateTimeField(
               controller: bdayController,
               format: DateFormat("yyyy-MM-dd"),
-              decoration: InputDecoration(labelText: 'Birthday'),
+              decoration: InputDecoration(
+                  labelText: 'Birthday',
+                  hintText: _birthday.toUtc().toString()),
               onShowPicker: (context, currentValue) {
                 return showDatePicker(
                     context: context,
@@ -246,45 +244,49 @@ class SettingsState extends State<Settings> {
             //   // validator: bdayValidator,
             // ),
             TextFormField(
-              decoration: InputDecoration(
-                  labelText: 'Website', hintText: "www.example.com"),
+              decoration:
+                  InputDecoration(labelText: 'Website', hintText: _website),
               controller: websiteController,
               onSaved: (value) {
+                websiteController.text = value;
                 AuthService.currentUser.website = value;
               },
             ),
             TextFormField(
-              decoration:
-                  InputDecoration(labelText: 'Add a Topic', hintText: "Topic"),
+              decoration: InputDecoration(
+                  labelText: 'Add a Topic', hintText: _topics.toString()),
               controller: topicController,
-              onSaved: (value) {
-                //AuthService.currentUser.topicsList.add(value);
-                if (value.toString() != null && value.toString().isNotEmpty) {
-                  _topics.add(value);
+              validator: (value) {
+                if (value == null || value.isEmpty || _topics.contains(value)) {
+                  return "Topic not valid.";
                 }
+                return null;
+              },
+              onSaved: (value) {
+                _topics.add(value);
               },
             ),
-             Container(
-              padding: EdgeInsets.symmetric(vertical: 10),
-              child: Row(
-                children: <Widget> [
+            Container(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: Row(children: <Widget>[
                   Text('Hide email from other users',
-                    style: TextStyle(fontSize: 16)),
+                      style: TextStyle(fontSize: 16)),
                   Expanded(
-                    child: Container(
-                    alignment: Alignment.centerRight,
-                    child: Switch(
-                    value: _emailIsPrivate,
-                    onChanged: (value) {
-                      AuthService.currentUser.emailIsPrivate = value;
-                      setState(() {
-                        _emailIsPrivate = value;
-                        print(_emailIsPrivate.toString());
-                      });
-                    },
-                    activeTrackColor: Color(0xff55B0BD), 
-                    activeColor: Color(0xff077188),
-             ))),])),
+                      child: Container(
+                          alignment: Alignment.centerRight,
+                          child: Switch(
+                            value: _emailIsPrivate,
+                            onChanged: (value) {
+                              AuthService.currentUser.emailIsPrivate = value;
+                              setState(() {
+                                _emailIsPrivate = value;
+                                print(_emailIsPrivate.toString());
+                              });
+                            },
+                            activeTrackColor: Color(0xff55B0BD),
+                            activeColor: Color(0xff077188),
+                          ))),
+                ])),
             Padding(
               padding: EdgeInsets.all(10.0),
               child: RaisedButton(
@@ -309,15 +311,6 @@ class SettingsState extends State<Settings> {
                         "topicsList": List.from(_topics),
                         "emailIsPrivate": _emailIsPrivate,
                       });
-                      // AuthService.updateUser(
-                      //   fnameController.text,
-                      //   lnameController.text,
-                      //   emailController.text,
-                      //   bioController.text,
-                      //   bdayController.text,
-                      //   websiteController.text,
-                      //   _topics,
-                      // );
                       final snackBar = SnackBar(
                         content: Text('Profile changes saved successfully'),
                         duration: const Duration(seconds: 3),
@@ -331,6 +324,16 @@ class SettingsState extends State<Settings> {
                       );
                       Scaffold.of(context).showSnackBar(snackBar);
                     }
+                    setState(() {
+                      print("refresh settings");
+                      fnameController.clear();
+                      lnameController.clear();
+                      bioController.clear();
+                      bdayController.clear();
+                      websiteController.clear();
+                      emailController.clear();
+                      topicController.clear();
+                    });
                   }),
             ),
             Padding(

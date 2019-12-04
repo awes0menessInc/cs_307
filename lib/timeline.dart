@@ -211,11 +211,10 @@ class _ListPageState extends State<ListPage> {
     ));
   }
 
-  _pageNavigation(uid){
+  _pageNavigation(uid) {
     if (uid == AuthService.currentUser.uid) {
       return new ProfilePage(userPage: uid);
-    }
-    else {
+    } else {
       return new OtherUserProfilePage(userPage: uid);
     }
   }
@@ -236,8 +235,7 @@ class _ListPageState extends State<ListPage> {
               onTap: () {
                 print("tap!");
                 var route = new MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                      _pageNavigation(post.uid),
+                  builder: (BuildContext context) => _pageNavigation(post.uid),
                 );
                 Navigator.of(context).push(route);
               },
@@ -295,13 +293,13 @@ class _ListPageState extends State<ListPage> {
             ),
             //ButtonBar
             SizedBox(
-                height: 50,
+                height: 60,
                 child: ButtonBar(
                   children: <Widget>[
                     FlatButton(
                       child: Text("View Tags",
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 11,
                             color: Color.fromRGBO(5, 62, 66, 1.0),
                           )),
                       onPressed: () => showTags(context, post),
@@ -320,7 +318,7 @@ class _ListPageState extends State<ListPage> {
                               );
                             })),
                     SizedBox(
-                        width: 40,
+                        width: 30,
                         child: IconButton(
                           icon: post.likes.contains(AuthService.currentUser.uid)
                               ? _iconPressed

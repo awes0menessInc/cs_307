@@ -186,20 +186,19 @@ class ProfilePageState extends State<ProfilePage> {
         ));
   }
 
-  Widget _buildEmail(){
+  Widget _buildEmail() {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10.0),
-      child: Text(
-        email,
-        style: TextStyle(
-          fontFamily: 'Montserrat',
-          color: Colors.black,
-          fontSize: 15.0,
-          fontWeight: FontWeight.w400,
-          fontStyle: FontStyle.italic,
-        ),
-      )
-    );
+        margin: EdgeInsets.symmetric(vertical: 10.0),
+        child: Text(
+          email,
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            color: Colors.black,
+            fontSize: 15.0,
+            fontWeight: FontWeight.w400,
+            fontStyle: FontStyle.italic,
+          ),
+        ));
   }
 
   Widget _buildStatItem(String label, String count) {
@@ -291,18 +290,18 @@ class ProfilePageState extends State<ProfilePage> {
     );
     if (bio != null && bio != "") {
       return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      padding: EdgeInsets.all(8.0),
-      child: Text(
-        bio,
-        textAlign: TextAlign.center,
-        style: bioTextStyle,
-      ),
-    );
+        color: Theme.of(context).scaffoldBackgroundColor,
+        padding: EdgeInsets.all(8.0),
+        child: Text(
+          bio,
+          textAlign: TextAlign.center,
+          style: bioTextStyle,
+        ),
+      );
+    } else {
+      return Container(height: 0);
     }
-    else {return Container(height: 0);}
   }
-
 
   Widget _buildSeparator(Size screenSize) {
     return Container(
@@ -428,50 +427,48 @@ class ProfilePageState extends State<ProfilePage> {
 
   Widget makeCard(BuildContext context, Post post, int index) {
     return Card(
-      elevation: 8,
-      margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          SizedBox(
-            child: makeListTile(context, post),
-          ),
-          SizedBox(
-            height: 50,
-            child: ButtonBar(
-              children: <Widget>[
-                SizedBox(
-                  width: 25,
-                  child: IconButton(
-                    icon: Icon(Icons.assignment, size: 19),
-                    color: Color.fromRGBO(5, 62, 66, 1.0),
-                    onPressed: () => showTags(context, post),
-                  )
-                ),
-                SizedBox(
-                  width: 25,
-                  child: IconButton(
-                    icon: Icon(Icons.add_comment, size: 19),
-                    color: Color.fromRGBO(5, 62, 66, 1.0),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => RePost(post: posts[index])),
-                      );
-                    },
-                  )
-                ),
-                SizedBox(
-                  width: 40,
-                  child: IconButton(
-                    icon: Icon(Icons.favorite_border, size: 20),
-                    color: Color.fromRGBO(5, 62, 66, 1.0),
-                    onPressed: () => debugPrint('like'),
-                  )
-                ),
-              ],
-            )),
+        elevation: 8,
+        margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            SizedBox(
+              child: makeListTile(context, post),
+            ),
+            SizedBox(
+                height: 70,
+                child: ButtonBar(
+                  children: <Widget>[
+                    SizedBox(
+                        width: 25,
+                        child: IconButton(
+                          icon: Icon(Icons.assignment, size: 19),
+                          color: Color.fromRGBO(5, 62, 66, 1.0),
+                          onPressed: () => showTags(context, post),
+                        )),
+                    SizedBox(
+                        width: 25,
+                        child: IconButton(
+                          icon: Icon(Icons.add_comment, size: 19),
+                          color: Color.fromRGBO(5, 62, 66, 1.0),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      RePost(post: posts[index])),
+                            );
+                          },
+                        )),
+                    SizedBox(
+                        width: 40,
+                        child: IconButton(
+                          icon: Icon(Icons.favorite_border, size: 20),
+                          color: Color.fromRGBO(5, 62, 66, 1.0),
+                          onPressed: () => debugPrint('like'),
+                        )),
+                  ],
+                )),
           ],
         ));
   }
@@ -603,22 +600,22 @@ class ProfilePageState extends State<ProfilePage> {
         child: Column(
           children: <Widget>[
             SizedBox(height: screenSize.height / 20),
-                _buildProfileImage(),
-                SizedBox(height: 10.0),
-                _buildFullName(context),
-                _buildEmail(),
-                _buildStatContainer(context),
-                _buildBio(context),
-                // _buildDemoButton(),
-                _buildButtons(context),
-                _buildSeparator(screenSize),
-                // _buildNoPosts(context),
-                // _makeBody(context),
-                buildUserline(context),
-            ],
-          ),
+            _buildProfileImage(),
+            SizedBox(height: 10.0),
+            _buildFullName(context),
+            _buildEmail(),
+            _buildStatContainer(context),
+            _buildBio(context),
+            // _buildDemoButton(),
+            _buildButtons(context),
+            _buildSeparator(screenSize),
+            // _buildNoPosts(context),
+            // _makeBody(context),
+            buildUserline(context),
+          ],
         ),
-      );
+      ),
+    );
 
     // return Scaffold(
     //   body: Stack(
